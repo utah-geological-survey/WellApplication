@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='WellApplication',
-    version='0.0.0',
+    version='0.0.1',
     author='Paul Inkenbrandt',
     author_email='paulinkenbrandt@utah.gov',
     packages=['wellapplication'],
