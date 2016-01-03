@@ -1,27 +1,12 @@
 Metadata-Version: 1.1
 Name: WellApplication
-Version: 0.0.6
+Version: 0.0.7
 Summary: Interface with xle files; analyze hydrographs; plot hydrographs
 Home-page: http://pypi.python.org/pypi/WellApplication/
 Author: Paul Inkenbrandt
 Author-email: paulinkenbrandt@utah.gov
 License: LICENSE.txt
-Description: ================
-        Well Application
-        ================
-        
-        Uses
-        ====
-        
-        This package:
-        *allows a user to upload data from an .xle file common with some water well transducers.
-        
-        *matches well and barometric data to same sample intervals
-        
-        *adjust with manual measurements
-        
-        *removes skips and jumps from data
-        
+Description: UNKNOWN
 Keywords: hydrogeology hydrograph barocorrection
 Platform: UNKNOWN
 Classifier: Development Status :: 1 - Planning

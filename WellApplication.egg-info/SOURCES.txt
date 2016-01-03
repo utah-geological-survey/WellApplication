@@ -1,7 +1,7 @@
 CHANGES.txt
 LICENSE.txt
 MANIFEST.in
-README.txt
+README.rst
 setup.py
 WellApplication.egg-info/PKG-INFO
 WellApplication.egg-info/SOURCES.txt

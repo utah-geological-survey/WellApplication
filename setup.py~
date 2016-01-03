@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='WellApplication', 
-      version='0.0.5', 
+      version='0.0.6', 
       author='Paul Inkenbrandt',
       author_email='paulinkenbrandt@utah.gov',
       packages=find_packages(exclude=['contrib', 
@@ -9,7 +9,6 @@ setup(name='WellApplication',
       url='http://pypi.python.org/pypi/WellApplication/',
       license='LICENSE.txt',
       description='Interface with xle files; analyze hydrographs; plot hydrographs',
-      long_description=open('README.txt').read(),
       install_requires=["Pandas >= 0.16.1", 
                         "Numpy >= 1.9.0", 
                         "Matplotlib >= 1.4.3", 
