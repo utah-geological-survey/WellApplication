@@ -1,0 +1,4 @@
+Pandas >= 0.16.1
+Numpy >= 1.9.0
+Matplotlib >= 1.4.3
+xmltodict >= 0.9.2
