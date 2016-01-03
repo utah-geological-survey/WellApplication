@@ -1,3 +1,4 @@
+v0.0.8, 2016-01-03 -- added class usgsGis in gis
 v0.0.7, 2016-01-03 -- improved readme (.rst)
 v0.0.6, 2016-01-01 -- connected object in init
 v0.0.5, 2016-01-01 -- renamed file, added class

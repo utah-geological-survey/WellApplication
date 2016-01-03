@@ -5,3 +5,4 @@ __email__ = 'paulinkenbrandt@utah.gov'
 __version__ = '0.0.1'
 
 from transport import transport
+from gis import usgsGis

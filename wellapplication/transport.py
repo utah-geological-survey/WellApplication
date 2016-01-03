@@ -119,14 +119,13 @@ class transport:
             print('No Jumps')
         return df    
     
-    
     def getwellid(infile, wellinfo):
-        m = re.search("\d", getfilename(infile))
-        s = re.search("\s", getfilename(infile))
+        m = re.search("\d", transport.getfilename(infile))
+        s = re.search("\s", transport.getfilename(infile))
         if m.start() > 3:
-            wellname = getfilename(infile)[0:m.start()].strip().lower()
+            wellname = transport.getfilename(infile)[0:m.start()].strip().lower()
         else:
-            wellname = getfilename(infile)[0:s.start()].strip().lower()
+            wellname = transport.getfilename(infile)[0:s.start()].strip().lower()
         wellid = wellinfo[wellinfo['Well']==wellname]['WellID'].values[0]
         return wellname, wellid
     
@@ -161,10 +160,10 @@ class transport:
         ch2Unit = obj['Body_xle']['Ch2_data_header']['Unit']
         numCh2 = pd.to_numeric(f['ch2'])
         if ch2Unit == 'Deg C' or ch2Unit == u'\N{DEGREE SIGN}' + u'C':
-            f[str(ch2ID).title()] = pd.to_numeric(f['ch2'])
+            f[str(ch2ID).title()] = numCh2
         elif ch2Unit == 'Deg F' or ch2Unit == u'\N{DEGREE SIGN}' + u'F': 
             print('Temp in F, converting to C')
-            f[str(ch2ID).title()] = (pd.to_numeric(f['ch2'])-32)*5/9
+            f[str(ch2ID).title()] = (numCh2-32)*5/9
     
         #CH 1 manipulation    
         ch1ID =  obj['Body_xle']['Ch1_data_header']['Identification'] # Usually level
@@ -189,7 +188,7 @@ class transport:
             print("Unknown units, no conversion")
             
         # add extension-free file name to dataframe
-        f['name'] = getfilename(infile)
+        f['name'] = transport.getfilename(infile)
         # combine Date and Time fields into one field
         f['DateTime'] = pd.to_datetime(f.apply(lambda x: x['Date'] + ' ' + x['Time'], 1))
         f[str(ch1ID).title()] =  pd.to_numeric(f[str(ch1ID).title()])
@@ -240,10 +239,10 @@ class transport:
                     indices = fd.readlines().index('[Data]\n')
     
                 # convert data to pandas dataframe starting at the indexed data line
-                f[getfilename(infile)] = pd.read_table(infile, parse_dates=True, sep='     ', index_col=0,
+                f[transport.getfilename(infile)] = pd.read_table(infile, parse_dates=True, sep='     ', index_col=0,
                                                skiprows=indices+2, names=['DateTime','Level','Temperature'], skipfooter=1,engine='python')
                 # add extension-free file name to dataframe
-                f[getfilename(infile)]['name'] = getfilename(infile)
+                f[transport.getfilename(infile)]['name'] = transport.getfilename(infile)
                 f['Level'] = pd.to_numeric(f['Level'])
                 f['Temperature'] = pd.to_numeric(f['Temperature']) 
             # run computations using xle files
@@ -255,18 +254,18 @@ class transport:
                 # navigate through xml to the data
                 wellrawdata = obj['Body_xle']['Data']['Log']
                 # convert xml data to pandas dataframe
-                f[getfilename(infile)] = pd.DataFrame(wellrawdata)
+                f[transport.getfilename(infile)] = pd.DataFrame(wellrawdata)
                 # get header names and apply to the pandas dataframe          
-                f[getfilename(infile)][str(obj['Body_xle']['Ch1_data_header']['Identification']).title()] = f[getfilename(infile)]['ch1']
-                f[getfilename(infile)][str(obj['Body_xle']['Ch2_data_header']['Identification']).title()] = f[getfilename(infile)]['ch2']
+                f[transport.getfilename(infile)][str(obj['Body_xle']['Ch1_data_header']['Identification']).title()] = f[transport.getfilename(infile)]['ch1']
+                f[transport.getfilename(infile)][str(obj['Body_xle']['Ch2_data_header']['Identification']).title()] = f[transport.getfilename(infile)]['ch2']
       
                 # add extension-free file name to dataframe
-                f[getfilename(infile)]['name'] = getfilename(infile)
+                f[transport.getfilename(infile)]['name'] = transport.getfilename(infile)
                 # combine Date and Time fields into one field
-                f[getfilename(infile)]['DateTime'] = pd.to_datetime(f[getfilename(infile)].apply(lambda x: x['Date'] + ' ' + x['Time'], 1))
-                f[getfilename(infile)] = f[getfilename(infile)].reset_index()
-                f[getfilename(infile)] = f[getfilename(infile)].set_index('DateTime')
-                f[getfilename(infile)] = f[getfilename(infile)].drop(['Date','Time','@id','ch1','ch2','index','ms'],axis=1)
+                f[transport.getfilename(infile)]['DateTime'] = pd.to_datetime(f[transport.getfilename(infile)].apply(lambda x: x['Date'] + ' ' + x['Time'], 1))
+                f[transport.getfilename(infile)] = f[transport.getfilename(infile)].reset_index()
+                f[transport.getfilename(infile)] = f[transport.getfilename(infile)].set_index('DateTime')
+                f[transport.getfilename(infile)] = f[transport.getfilename(infile)].drop(['Date','Time','@id','ch1','ch2','index','ms'],axis=1)
             # run computations using csv files
     
             else:
@@ -309,11 +308,11 @@ class transport:
             f = pd.read_table(infile, parse_dates=True, sep='     ', index_col=0,
                                            skiprows=indices+2, names=['DateTime','Level','Temperature'], skipfooter=1,engine='python')
             # add extension-free file name to dataframe
-            f['name'] = getfilename(infile)
+            f['name'] = transport.getfilename(infile)
     
         # run computations using xle files
         elif filetype=='.xle':
-            f = new_xle_imp(infile)
+            f = transport.new_xle_imp(infile)
         
         # run computations using csv files
         elif filetype=='.csv':
@@ -325,7 +324,7 @@ class transport:
                     indices = fd.readlines().index(',Date,Time,100 ms,Level,Temperature\n')
             f = pd.read_csv(infile, skiprows=indices, skipfooter=1, engine='python')
             # add extension-free file name to dataframe
-            f['name'] = getfilename(infile)
+            f['name'] = transport.getfilename(infile)
             # combine Date and Time fields into one field
             f['DateTime'] = pd.to_datetime(f.apply(lambda x: x['Date'] + ' ' + x['Time'], 1))
             f = f.reset_index()
@@ -405,17 +404,7 @@ class transport:
                                        (barolocal.loc['pw19','Y']-wellinfo['UTMNorthing'])**2 + 
                                        (barolocal.loc['pw19','Z']-wellinfo['G_Elev_m'])**2)
         wellinfo['closest_baro'] = wellinfo[['pw03','pw10','pw19']].T.idxmin()
-        return wellinfo
-    
-    def getwellid(infile,wellinfo):
-        m = re.search("\d", getfilename(infile))
-        s = re.search("\s", getfilename(infile))
-        if m.start() > 3:
-            wellname = getfilename(infile)[0:m.start()].strip().lower()
-        else:
-            wellname = getfilename(infile)[0:s.start()].strip().lower()
-        wellid = wellinfo[wellinfo['Well']==wellname]['WellID'].values[0]
-        return wellname, wellid
+        return wellinfo   
     
     def imp_new_well(infile, wellinfo, manual, baro):
         '''
@@ -429,12 +418,12 @@ class transport:
         
         This function imports xle (solinst) and csv (Global Water) transducer files, removes barometric pressure effects and corrects for drift.
         ''' 
-        wellname, wellid = getwellid(infile,wellinfo) #see custom getwellid function
+        wellname, wellid = transport.getwellid(infile,wellinfo) #see custom getwellid function
         print('Well = ' + wellname)    
         if wellinfo[wellinfo['Well']==wellname]['LoggerTypeName'].values[0] == 'Solinst': # Reads Solinst Raw File
-            f = new_xle_imp(infile)
+            f = transport.new_xle_imp(infile)
             # Remove first and/or last measurements if the transducer was out of the water
-            f = dataendclean(f,'Level')      
+            f = transport.dataendclean(f,'Level')      
             
             bse = int(f.index.to_datetime().minute[0])
             try:
@@ -443,11 +432,11 @@ class transport:
                 b = b.to_frame()
             except (KeyError,NameError):
                 print('No BP match, using pw03')
-                b = hourly_resample(baro['pw03'], bse)
+                b = transport.hourly_resample(baro['pw03'], bse)
                 b = b.to_frame()
                 b['bp'] = b['pw03']
                 bp = 'bp'
-            f = hourly_resample(f,bse)
+            f = transport.hourly_resample(f,bse)
             g = pd.merge(f,b,left_index=True,right_index=True,how='inner')
             
             g['MeasuredLevel'] = g['Level']         
@@ -472,7 +461,7 @@ class transport:
             f = f[f.DateTime.notnull()]
             f['Level'] = f[' Feet']
             # Remove first and/or last measurements if the transducer was out of the water
-            f = dataendclean(f,'Level')      
+            f = transport.dataendclean(f,'Level')      
             flist = f.columns.tolist()
             if ' Temp C' in flist:
                 f['Temperature'] = f[' Temp C']
@@ -491,7 +480,7 @@ class transport:
             bse = int(f.index.to_datetime().minute[0])
             try:
                 bp = str(wellinfo[wellinfo['Well']==wellname]['BE barologger'].values[0])
-                b = hourly_resample(baro[bp], bse)
+                b = transport.hourly_resample(baro[bp], bse)
                 b = b.to_frame()
             except (KeyError,NameError):
                 print('No match, using Level')
@@ -502,7 +491,7 @@ class transport:
                 b.drop(['bp'],inplace=True,axis=1)
                 
             #b = hourly_resample(baro[bp], bse)
-            f = hourly_resample(f,bse)
+            f = transport.hourly_resample(f,bse)
             g = pd.merge(f,b,left_index=True,right_index=True,how='inner')
             g['MeasuredLevel'] = g['Level']
             
@@ -518,12 +507,12 @@ class transport:
         g['DeltaLevel'] = g['BaroEfficiencyLevel'] - g['BaroEfficiencyLevel'][0]
         
         # Match manual water level to closest date
-        g['MeasuredDTW'] = fcl(manual[manual['WellID']== wellid],min(g.index.to_datetime()))[1]-g['DeltaLevel']
+        g['MeasuredDTW'] = transport.fcl(manual[manual['WellID']== wellid],min(g.index.to_datetime()))[1]-g['DeltaLevel']
     
         # Drift Correction
         #lastdtw = g['MeasuredDTW'][-1]
-        last = fcl(manual[manual['WellID']== wellid],max(g.index.to_datetime()))[1]
-        first = fcl(manual[manual['WellID']== wellid],min(g.index.to_datetime()))[1]
+        last = transport.fcl(manual[manual['WellID']== wellid],max(g.index.to_datetime()))[1]
+        first = transport.fcl(manual[manual['WellID']== wellid],min(g.index.to_datetime()))[1]
         lastg = float(g[g.index.to_datetime()==max(g.index.to_datetime())]['MeasuredDTW'].values)
         driftlen = len(g.index)
         g['last_diff_int'] = np.round((lastg-last),4)/np.round(driftlen-1.0,4)
@@ -567,7 +556,7 @@ class transport:
         bracketedwls = {}
     
         for i in range(len(manualfile)+1):
-            breakpoints.append(fcl(wellbaro, manualfile.index.to_datetime()[i-1]).name)
+            breakpoints.append(transport.fcl(wellbaro, manualfile.index.to_datetime()[i-1]).name)
     
         last_man_wl,first_man_wl,last_tran_wl,driftlen = [],[],[],[]
     
@@ -578,10 +567,10 @@ class transport:
     
     
             bracketedwls[i+1].loc[:,'DeltaLevel'] = bracketedwls[i+1].loc[:,meas] - bracketedwls[i+1].ix[0,meas]
-            bracketedwls[i+1].loc[:,'MeasuredDTW'] = fcl(manualfile,breakpoints[i+1])[manmeas] - bracketedwls[i+1].loc[:,'DeltaLevel']
+            bracketedwls[i+1].loc[:,'MeasuredDTW'] = transport.fcl(manualfile,breakpoints[i+1])[manmeas] - bracketedwls[i+1].loc[:,'DeltaLevel']
     
-            last_man_wl.append(fcl(manualfile,breakpoints[i+2])[manmeas])
-            first_man_wl.append(fcl(manualfile,breakpoints[i+1])[manmeas])
+            last_man_wl.append(transport.fcl(manualfile,breakpoints[i+2])[manmeas])
+            first_man_wl.append(transport.fcl(manualfile,breakpoints[i+1])[manmeas])
             last_tran_wl.append(float(bracketedwls[i+1].loc[max(bracketedwls[i+1].index.to_datetime()),'MeasuredDTW']))
             driftlen.append(len(bracketedwls[i+1].index))
             bracketedwls[i+1].loc[:,'last_diff_int'] = np.round((last_tran_wl[i]-last_man_wl[i]),4)/np.round(driftlen[i]-1.0,4)
@@ -663,12 +652,12 @@ class transport:
     
         '''
         #Remove dangling ends
-        baroclean = dataendclean(barofile, 'Level')
-        wellclean = dataendclean(wellfile, 'Level')
+        baroclean = transport.dataendclean(barofile, 'Level')
+        wellclean = transport.dataendclean(wellfile, 'Level')
         
         # resample data to make sample interval consistent  
-        baro = hourly_resample(baroclean,0,sampint)
-        well = hourly_resample(wellclean,0,sampint)
+        baro = transport.hourly_resample(baroclean,0,sampint)
+        well = transport.hourly_resample(wellclean,0,sampint)
         
         # reassign `Level` to reduce ambiguity
         well['abs_feet_above_levelogger'] = well['Level']
@@ -682,12 +671,10 @@ class transport:
         bracketedwls = {}
     
         for i in range(len(manualfile)+1):
-            breakpoints.append(fcl(wellbaro, manualfile.index.to_datetime()[i-1]).name)
+            breakpoints.append(transport.fcl(wellbaro, manualfile.index.to_datetime()[i-1]).name)
     
         last_man_wl,first_man_wl,last_tran_wl,driftlen = [],[],[],[]
-    
-        firstupper, firstlower, firstlev, lastupper, lastlower, lastlev = [],[],[],[],[],[]
-    
+   
         for i in range(len(manualfile)-1):
             # Break up time series into pieces based on timing of manual measurements
             bracketedwls[i+1] = wellbaro.loc[(wellbaro.index.to_datetime() > breakpoints[i+1])&(wellbaro.index.to_datetime() < breakpoints[i+2])]
@@ -695,10 +682,10 @@ class transport:
     
     
             bracketedwls[i+1].loc[:,'DeltaLevel'] = bracketedwls[i+1].loc[:,'adjusted_levelogger'] - bracketedwls[i+1].ix[0,'adjusted_levelogger']
-            bracketedwls[i+1].loc[:,'MeasuredDTW'] = fcl(manualfile,breakpoints[i+1])[0] - bracketedwls[i+1].loc[:,'DeltaLevel']
+            bracketedwls[i+1].loc[:,'MeasuredDTW'] = transport.fcl(manualfile,breakpoints[i+1])[0] - bracketedwls[i+1].loc[:,'DeltaLevel']
     
-            last_man_wl.append(fcl(manualfile,breakpoints[i+2])[0])
-            first_man_wl.append(fcl(manualfile,breakpoints[i+1])[0])
+            last_man_wl.append(transport.fcl(manualfile,breakpoints[i+2])[0])
+            first_man_wl.append(transport.fcl(manualfile,breakpoints[i+1])[0])
             last_tran_wl.append(float(bracketedwls[i+1].loc[max(bracketedwls[i+1].index.to_datetime()),'MeasuredDTW']))
             driftlen.append(len(bracketedwls[i+1].index))
             bracketedwls[i+1].loc[:,'last_diff_int'] = np.round((last_tran_wl[i]-last_man_wl[i]),4)/np.round(driftlen[i]-1.0,4)
@@ -716,62 +703,40 @@ class transport:
         # subtract depth to water below ground surface from well surface elevation
         wellbarofixed.loc[:,'WaterElevation'] = wellelev - wellbarofixed.loc[:,'DTWBelowGroundSurface']
         
-        wellbarofinal = smoother(wellbarofixed, 'WaterElevation')
+        wellbarofinal = transport.smoother(wellbarofixed, 'WaterElevation')
         
         return wellbarofinal
-        
-    # clark's method
-    def clarks(data,bp,wl):
+
+    def xleHeadTable(folder):
         '''
-        clarks method
-        Input dataframe (data) with barometric pressure (bp) and water level (wl) data
-        Returns slope, intercept, and r squared value'''
-        data['dwl'] = data[wl].diff()
-        data['dbp'] = data[bp].diff()
+        RETURNS
+        A pandas dataframe containing the transducer data
+        '''
+        # open text file
         
-        data['beta'] = data['dbp']*data['dwl']
-        data['Sbp'] = np.abs(data['dbp']).cumsum()
-        data['Swl'] = data[['dwl','beta']].apply(lambda x: -1*np.abs(x[0]) if x[1]>0 else np.abs(x[0]), axis=1).cumsum()
-        plt.figure()
-        plt.plot(data['Sbp'],data['Swl'])
-        regression = ols(y=data['Swl'], x=data['Sbp'])
+        filenames = [os.path.join(folder,fn) for fn in next(os.walk(folder))[2]]
         
-        m = regression.beta.x
-        b = regression.beta.intercept
-        r = regression.r2
+        instType, modelNum, serialNum, firmWare, project, well, stopTime, batteryPct = [],[],[],[],[],[],[],[] 
         
-        y_reg = [data.ix[i,'Sbp']*m+b for i in range(len(data['Sbp']))]
+        for infile in filenames:
+           
+            # get the extension of the input file
+            filename, filetype = os.path.splitext(infile)
+            if filetype=='.xle':
+                # open text file
+                with open(infile) as fd:
+                    # parse xml
+                    obj = xmltodict.parse(fd.read(),encoding="ISO-8859-1")
+                # navigate through xml to the data
+                instType.append(obj['Body_xle']['Instrument_info']['Instrument_type'])          
+                modelNum.append(obj['Body_xle']['Instrument_info']['Model_number'])  
+                serialNum.append(obj['Body_xle']['Instrument_info']['Serial_number'])
+                batteryPct.append(obj['Body_xle']['Instrument_info']['Battery_level'])
+                firmWare.append(obj['Body_xle']['Instrument_info']['Firmware'])
+                project.append(obj['Body_xle']['Instrument_info_data_header']['Project_ID'])
+                well.append(obj['Body_xle']['Instrument_info_data_header']['Location'])
+                stopTime.append(obj['Body_xle']['Instrument_info_data_header']['Stop_time'])
+        properties = pd.DataFrame({'instType':instType, 'modelNum':modelNum, 'serialNum':serialNum, 'firmWare':firmWare, 
+                                   'project':project, 'well':well, 'stopTime':stopTime, 'batteryPct':batteryPct})
     
-        plt.plot(data['Sbp'],y_reg,
-                 label='Regression: Y = {m:.4f}X + {b:.5}\nr^2 = {r:.4f}\n BE = {be:.2f} '.format(m=m,b=b,r=r,be=m))
-        plt.legend()
-        plt.xlabel('Sum of Barometric Pressure Changes (ft)')
-        plt.ylabel('Sum of Water-Level Changes (ft)')
-        data.drop(['dwl','dbp','Sbp','Swl'], axis=1, inplace=True)
-        return m,b,r
-        
-    def baro_eff(df,bp,wl,lag=100):
-        df.dropna(inplace=True)
-        #dwl = df[wl].diff().values[1:-1]
-        #dbp = df[bp].diff().values[1:-1]
-        dwl = np.subtract(df[wl].values[1:-1],np.mean(df[wl].values[1:-1]))
-        dbp = np.subtract(df[bp].values[1:-1],np.mean(df[bp].values[1:-1]))
-        df['j_dates'] = df.index.to_julian_date()
-        lag_time = df['j_dates'].diff().cumsum().values[1:-1]
-        df.drop('j_dates',axis=1,inplace=True)
-        # Calculate BP Response Function
-    
-        ## create lag matrix for regression
-        bpmat = tools.lagmat(dbp, lag, original='in')
-        ## transpose matrix to determine required length
-        ## run least squared regression
-        sqrd = np.linalg.lstsq(bpmat,dwl)
-        wlls = sqrd[0]
-        cumls = np.cumsum(wlls)
-        negcumls = [-1*cumls[i] for i in range(len(cumls))]
-        ymod = np.dot(bpmat,wlls)
-        
-        ## resid gives the residual of the bp
-        resid=[(dwl[i] - ymod[i])+np.mean(df[wl].values[1:-1]) for i in range(len(dwl))]
-        lag_trim = lag_time[0:len(cumls)]
-        return negcumls, cumls, ymod, resid, lag_time, dwl, dbp
+        return properties

@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='WellApplication', 
-      version='0.0.7', 
+      version='0.0.8', 
       author='Paul Inkenbrandt',
       author_email='paulinkenbrandt@utah.gov',
       packages=find_packages(exclude=['contrib', 
@@ -12,7 +12,8 @@ setup(name='WellApplication',
       install_requires=["Pandas >= 0.16.1", 
                         "Numpy >= 1.9.0", 
                         "Matplotlib >= 1.4.3", 
-                        "xmltodict >= 0.9.2"],
+                        "xmltodict >= 0.9.2",
+                        "urllib2 >= 2.7"],
       classifiers = [
                     'Development Status :: 1 - Planning',
                     'Programming Language :: Python :: 2.7',
