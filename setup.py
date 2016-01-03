@@ -7,7 +7,7 @@ setup(
     author_email='paulinkenbrandt@utah.gov',
     packages=['wellapplication'],
     scripts=[],
-    url='https://github.com/inkenbrandt/WellApplication',
+    url='http://pypi.python.org/pypi/WellApplication/',
     license='LICENSE.txt',
     description='Interface with Solinst transducers; analyze hydrographs; plot hydrographs',
     long_description=open('README.txt').read(),
