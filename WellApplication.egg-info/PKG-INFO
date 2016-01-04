@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: WellApplication
-Version: 0.0.8
+Version: 0.0.10
 Summary: Interface with xle files; analyze hydrographs; plot hydrographs
 Home-page: http://pypi.python.org/pypi/WellApplication/
 Author: Paul Inkenbrandt
