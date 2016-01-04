@@ -90,7 +90,7 @@ class transport:
         This function uses pandas powerful time-series manipulation to upsample to every minute, then downsample to every hour, 
         on the hour.
         
-        This function will need adjustment if you do not want it to return hourly samples, or if you are sampling more frequently than
+        This function will need adjustment if you do not want it to return hourly samples, or iusgsGisf you are sampling more frequently than
         once per minute.
         
         see http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases
