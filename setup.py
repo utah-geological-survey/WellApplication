@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='WellApplication', 
-      version='0.0.19', 
+      version='0.0.24', 
       author='Paul Inkenbrandt',
       author_email='paulinkenbrandt@utah.gov',
       packages=find_packages(exclude=['contrib', 'docs', 'tests*']),

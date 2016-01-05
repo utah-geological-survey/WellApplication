@@ -1,4 +1,6 @@
-v0.0.19, 2016-01-03 -- static functions
+v0.0.24, 2016-01-03 -- bug fix, added docs
+v0.0.23, 2016-01-03 -- bug fix, added chem.py, fixed WQP
+v0.0.22, 2016-01-03 -- bug fix, added chem.py
 v0.0.18, 2016-01-03 -- version
 v0.0.17, 2016-01-03 -- fixed class
 v0.0.16, 2016-01-03 -- fixed class

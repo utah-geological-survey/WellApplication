@@ -6,6 +6,7 @@ WellApplication.egg-info/dependency_links.txt
 WellApplication.egg-info/requires.txt
 WellApplication.egg-info/top_level.txt
 wellapplication/__init__.py
+wellapplication/chem.py
 wellapplication/transport.py
 wellapplication/usgsGis.py
 wellapplication/test/__init__.py
