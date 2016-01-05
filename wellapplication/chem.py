@@ -10,7 +10,9 @@ import numpy as np
 import datetime
 
 class WQP:
-''' WQP manipulates and imports data from this site: http://www.waterqualitydata.us/'''
+    ''' 
+    WQP manipulates and imports data from this site: <a href=http://www.waterqualitydata.us/>WQP</a> 
+    '''
     @staticmethod
     def datetimefix(x,format):
         '''
