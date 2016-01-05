@@ -2,6 +2,9 @@
 Well Application
 ================
 
+.. image:: https://travis-ci.org/inkenbrandt/WellApplication.svg?branch=master
+    :target: https://travis-ci.org/inkenbrandt/WellApplication
+
 Uses
 ====
 

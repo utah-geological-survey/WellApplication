@@ -5,15 +5,12 @@ python:
   - "2.7"
   - "3.3"
 
-
-
 install:
+  - pip install .
   - pip install docopt querycsv coverage nose nose-cov mock flake8
-  - python setup.py install
 
 script:
-  - nosetests --with-coverage 
-  - flake8
+  - nosetests
 after_success:
     # Report coverage results to codecov.io
     - pip install codecov
