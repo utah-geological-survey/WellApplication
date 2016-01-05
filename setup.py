@@ -1,11 +1,10 @@
 from setuptools import setup, find_packages
 
 setup(name='WellApplication', 
-      version='0.0.10', 
+      version='0.0.19', 
       author='Paul Inkenbrandt',
       author_email='paulinkenbrandt@utah.gov',
-      packages=find_packages(exclude=['contrib', 
-'docs', 'tests*']),
+      packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
       url='http://pypi.python.org/pypi/WellApplication/',
       license='LICENSE.txt',
       description='Interface with xle files; analyze hydrographs; plot hydrographs',

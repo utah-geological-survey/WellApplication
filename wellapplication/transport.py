@@ -1,13 +1,15 @@
-#-*- coding: utf-8 -*-
+    #-*- coding: utf-8 -*-
 import pandas as pd
 import numpy as np
 import os
 import glob
 import re
 import xmltodict
-from datetime import datetime
-
+    
+    
 class transport:
+    
+    @staticmethod
     def jumpfix(df, meas, threashold=0.005):
         '''
         removes jumps or jolts in time series data (where offset is lasting)
@@ -27,6 +29,7 @@ class transport:
         df[meas]=df['newVal']
         return df
     
+    @staticmethod
     def fcl(df, dtObj):
         '''
         finds closest date index in a dataframe to a date object
@@ -38,10 +41,14 @@ class transport:
         '''
         return df.iloc[np.argmin(np.abs(df.index.to_pydatetime() - dtObj))]
     
+    @staticmethod
     def getfilename(path):
-        # this function extracts the file name without file path or extension
+        '''
+        this function extracts the file name without file path or extension
+        '''        
         return path.split('\\').pop().split('/').pop().rsplit('.', 1)[0]
     
+    @staticmethod    
     def hourly_resample(df,bse=0):
         '''
         INPUT
@@ -71,6 +78,7 @@ class transport:
         df = df.resample('60Min', how='first', closed='left', base=bse)
         return df
     
+    @staticmethod 
     def hourly_resample_minutes(df,bse=0,minutes=60):
         '''
         INPUT
@@ -101,6 +109,7 @@ class transport:
         df = df.resample(str(minutes)+'Min', how='first',closed='left',label='left', base=bse) #modify '60Min' to change the resulting frequency
         return df
     
+    @staticmethod 
     def dataendclean(df,x):
         '''
         trims off ends and beginnings of datasets that exceed 2.0 standard deviations of the first and last 30 values
@@ -119,6 +128,7 @@ class transport:
             print('No Jumps')
         return df    
     
+    @staticmethod
     def getwellid(infile, wellinfo):
         m = re.search("\d", transport.getfilename(infile))
         s = re.search("\s", transport.getfilename(infile))
@@ -129,6 +139,7 @@ class transport:
         wellid = wellinfo[wellinfo['Well']==wellname]['WellID'].values[0]
         return wellname, wellid
     
+    @staticmethod 
     def new_xle_imp(infile):
         '''
         This function uses an exact file path to upload a Solinst xle file. 
@@ -207,6 +218,7 @@ class transport:
         f['MeasuredLevel'] = f['Level'] 
         return f
     
+    @staticmethod 
     def compilation(inputfile):
         """
         This function reads multiple Solinst transducer files in a directory and generates a compiled Pandas dataframe.
@@ -285,6 +297,7 @@ class transport:
         outfile = g
         return outfile
     
+    @staticmethod 
     def appendomatic(infile,existingfile):
         '''
         appends data from one table to an existing compilation
@@ -347,7 +360,7 @@ class transport:
         os.remove(existingfile)
         g.to_csv(existingfile)
     
-    
+    @staticmethod
     def make_files_table(folder, wellinfo):
         '''
         This tool will make a descriptive table (Pandas DataFrame) containing filename, date, and site id.
@@ -384,6 +397,7 @@ class transport:
         
         return files
     
+    @staticmethod
     def barodistance(wellinfo):
         '''
         Determines Closest Barometer to Each Well using wellinfo DataFrame
@@ -406,6 +420,7 @@ class transport:
         wellinfo['closest_baro'] = wellinfo[['pw03','pw10','pw19']].T.idxmin()
         return wellinfo   
     
+    @staticmethod
     def imp_new_well(infile, wellinfo, manual, baro):
         '''
         INPUT
@@ -550,7 +565,7 @@ class transport:
     
     
     # Use `g[wellinfo[wellinfo['Well']==wellname]['closest_baro']]` instead if you want to match the closest barometer to the data
-    
+    @staticmethod
     def manualset(wellbaro,manualfile, manmeas=0, meas=1):
         breakpoints = []
         bracketedwls = {}
@@ -583,6 +598,7 @@ class transport:
         wellbarofixed.loc[:,'DTWBelowCasing'] = wellbarofixed['MeasuredDTW'] - wellbarofixed['DriftCorrection']
         return wellbarofixed
     
+    @staticmethod
     def smoother(df, p, win=30, sd=3):
         '''
         remove outliers from a pandas dataframe column and fill with interpolated values
@@ -631,7 +647,7 @@ class transport:
         df = df[1:-1]
         return df
         
-    
+    @staticmethod
     def baro_drift_correct(wellfile,barofile,manualfile,sampint=60,wellelev=4800,stickup=0):
         '''
         INPUT
@@ -674,7 +690,7 @@ class transport:
             breakpoints.append(transport.fcl(wellbaro, manualfile.index.to_datetime()[i-1]).name)
     
         last_man_wl,first_man_wl,last_tran_wl,driftlen = [],[],[],[]
-   
+       
         for i in range(len(manualfile)-1):
             # Break up time series into pieces based on timing of manual measurements
             bracketedwls[i+1] = wellbaro.loc[(wellbaro.index.to_datetime() > breakpoints[i+1])&(wellbaro.index.to_datetime() < breakpoints[i+2])]
@@ -706,7 +722,8 @@ class transport:
         wellbarofinal = transport.smoother(wellbarofixed, 'WaterElevation')
         
         return wellbarofinal
-
+    
+    @staticmethod
     def xleHeadTable(folder):
         '''
         RETURNS

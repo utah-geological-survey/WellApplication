@@ -1,6 +1,3 @@
-CHANGES.txt
-LICENSE.txt
-MANIFEST.in
 README.rst
 setup.py
 WellApplication.egg-info/PKG-INFO
@@ -9,6 +6,6 @@ WellApplication.egg-info/dependency_links.txt
 WellApplication.egg-info/requires.txt
 WellApplication.egg-info/top_level.txt
 wellapplication/__init__.py
-wellapplication/gis.py
 wellapplication/transport.py
+wellapplication/usgsGis.py
 wellapplication/test/__init__.py
