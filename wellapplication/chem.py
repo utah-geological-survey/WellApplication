@@ -184,8 +184,8 @@ class WQP:
         df1 = df1.drop(resdroplist, axis=1)
         
         # convert results and mdl to float
-        df1['ResultValue'] = pd.to_numeric(df1['ResultValue'])
-        df1['MDL'] = pd.to_numeric(df1['MDL'])
+        df1['ResultValue'] = pd.to_numeric(df1['ResultValue'], errors='coerce')
+        df1['MDL'] = pd.to_numeric(df1['MDL'], errors='coerce')
         
         # match old and new station ids
         df1['StationId'] = df1['StationId'].str.replace('_WQX-','-')
