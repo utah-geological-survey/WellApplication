@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 
 setup(name='WellApplication', 
-      version='0.0.26', 
+      version='0.0.27', 
       author='Paul Inkenbrandt',
       author_email='paulinkenbrandt@utah.gov',
       packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
-      url='http://pypi.python.org/pypi/WellApplication/',
+      url='https://github.com/inkenbrandt/WellApplication',
       license='LICENSE.txt',
       description='Interface with xle files; analyze hydrographs; plot hydrographs',
       install_requires=["Pandas >= 0.16.1", 
