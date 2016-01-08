@@ -28,9 +28,9 @@ class piper:
         
         self.fieldnames = [u'Na', u'K', u'Ca', u'Mg', u'Cl', u'HCO3', u'CO3', u'SO4']
         self.anions = ['Cl','HCO3','CO3','SO4']
-        self.cations = ['Na','K','Ca','Mg']
+        self.cations = ['Na','K','Ca','Mg','NaK']
         print('ok')
-
+    
     def fillMissing(self, df):
         
         # fill in nulls with 0
@@ -41,7 +41,7 @@ class piper:
                         df.loc[i,col] = 0
             else:
                 df.col = 0
-    
+                
         # add missing columns
         for name in self.fieldnames:
             if name in df.columns:
@@ -49,7 +49,8 @@ class piper:
             else:
                 print(name)
                 df[name] = 0
-                
+      
+        
         return df
     
     def convertIons(self, df):
@@ -78,7 +79,6 @@ class piper:
         
         df1['EC'] = df1['anions'] + df1['cations']
         
-        self.df = df1
         
         return df1
 
@@ -89,16 +89,15 @@ class piper:
             df[ion+'EC'] = df[[ion+'_meq','anions']].apply(lambda x: 100*x[0]/x[1],1)
         for ion in self.cations:
             df[ion+'EC'] = df[[ion+'_meq','cations']].apply(lambda x: 100*x[0]/x[1],1)
-    
-    
+        
         return df
     
     
-    def piperDraw(self, df):
+    def piperplot(self, df):
         
-        df = fillMissing(df)
-        df = convertIons(df)
-        df = ionPercentage(df)
+        self.fillMissing(df)
+        self.convertIons(df)
+        self.ionPercentage(df)
         
         CaEC = df['CaEC'].values
         MgEC = df['MgEC'].values
@@ -119,8 +118,7 @@ class piper:
         
         markSize = 30
         lineW = 0.5
-        xtickpositions = np.linspace(0,100,6) # desired xtickpositions for graphs
-        
+
         # Make Figure
         fig = plt.figure()
         # add title

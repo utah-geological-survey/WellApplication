@@ -1,0 +1,18 @@
+Metadata-Version: 1.1
+Name: WellApplication
+Version: 0.0.33
+Summary: Interface with xle files; analyze hydrographs; plot hydrographs
+Home-page: https://github.com/inkenbrandt/WellApplication
+Author: Paul Inkenbrandt
+Author-email: paulinkenbrandt@utah.gov
+License: LICENSE.txt
+Description: UNKNOWN
+Keywords: hydrogeology hydrograph barocorrection
+Platform: UNKNOWN
+Classifier: Development Status :: 1 - Planning
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering :: GIS
+Classifier: Natural Language :: English
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 2.7
