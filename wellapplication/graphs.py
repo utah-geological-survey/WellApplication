@@ -4,11 +4,12 @@ Created on Thu Nov 19 12:32:51 2015
 
 @author: paulinkenbrandt
 """
-
-
+import scipy.stats as sp
+import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from collections import OrderedDict
+from datetime import datetime
 
 class piper:
     """
@@ -248,3 +249,148 @@ class piper:
             plt.legend(by_label.values(), by_label.keys(), loc='lower center', ncol=5, shadow=False, fancybox=True, bbox_to_anchor=(0.5, 0.6), scatterpoints=1)
         
         self.plot = fig
+        self.df = df
+        
+class fdc:
+    
+    @staticmethod
+    def fdc(df,site,begyear,endyear):
+        '''
+        Generate flow duration curve for hydrologic time series data
+        
+        df = pandas dataframe containing data
+        site = column within dataframe that contains the flow values
+        begyear = start year for analysis
+        endyear = end year for analysis
+        '''
+            
+        data = df[(df.index.to_datetime() > pd.datetime(begyear,1,1))&(df.index.to_datetime() < pd.datetime(endyear,1,1))]
+        data = data[site].dropna().values
+        data = np.sort(data)
+        ranks = sp.rankdata(data, method='average')
+        ranks = ranks[::-1]
+        prob = [100*(ranks[i]/(len(data)+1)) for i in range(len(data)) ]
+        plt.figure()
+        plt.scatter(prob,data,label=site)
+        plt.yscale('log')
+        plt.grid(which = 'both')
+        plt.xlabel('% of time that indicated discharge was exceeded or equaled')
+        plt.ylabel('discharge (cfs)')
+        plt.xticks(range(0,100,5))
+        plt.title('Flow duration curve for ' + site)
+    
+    @staticmethod
+    def fdc_simple(df, site, begyear=1900, endyear=2015, normalizer=1):
+        '''
+        Generate flow duration curve for hydrologic time series data
+        
+        PARAMETERS:
+            df = pandas dataframe of interest; must have a date or date-time as the index
+            site = pandas column containing discharge data; must be within df
+            begyear = beginning year of analysis; defaults to 1900
+            endyear = end year of analysis; defaults to 2015
+            normalizer = value to use to normalize discharge; defaults to 1 (no normalization)
+        
+        RETURNS:
+            matplotlib plot displaying the flow duration curve of the data
+            
+        REQUIRES:
+            numpy as np
+            pandas as pd
+            matplotlib.pyplot as plt
+            scipy.stats as sp
+        '''
+        # limit dataframe to only the site
+        df = df[[site]]
+        
+        # filter dataframe to only include dates of interest
+        data = df[(df.index.to_datetime() > pd.datetime(begyear,1,1))&(df.index.to_datetime() < pd.datetime(endyear,1,1))]
+    
+        # remove na values from dataframe
+        data = data.dropna()
+    
+        # take average of each day of year (from 1 to 366) over the selected period of record
+        data['doy']=data.index.dayofyear
+        dailyavg = data[site].groupby(data['doy']).mean()
+            
+        data = np.sort(dailyavg)
+    
+        ## uncomment the following to use normalized discharge instead of discharge
+        #mean = np.mean(data)
+        #std = np.std(data)
+        #data = [(data[i]-np.mean(data))/np.std(data) for i in range(len(data))]
+        data = [(data[i])/normalizer for i in range(len(data))]
+        
+        # ranks data from smallest to largest
+        ranks = sp.rankdata(data, method='average')
+    
+        # reverses rank order
+        ranks = ranks[::-1]
+        
+        # calculate probability of each rank
+        prob = [(ranks[i]/(len(data)+1)) for i in range(len(data)) ]
+        
+        # plot data via matplotlib
+        plt.plot(prob,data,label=site+' '+str(begyear)+'-'+str(endyear))
+        
+def gantt(df, sites):
+    q = {}
+    m = {}
+    for site in sites:
+        q[site] = df[site].first_valid_index()
+        m[site] = df[site].last_valid_index()
+    
+    USGS_start_date = pd.DataFrame(data=q, index=[0])
+    USGS_finish_date = pd.DataFrame(data=m, index=[0])
+    USGS_start_date = USGS_start_date.transpose()
+    USGS_start_date['start_date'] = USGS_start_date[0]
+    USGS_start_date = USGS_start_date.drop([0],axis=1)
+    USGS_finish_date = USGS_finish_date.transpose()
+    USGS_finish_date['fin_date'] = USGS_finish_date[0]
+    USGS_finish_date = USGS_finish_date.drop([0],axis=1)
+    USGS_start_fin = pd.merge(USGS_finish_date,USGS_start_date, left_index=True, right_index=True, how='outer' )
+    USGS_Site_Info = pd.merge(USGS_start_fin,df, left_index=True, right_index=True, how='outer' )
+    
+    
+    USGS_sum_stats = df[sites].describe()
+    USGS_sum_stats = USGS_sum_stats.transpose()
+    USGS_Site_Info = pd.merge(USGS_sum_stats,USGS_Site_Info, left_index=True, right_index=True, how='outer' )
+    # designate variables
+    x2 = USGS_Site_Info['fin_date'].astype(datetime).values
+    x1 = USGS_Site_Info['start_date'].astype(datetime).values
+    y = USGS_Site_Info.index.astype(np.int)
+    names = USGS_Site_Info['name'].values
+    
+    labs, tickloc, col = [], [], []
+    
+    # create color iterator for multi-color lines in gantt chart
+    color=iter(plt.cm.Dark2(np.linspace(0,1,len(y))))
+    
+    plt.figure(figsize=[8,10])
+    fig, ax = plt.subplots()
+    
+    # generate a line and line properties for each station
+    for i in range(len(y)):
+        c=next(color)
+        
+        plt.hlines(i+1, x1[i], x2[i], label=y[i], color=c, linewidth=2)
+        labs.append(names[i].title()+" ("+str(y[i])+")")
+        tickloc.append(i+1)
+        col.append(c)
+    plt.ylim(0,len(y)+1)
+    plt.yticks(tickloc, labs)
+    
+    # create custom x labels
+    plt.xticks(np.arange(datetime(np.min(x1).year,1,1),np.max(x2)+timedelta(days=365.25),timedelta(days=365.25*5)),rotation=45)
+    plt.xlim(datetime(np.min(x1).year,1,1),np.max(x2)+timedelta(days=365.25))
+    plt.xlabel('Date')
+    plt.ylabel('USGS Official Station Name and Station Id')
+    plt.grid()
+    plt.title('USGS Station Measurement Duration')
+    # color y labels to match lines
+    gytl = plt.gca().get_yticklabels()
+    for i in range(len(gytl)):
+        gytl[i].set_color(col[i])
+    plt.tight_layout()
+    
+    plt.show()

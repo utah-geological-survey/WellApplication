@@ -8,7 +8,7 @@ import urllib2
 import xmltodict
 import pandas as pd
 
-class usgsGis:
+class usgs:
     @staticmethod 
     def getelev(x):
         '''
@@ -37,8 +37,8 @@ class usgsGis:
             return DD+MM+SS
         return dms(x[1])+dms(x[0])+'01'
         
-    @staticmethod    
-    def getInfo(html):
+  
+    def getInfo(self, html):
         '''
         Input
         -----
@@ -55,3 +55,14 @@ class usgsGis:
         skiplist.append(skip+1)
         df = pd.read_table(html, sep="\t",skiprows=skiplist)
         return df
+        
+    def getStationInfo(self, siteno):
+        html = "http://waterservices.usgs.gov/nwis/site/?format=rdb&sites=" + siteno + "&siteOutput=expanded"
+        self.getInfo(html)
+        
+    def getStationsfromHUC(self, HUC):
+        stationhtml = "http://waterservices.usgs.gov/nwis/site/?format=rdb,1.0&huc=" + str(HUC) + "&siteType=GW&hasDataTypeCd=gw"
+        sites = self.getInfo(stationhtml)
+        stations = list(sites['site_no'].values)
+        stations = [str(i) for i in stations]
+        return stations

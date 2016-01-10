@@ -229,23 +229,23 @@ class WQP:
              "MonitoringLocationDescriptionText":"StationComment", "MonitoringLocationName":"StationName", 
              "MonitoringLocationTypeName":"StationType"}
              
-        WQPStat.rename(columns=StatFieldDict,inplace=True)
+        df.rename(columns=StatFieldDict,inplace=True)
         
         statdroplist = ["ContributingDrainageAreaMeasure/MeasureUnitCode", "ContributingDrainageAreaMeasure/MeasureValue", 
                 "DrainageAreaMeasure/MeasureUnitCode", "DrainageAreaMeasure/MeasureValue", "CountryCode", "ProviderName", 
                 "SourceMapScaleNumeric"]
         
-        WQPStat.drop(statdroplist,inplace=True,axis=1)
+        df.drop(statdroplist,inplace=True,axis=1)
         
         TypeDict = {"Stream: Canal":"Stream", "River/Stream":"Stream", 
             "Stream: Canal":"Stream", "Well: Test hole not completed as a well":"Well"}
 
         # Make station types in the StationType field consistent for easier summary and compilation later on.
-        WQPStat.StationType = WQPStat["StationType"].apply(lambda x: TypeDict.get(x,x),1)
-        WQPStat.Elev = WQPStat.Elev.apply(lambda x: np.nan if x==0.0 else round(x,1), 1)
+        df.StationType = df["StationType"].apply(lambda x: TypeDict.get(x,x),1)
+        df.Elev = df.Elev.apply(lambda x: np.nan if x==0.0 else round(x,1), 1)
         
         # Remove preceding WQX from StationId field to remove duplicate station data created by legacy database.
-        WQPStat['StationId'] = WQPStat['StationId'].str.replace('_WQX-','-')
-        WQPStat.drop_duplicates(subset=['StationId'],inplace=True)
+        df['StationId'] = df['StationId'].str.replace('_WQX-','-')
+        df.drop_duplicates(subset=['StationId'],inplace=True)
         
-        return WQPStat
+        return df
