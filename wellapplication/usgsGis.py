@@ -7,6 +7,7 @@ Created on Sun Jan  3 00:30:36 2016
 import urllib2
 import xmltodict
 import pandas as pd
+from datetime import datetime
 
 class usgs:
     @staticmethod 
@@ -58,7 +59,8 @@ class usgs:
         
     def getStationInfo(self, siteno):
         html = "http://waterservices.usgs.gov/nwis/site/?format=rdb&sites=" + siteno + "&siteOutput=expanded"
-        self.getInfo(html)
+        siteinfo = self.getInfo(html)
+        return siteinfo
         
     def getStationsfromHUC(self, HUC):
         stationhtml = "http://waterservices.usgs.gov/nwis/site/?format=rdb,1.0&huc=" + str(HUC) + "&siteType=GW&hasDataTypeCd=gw"
@@ -66,3 +68,15 @@ class usgs:
         stations = list(sites['site_no'].values)
         stations = [str(i) for i in stations]
         return stations
+        
+    def getWLfromHUC(self, HUC):
+        html = "http://waterservices.usgs.gov/nwis/gwlevels/?format=rdb&huc="+str(HUC)+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
+        wls = self.getInfo(html)
+        return wls
+        
+    def getWLfromSite(self, siteno):
+        html = "http://waterservices.usgs.gov/nwis/gwlevels/?format=rdb&sites="+str(siteno)+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
+        wls = self.getInfo(html)
+        return wls
+
+    

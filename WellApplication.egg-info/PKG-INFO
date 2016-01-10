@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: WellApplication
-Version: 0.0.35
+Version: 0.0.38
 Summary: Interface with xle files; analyze hydrographs; plot hydrographs
 Home-page: https://github.com/inkenbrandt/WellApplication
 Author: Paul Inkenbrandt
