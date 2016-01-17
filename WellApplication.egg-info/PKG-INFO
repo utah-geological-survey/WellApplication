@@ -1,7 +1,7 @@
 Metadata-Version: 1.1
 Name: WellApplication
-Version: 0.1.1
-Summary: Interface with xle files; analyze hydrographs; plot hydrographs
+Version: 0.1.3
+Summary: Interface with xle files; analyze hydrographs; plot hydrographs; download USGS data
 Home-page: https://github.com/inkenbrandt/WellApplication
 Author: Paul Inkenbrandt
 Author-email: paulinkenbrandt@utah.gov
