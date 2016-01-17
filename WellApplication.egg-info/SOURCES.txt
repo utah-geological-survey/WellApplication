@@ -5,7 +5,9 @@ WellApplication.egg-info/SOURCES.txt
 WellApplication.egg-info/dependency_links.txt
 WellApplication.egg-info/requires.txt
 WellApplication.egg-info/top_level.txt
+wellapplication/MannKendall.py
 wellapplication/__init__.py
+wellapplication/avgMeths.py
 wellapplication/chem.py
 wellapplication/graphs.py
 wellapplication/transport.py
