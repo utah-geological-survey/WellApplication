@@ -39,11 +39,17 @@ def projy(x):
 
 def projx(x):
     from pyproj import Proj, transform
-    inProj = Proj(init='epsg:4326') #WGS84
-    outProj = Proj(init='epsg:2152') #NAD83(CSRS98) / UTM zone 12N
-    x2,y2 = transform(inProj,outProj,x[0],x[1])
+    inProj = Proj(proj='latlong', datum='WGS84')#, init='epsg:4326') #WGS84
+    outProj = Proj(proj='utm', zone=12, ellps='WGS84')#, init='epsg:2152') #NAD83(CSRS98) / UTM zone 12N
+    x2,y2 = transform(inProj,outProj,x[0],x[1], radians=False)
     return x2
     
 def getwlelev(x):
     return x[1] - (x[0]/3.2808)
+    
+def sumstats(x):
+    if np.count_nonzero(~np.isnan(x)) == 0:
+        return 1
+    else:
+        return np.std(x)/np.count_nonzero(~np.isnan(x))
     

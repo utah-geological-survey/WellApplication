@@ -10,7 +10,6 @@ import pandas as pd
 from datetime import datetime
 from httplib import BadStatusLine
 import numpy as np
-import matplotlib.pyplot as plt
 import avgMeths
 
 class usgs:
@@ -54,7 +53,6 @@ class usgs:
             return DD+MM+SS
         return dms(x[1])+dms(x[0])+'01'
         
-  
     def getInfo(self, html):
         '''
         Input
@@ -87,18 +85,21 @@ class usgs:
                 print "could not fetch %s" % html        
                 pass            
 
-        
     def getStationInfo(self, siteno):
         html = "http://waterservices.usgs.gov/nwis/site/?format=rdb&sites=" + siteno + "&siteOutput=expanded"
         siteinfo = self.getInfo(html)
         return siteinfo
     
     def parsesitelist(self, ListOfSites):
+        '''
+        Takes a list of USGS sites and turns it into a string format that can be used in the html REST format
+        '''
         siteno = str(ListOfSites).replace(" ","")
         siteno = siteno.replace("]","")
         siteno = siteno.replace("[","")
         siteno = siteno.replace("','",",")
         siteno = siteno.replace("'","")
+        siteno = siteno.replace('"',"")        
         return siteno
     
     def getStationInfoFromList(self, ListOfSites):
@@ -108,11 +109,13 @@ class usgs:
         return siteinfo
 
     def getStationInfoFromHUC(self, HUC):
+        HUC = self.parsesitelist(HUC)
         stationhtml = "http://waterservices.usgs.gov/nwis/site/?format=rdb,1.0&huc=" + str(HUC) + "&siteType=GW&hasDataTypeCd=gw"
         siteinfo = self.getInfo(stationhtml)
         return siteinfo       
     
     def getStationsfromHUC(self, HUC):
+        HUC = self.parsesitelist(HUC)
         stationhtml = "http://waterservices.usgs.gov/nwis/site/?format=rdb,1.0&huc=" + str(HUC) + "&siteType=GW&hasDataTypeCd=gw"
         sites = self.getInfo(stationhtml)
         stations = list(sites['site_no'].values)
@@ -120,6 +123,7 @@ class usgs:
         return stations
         
     def getWLfromHUC(self, HUC):
+        HUC = self.parsesitelist(HUC)
         html = "http://waterservices.usgs.gov/nwis/gwlevels/?format=rdb&huc="+str(HUC)+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
         wls = self.getInfo(html)
         return wls
@@ -135,7 +139,27 @@ class usgs:
         wls = self.getInfo(html)
         return wls
     
+    def cleanGWL(self, data):
+        '''
+        Drops water level data of suspect quality based on lev_status_cd
+        
+        returns Pandas DataFrame
+        '''
+        CleanData = data[~data['lev_status_cd'].isin(['Z', 'R', 'V', 'P', 'O', 'F', 'W', 'G', 'S', 'C', 'E', 'N'])]
+        return CleanData
+    
     def hucPlot(self, HUC):
+        '''
+        generates average water level statistics for a huc or list of hucs
+        INPUT
+        -----
+        HUC = 8-digit huc as int or string; list of hucs can be used if separated by comma        
+        
+        RETURNS
+        -------
+        wlLongStatsGroups = pandas dataframe of standardized water levels over duration of measurement
+        wlLongStatsGroups2 = pandas dataframe of change in average water levels over duration of measurement
+        '''
         #stations = USGS.getStationsfromHUC(str(HUC))
         siteinfo = self.getStationInfoFromHUC(str(HUC))
         data = self.getWLfromHUC(HUC)
@@ -157,10 +181,9 @@ class usgs:
         wlLongStats['levDiff'] = wlLongStats['lev_va'].diff()
             
         wlLongStatsGroups = wlLongStats.groupby(['date'])['stdWL'].agg({'mean':np.mean,'median':np.median,
-                                                                        'standard':np.std, 
-                                                                        'cnt':(lambda x: np.count_nonzero(~np.isnan(x))), 
-                                                                        'err':(lambda x: 1.96*np.std(x)/np.count_nonzero(~np.isnan(x)))})
-        wlLongStatsGroups2 = wlLongStats.groupby(['date'])['levDiff'].agg({'mean':np.mean,'median':np.median, 'standard':np.std, 'cnt':(lambda x: np.count_nonzero(~np.isnan(x))), 'err':(lambda x: 1.96*np.std(x)/np.count_nonzero(~np.isnan(x)))})
+                                                                        'standard':np.std, 'cnt':(lambda x: np.count_nonzero(~np.isnan(x))), 
+                                                                        'err':(lambda x: 1.96*avgMeths.sumstats(x))})
+        wlLongStatsGroups2 = wlLongStats.groupby(['date'])['levDiff'].agg({'mean':np.mean,'median':np.median, 'standard':np.std, 'cnt':(lambda x: np.count_nonzero(~np.isnan(x))), 'err':(lambda x: 1.96*avgMeths.sumstats(x))})
     
         wlLongStatsGroups['meanpluserr'] = wlLongStatsGroups['mean'] + wlLongStatsGroups['err']
         wlLongStatsGroups['meanminuserr'] = wlLongStatsGroups['mean'] - wlLongStatsGroups['err']
@@ -168,27 +191,6 @@ class usgs:
         wlLongStatsGroups2['meanpluserr'] = wlLongStatsGroups2['mean'] + wlLongStatsGroups2['err']
         wlLongStatsGroups2['meanminuserr'] = wlLongStatsGroups2['mean'] - wlLongStatsGroups2['err']
         
-        wlLongSt = wlLongStatsGroups[wlLongStatsGroups['cnt']>2]
-        wlLongSt2 = wlLongStatsGroups2[wlLongStatsGroups2['cnt']>2]
-        
-        plt.figure()
-        x = wlLongSt.index
-        y = wlLongSt['mean']
-        plt.plot(x,y,label='Average Groundwater Level Variation')
-        plt.fill_between(wlLongSt.index, wlLongSt['meanpluserr'], wlLongSt['meanminuserr'], 
-                         facecolor='blue', alpha=0.4, linewidth=0.5, label= "Std Error")
-        plt.grid(which='both')
-        plt.ylabel('Depth to Water z-score')
-        plt.xticks(rotation=45)
-        
-        plt.figure()
-        x = wlLongSt2.index
-        y = wlLongSt2['mean']
-        plt.plot(x,y,label='Average Groundwater Level Changes')
-        plt.fill_between(wlLongSt.index, wlLongSt2['meanpluserr'], wlLongSt2['meanminuserr'], 
-                         facecolor='blue', alpha=0.4, linewidth=0.5, label= "Std Error")
-        plt.grid(which='both')
-        plt.ylabel('Change in Average Depth to Water (ft)')
-        plt.xticks(rotation=45)
+        return wlLongStatsGroups, wlLongStatsGroups2
 
     

@@ -21,6 +21,12 @@ This package:
 
 * removes skips and jumps from data
 
+Development
+============
+
+The most current iteration for this package is found at it's `GitHub Repository <https://github.com/inkenbrandt/WellApplication>`_
+.
+
 Modules
 =======
 
@@ -35,4 +41,5 @@ The most important function in this library is `new_xle_imp`, which uses the pat
 usgsGis
 -------
 
-This class has functions used to apply the USGS's rest-based api to download USGS data by leveraging the urllib2 package.
+This class has functions used to apply the USGS's rest-based api to download USGS data by leveraging  `urllib2 <https://docs.python.org/2/library/urllib2.html>`_
+ package and `Pandas <http://pandas.pydata.org/>`_.
