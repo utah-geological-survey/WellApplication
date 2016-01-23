@@ -18,7 +18,7 @@ This package:
 
 ## Development
 
-The most current iteration for this package is found at it's `GitHub Repository <https://github.com/inkenbrandt/WellApplication>`_
+The most current iteration for this package is found at it's <a href=https://github.com/inkenbrandt/WellApplication>GitHub Repository</a>
 .
 
 ## Modules

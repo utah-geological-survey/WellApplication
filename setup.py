@@ -1,3 +1,4 @@
+import os
 import sys
 from setuptools import setup, find_packages
 # To use:
@@ -25,11 +26,11 @@ except:
 setup(name=__name__,
       description = 'Interface with xle files; analyze hydrographs; plot hydrographs; download USGS data',
       long_description = long_description,
-      version=__version__,
+      version = __version__,
       author = __author__,
       author_email = 'paulinkenbrandt@utah.gov',
       url = 'https://github.com/inkenbrandt/WellApplication',
-      license= 'LICENSE.txt',
+      license = 'LICENSE.txt',
       install_requires=["Pandas >= 0.16.1", 
                         "Numpy >= 1.9.0", 
                         "Matplotlib >= 1.4.3", 
@@ -37,5 +38,4 @@ setup(name=__name__,
                         "scipy >= 0.16.0",
                         "pyproj >= 1.9.4"],
       packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
-      keywords='hydrogeology hydrograph barocorrection fdc usgs Solinst xle piper'
-      )
+      keywords='hydrogeology hydrograph barocorrection fdc usgs Solinst xle piper')

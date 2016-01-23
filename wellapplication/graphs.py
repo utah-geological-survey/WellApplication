@@ -126,7 +126,7 @@ class piper:
         #fig.suptitle(piperTitle, x=0.20,y=.98, fontsize=14 )
         # Colormap and Saving Options for Figure
         
-        if len(Elev)>0:6
+        if len(Elev)>0:
             vart = Elev
         else:
             vart = [1]*len(df)
