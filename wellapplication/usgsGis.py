@@ -164,7 +164,10 @@ class usgs:
         #stations = USGS.getStationsfromHUC(str(HUC))
         siteinfo = self.getStationInfoFromHUC(str(HUC))
         data = self.getWLfromHUC(HUC)
-        data.drop([u'agency_cd', u'site_tp_cd'], inplace=True, axis=1)
+        try:
+            data.drop([u'agency_cd', u'site_tp_cd'], inplace=True, axis=1)
+        except(ValueError):
+            pass
         stationWL = pd.merge(data, siteinfo, on='site_no', how='left')
 
         stationWL['date'], stationWL['Year'], stationWL['Month'] = zip(*stationWL['lev_dt'].apply(lambda x: avgMeths.getyrmnth(x),1))
