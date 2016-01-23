@@ -1,3 +1,4 @@
+v0.1.7, 2016-01-22 -- added to readme and docs;
 v0.1.6, 2016-01-18 -- added to readme and docs
 v0.1.5, 2016-01-18 -- added features; fixed bugs
 v0.1.4, 2016-01-17 -- added features

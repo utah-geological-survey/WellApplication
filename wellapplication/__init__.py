@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-__version__ = '0.1.6'
+__version__ = '0.1.7'
 __author__ = 'Paul Inkenbrandt'
-
+__name__ = 'wellapplication'
 
 from transport import transport
 from usgsGis import usgs

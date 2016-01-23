@@ -1,28 +1,41 @@
+import sys
 from setuptools import setup, find_packages
+# To use:
+#	   python setup.py bdist --format=wininst
 
-setup(name='WellApplication', 
-      version='0.1.6', 
-      author='Paul Inkenbrandt',
-      author_email='paulinkenbrandt@utah.gov',
-      packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
-      url='https://github.com/inkenbrandt/WellApplication',
-      license='LICENSE.txt',
-      description='Interface with xle files; analyze hydrographs; plot hydrographs; download USGS data',
+from wellapplication import __version__, __name__, __author__
+
+# trap someone trying to install flopy with something other
+#  than python 2 or 3
+if not sys.version_info[0] in [2,3]:
+    print('Sorry, wellapplication not supported in your Python version')
+    print('  Supported versions: 2 and maybe 3')
+    print('  Your version of Python: {}'.format(sys.version_info[0]))
+    sys.exit(1)  # return non-zero value for failure
+
+long_description = ''
+
+try:
+    import pypandoc
+
+    long_description = pypandoc.convert('README.md', 'rst')
+except:
+    pass
+
+setup(name=__name__,
+      description = 'Interface with xle files; analyze hydrographs; plot hydrographs; download USGS data',
+      long_description = long_description,
+      version=__version__,
+      author = __author__,
+      author_email = 'paulinkenbrandt@utah.gov',
+      url = 'https://github.com/inkenbrandt/WellApplication',
+      license= 'LICENSE.txt',
       install_requires=["Pandas >= 0.16.1", 
                         "Numpy >= 1.9.0", 
                         "Matplotlib >= 1.4.3", 
                         "xmltodict >= 0.9.2",
                         "scipy >= 0.16.0",
                         "pyproj >= 1.9.4"],
-      classifiers = [
-                    'Development Status :: 1 - Planning',
-                    'Programming Language :: Python :: 2.7',
-                    'Intended Audience :: Science/Research',
-                    'Topic :: Scientific/Engineering :: GIS',
-                    'Natural Language :: English',
-                    'License :: OSI Approved :: MIT License',
-                    'Programming Language :: Python :: 2.7'
-                    ],
-    keywords='hydrogeology hydrograph barocorrection fdc usgs Solinst xle piper',
-    )
-    
+      packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
+      keywords='hydrogeology hydrograph barocorrection fdc usgs Solinst xle piper'
+      )

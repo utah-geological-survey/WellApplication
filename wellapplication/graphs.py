@@ -9,7 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from collections import OrderedDict
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class piper:
     """
@@ -126,7 +126,7 @@ class piper:
         #fig.suptitle(piperTitle, x=0.20,y=.98, fontsize=14 )
         # Colormap and Saving Options for Figure
         
-        if len(Elev)>0:
+        if len(Elev)>0:6
             vart = Elev
         else:
             vart = [1]*len(df)

@@ -7,8 +7,9 @@ Created on Sun Jan  3 00:30:36 2016
 import urllib2
 import xmltodict
 import pandas as pd
-from datetime import datetime
+from datetime import datetime 
 from httplib import BadStatusLine
+import matplotlib.pyplot as plt
 import numpy as np
 import avgMeths
 
@@ -148,7 +149,7 @@ class usgs:
         CleanData = data[~data['lev_status_cd'].isin(['Z', 'R', 'V', 'P', 'O', 'F', 'W', 'G', 'S', 'C', 'E', 'N'])]
         return CleanData
     
-    def hucPlot(self, HUC):
+    def HUCdf(self, HUC):
         '''
         generates average water level statistics for a huc or list of hucs
         INPUT
@@ -177,7 +178,7 @@ class usgs:
         wlLongStats['stdWL'] = wlLongStats[['lev_va','mean','std']].apply(lambda x: avgMeths.stndrd(x),1 )
         wlLongStats['YRMO'] = wlLongStats[['Year','Month']].apply(lambda x: avgMeths.yrmo(x),1)
         wlLongStats['date'] = wlLongStats[['Year','Month']].apply(lambda x: avgMeths.adddate(x),1)
-        wlLongStats.groupby(['Month'])['stdWL'].mean().to_frame().plot()
+        self.wlMonthPlot = wlLongStats.groupby(['Month'])['stdWL'].mean().to_frame().plot()
         wlLongStats['levDiff'] = wlLongStats['lev_va'].diff()
             
         wlLongStatsGroups = wlLongStats.groupby(['date'])['stdWL'].agg({'mean':np.mean,'median':np.median,
@@ -193,4 +194,29 @@ class usgs:
         
         return wlLongStatsGroups, wlLongStatsGroups2
 
-    
+    def HUCplot(self, HUC):
+        df1,df2 = self.HUCdf(HUC)
+        wlLongSt = df1[df1['cnt']>2]
+        wlLongSt2 = df2[df2['cnt']>2]
+          
+        fig1 = plt.figure()
+        x = wlLongSt.index
+        y = wlLongSt['mean']
+        plt.plot(x,y,label='Average Groundwater Level Variation')
+        plt.fill_between(wlLongSt.index, wlLongSt['meanpluserr'], wlLongSt['meanminuserr'], 
+                         facecolor='blue', alpha=0.4, linewidth=0.5, label= "Std Error")
+        plt.grid(which='both')
+        plt.ylabel('Depth to Water z-score')
+        plt.xticks(rotation=45)
+        self.zPlot = fig1        
+        
+        fig2 = plt.figure()
+        x = wlLongSt2.index
+        y = wlLongSt2['mean']
+        plt.plot(x,y,label='Average Groundwater Level Changes')
+        plt.fill_between(wlLongSt.index, wlLongSt2['meanpluserr'], wlLongSt2['meanminuserr'], 
+                         facecolor='blue', alpha=0.4, linewidth=0.5, label= "Std Error")
+        plt.grid(which='both')
+        plt.ylabel('Change in Average Depth to Water (ft)')
+        plt.xticks(rotation=45)
+        self.wlPlot = fig2
