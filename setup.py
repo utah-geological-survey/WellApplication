@@ -1,4 +1,3 @@
-import os
 import sys
 from setuptools import setup, find_packages
 # To use:
@@ -37,5 +36,4 @@ setup(name=__name__,
                         "xmltodict >= 0.9.2",
                         "scipy >= 0.16.0",
                         "pyproj >= 1.9.4"],
-      packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
-      keywords='hydrogeology hydrograph barocorrection fdc usgs Solinst xle piper')
+      packages = find_packages(exclude=['contrib', 'docs', 'tests*']))
