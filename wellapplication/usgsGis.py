@@ -86,10 +86,6 @@ class usgs:
                 print "could not fetch %s" % html        
                 pass            
 
-    def getStationInfo(self, siteno):
-        html = "http://waterservices.usgs.gov/nwis/site/?format=rdb&sites=" + siteno + "&siteOutput=expanded"
-        siteinfo = self.getInfo(html)
-        return siteinfo
     
     def parsesitelist(self, ListOfSites):
         '''
@@ -103,33 +99,41 @@ class usgs:
         siteno = siteno.replace('"',"")        
         return siteno
     
+
+    def getStationInfo(self, sitenos):
+        siteno = self.parsesitelist(sitenos)        
+        html = "http://waterservices.usgs.gov/nwis/site/?format=rdb&sites=" + siteno + "&siteOutput=expanded"
+        siteinfo = self.getInfo(html)
+        return siteinfo    
+    
     def getStationInfoFromList(self, ListOfSites):
         siteno = self.parsesitelist(ListOfSites)
         html = "http://waterservices.usgs.gov/nwis/site/?format=rdb&sites=" + siteno + "&siteOutput=expanded"
         siteinfo = self.getInfo(html)
         return siteinfo
 
-    def getStationInfoFromHUC(self, HUC):
-        HUC = self.parsesitelist(HUC)
+    def getStationInfoFromHUC(self, HUCS):
+        HUC = self.parsesitelist(HUCS)
         stationhtml = "http://waterservices.usgs.gov/nwis/site/?format=rdb,1.0&huc=" + str(HUC) + "&siteType=GW&hasDataTypeCd=gw"
         siteinfo = self.getInfo(stationhtml)
         return siteinfo       
     
-    def getStationsfromHUC(self, HUC):
-        HUC = self.parsesitelist(HUC)
+    def getStationsfromHUC(self, HUCS):
+        HUC = self.parsesitelist(HUCS)
         stationhtml = "http://waterservices.usgs.gov/nwis/site/?format=rdb,1.0&huc=" + str(HUC) + "&siteType=GW&hasDataTypeCd=gw"
         sites = self.getInfo(stationhtml)
         stations = list(sites['site_no'].values)
         stations = [str(i) for i in stations]
         return stations
         
-    def getWLfromHUC(self, HUC):
-        HUC = self.parsesitelist(HUC)
+    def getWLfromHUC(self, HUCS):
+        HUC = self.parsesitelist(HUCS)
         html = "http://waterservices.usgs.gov/nwis/gwlevels/?format=rdb&huc="+str(HUC)+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
         wls = self.getInfo(html)
         return wls
         
-    def getWLfromSite(self, siteno):
+    def getWLfromSite(self, sitenos):
+        siteno = self.parsesitelist(sitenos)
         html = "http://waterservices.usgs.gov/nwis/gwlevels/?format=rdb&sites="+str(siteno)+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
         wls = self.getInfo(html)
         return wls

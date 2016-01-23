@@ -6,22 +6,20 @@ Created on Sat Jan 23 13:03:00 2016
 """
 
 import unittest
+import wellapplication as wa
+
+
 
 class TestStringMethods(unittest.TestCase):
 
-  def test_upper(self):
-      self.assertEqual('foo'.upper(), 'FOO')
-
-  def test_isupper(self):
-      self.assertTrue('FOO'.isupper())
-      self.assertFalse('Foo'.isupper())
-
-  def test_split(self):
-      s = 'hello world'
-      self.assertEqual(s.split(), ['hello', 'world'])
-      # check that s.split fails when the separator is not a string
-      with self.assertRaises(TypeError):
-          s.split(2)
+    def __init__(self):
+        USGS = wa.usgs()
+        return USGS
+        
+    def test_USGSdf(self):
+        USGS.HUCdf(16020301)
+        self.assertEqual(USGS.wlMonthPlot, matplotlib.axes._subplots.AxesSubplot)
+            
 
 if __name__ == '__main__':
     unittest.main()
