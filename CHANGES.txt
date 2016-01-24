@@ -1,3 +1,4 @@
+v0.2.4, 2016-01-23 -- added to readme
 v0.2.2, 2016-01-22 -- added tests
 v0.2.0, 2016-01-22 -- added to readme and docs; changed setup file
 v0.1.7, 2016-01-22 -- added to readme and docs
