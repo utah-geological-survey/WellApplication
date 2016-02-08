@@ -1,18 +1,32 @@
 # Config file for automatic testing at travis-ci.org
-
 language: python
 python:
-  - "2.7"
+  - 2.7
+  - 3.3
+notifications:
+  email: false
 
+# Setup anaconda
 before_install:
-  - pip install codecov
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b
+  - export PATH=/home/travis/miniconda/bin:$PATH
+  - conda update --yes conda
+  # The next couple lines fix a crash with multiprocessing on Travis and are not specific to using Miniconda
+  - sudo rm -rf /dev/shm
+  - sudo ln -s /run/shm /dev/shm
+# Install packages
 install:
-  - pip install pandas scipy numpy xmltodict matplotlib docopt querycsv coverage nose nose-cov mock flake8
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION atlas numpy scipy matplotlib nose dateutil pandas statsmodels xmltodict docopt querycsv nose-cov mock flake8
+  # Coverage packages are on my binstar channel
+  - conda install --yes -c dan_blanchard python-coveralls nose-cov
+  - python setup.py install
 
+# Run test
 script:
-  - nosetests --with-coverage
-after_success:
-    # Report coverage results to codecov.io
-    - pip install codecov
-    - codecov
+  - nosetests --with-cov --cov wellapplication --cov-config .coveragerc --logging-level=INFO
 
+# Calculate coverage
+after_success:
+  - coveralls --config_file .coveragerc
