@@ -1,10 +1,8 @@
 # Config file for automatic testing at travis-ci.org
 language: python
+
 python:
   - 2.7
-  - 3.3
-notifications:
-  email: false
 
 # Setup anaconda
 before_install:
@@ -16,6 +14,7 @@ before_install:
   # The next couple lines fix a crash with multiprocessing on Travis and are not specific to using Miniconda
   - sudo rm -rf /dev/shm
   - sudo ln -s /run/shm /dev/shm
+  
 # Install packages
 install:
   - conda install --yes python=$TRAVIS_PYTHON_VERSION atlas numpy scipy matplotlib nose dateutil pandas statsmodels xmltodict docopt querycsv nose-cov mock flake8
