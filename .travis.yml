@@ -7,7 +7,7 @@ python:
 before_install:
   - pip install codecov
 install:
-  - pip install pandas numpy xmltodict matplotlib docopt querycsv coverage nose nose-cov mock flake8
+  - pip install pandas scipy numpy xmltodict matplotlib docopt querycsv coverage nose nose-cov mock flake8
 
 script:
   - nosetests --with-coverage
@@ -15,3 +15,4 @@ after_success:
     # Report coverage results to codecov.io
     - pip install codecov
     - codecov
+
