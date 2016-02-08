@@ -360,9 +360,7 @@ def gantt(df, sites):
     # designate variables
     x2 = USGS_Site_Info['fin_date'].astype(datetime).values
     x1 = USGS_Site_Info['start_date'].astype(datetime).values
-    #y = USGS_Site_Info.index.astype(np.int)
-    names = USGS_Site_Info['name'].values
-    
+
     labs, tickloc, col = [], [], []
     
     # create color iterator for multi-color lines in gantt chart
