@@ -40,8 +40,7 @@ class piper:
                 for i in range(len(df)):
                     if df.loc[i,col] == None or df.loc[i,col]=='' or np.isnan(df.loc[i,col]):
                         df.loc[i,col] = 0
-            else:from usgsGis import usgs
-
+            else:
                 df.col = 0
                 
         # add missing columns
