@@ -372,11 +372,11 @@ def gantt(df, sites):
     fig, ax = plt.subplots()
     
     # generate a line and line properties for each station
-    for i in range(len(USGS_Site_Info.index)):
+    for i in range(len(sites)):
         c=next(color)
         
-        plt.hlines(i+1, x1[i], x2[i], label=y[i], color=c, linewidth=2)
-        labs.append(names[i].title()+" ("+str(y[i])+")")
+        plt.hlines(i+1, x1[i], x2[i], label=sites[i], color=c, linewidth=2)
+        labs.append(str(sites[i]).title()+" ("+str(sites[i])+")")
         tickloc.append(i+1)
         col.append(c)
     plt.ylim(0,len(y)+1)
