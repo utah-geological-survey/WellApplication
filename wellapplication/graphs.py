@@ -358,7 +358,7 @@ def gantt(df, sites):
     # designate variables
     x2 = USGS_Site_Info['fin_date'].astype(datetime).values
     x1 = USGS_Site_Info['start_date'].astype(datetime).values
-    y = USGS_Site_Info.index.astype(np.int)
+    #y = USGS_Site_Info.index.astype(np.int)
     names = USGS_Site_Info['name'].values
     
     labs, tickloc, col = [], [], []
@@ -370,7 +370,7 @@ def gantt(df, sites):
     fig, ax = plt.subplots()
     
     # generate a line and line properties for each station
-    for i in range(len(y)):
+    for i in range(len(USGS_Site_Info.index)):
         c=next(color)
         
         plt.hlines(i+1, x1[i], x2[i], label=y[i], color=c, linewidth=2)
