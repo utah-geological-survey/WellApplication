@@ -377,7 +377,7 @@ def gantt(df, sites):
         labs.append(str(sites[i]).title()+" ("+str(sites[i])+")")
         tickloc.append(i+1)
         col.append(c)
-    plt.ylim(0,len(y)+1)
+    plt.ylim(0,len(sites)+1)
     plt.yticks(tickloc, labs)
     
     # create custom x labels
