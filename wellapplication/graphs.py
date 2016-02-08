@@ -4,7 +4,9 @@ Created on Thu Nov 19 12:32:51 2015
 
 @author: paulinkenbrandt
 """
-import scipy.stats as sp
+import scipy
+from scipy import stats as sp
+#import scipy.stats as sp
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
