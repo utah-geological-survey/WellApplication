@@ -364,7 +364,7 @@ def gantt(df, sites):
     labs, tickloc, col = [], [], []
     
     # create color iterator for multi-color lines in gantt chart
-    color=iter(plt.cm.Dark2(np.linspace(0,1,len(y))))
+    color=iter(plt.cm.Dark2(np.linspace(0,1,len(sites))))
     
     plt.figure(figsize=[8,10])
     fig, ax = plt.subplots()
