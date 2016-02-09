@@ -14,7 +14,7 @@ install:
   # OK, this used to *fix* the build, but now it *breaks* the build.
   # If you're reading this, good luck out there. I'm not sure what to tell you.
   - conda config --add channels soft-matter
-  - conda create -n testenv --yes $DEPS pip nose setuptools xmltodict querycsv dateutil python=$TRAVIS_PYTHON_VERSION
+  - conda create -n testenv --yes $DEPS pip nose setuptools python=$TRAVIS_PYTHON_VERSION
   - source activate testenv
   # for debugging...
   - echo $PATH
@@ -28,5 +28,6 @@ before_install:
   - chmod +x miniconda.sh
   - ./miniconda.sh -b -p /home/travis/mc
   - export PATH=/home/travis/mc/bin:$PATH
+  - pip install nose dateutil xmltodict querycsv
 
 script: nosetests --nologcapture -a '!slow'
