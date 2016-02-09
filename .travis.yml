@@ -20,12 +20,12 @@ install:
   - conda info -a
 
   # Replace dep1 dep2 ... with your dependencies
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib nose dateutil pandas statsmodels xmltodict docopt querycsv nose-cov mock flake8
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib nose dateutil pandas statsmodels xmltodict docopt querycsv
   - source activate test-environment
   - python setup.py install
 
 
 # Run test
 script:
-  - nosetests --with-cov
+  - nosetests
 
