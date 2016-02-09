@@ -396,7 +396,10 @@ def gantt(df, stations = [], labels = []):
         c=next(color)
         for j in range(len(dateranges[stations[i]])-1):
             if (j+1)%2 != 0:
-                plt.hlines(i+1, dateranges[stations[i]][j], dateranges[stations[i]][j+1], label = stations[i], color=c, linewidth=3)
+                if len(labels) == 0 or len(labels)!=len(stations):
+                    plt.hlines(i+1, dateranges[stations[i]][j], dateranges[stations[i]][j+1], label = stations[i], color=c, linewidth=3)
+                else:
+                    plt.hlines(i+1, dateranges[stations[i]][j], dateranges[stations[i]][j+1], label = labels[i], color=c, linewidth=3)
         labs.append(stations[i])
         tickloc.append(i+1)
         col.append(c)
