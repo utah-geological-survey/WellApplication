@@ -5,7 +5,7 @@ matrix:
   include:
     # "Recommended" environments: More recent versions, for Py2 and Py3.
     - python: "2.7"
-      env: DEPS="numpy scipy matplotlib pandas nose dateutil statsmodels xmltodict docopt querycsv"
+      env: DEPS="numpy scipy matplotlib pandas nose dateutil statsmodels"
 
 install:
   # See:
@@ -29,5 +29,6 @@ before_install:
   - chmod +x miniconda.sh
   - ./miniconda.sh -b -p /home/travis/mc
   - export PATH=/home/travis/mc/bin:$PATH
+  - pip install xmltodict querycsv
 
 script: nosetests --nologcapture -a '!slow'
