@@ -127,7 +127,7 @@ class transport:
         
         '''
         df = df.resample('1Min') #you can make this smaller to accomodate for a higher sampling frequency
-        df = df.interpolate(method='time') #http://pandas.pydata.org/pandas-docs/dev/generated/pandas.Series.interpolate.html
+        df = df.interpolate(method='time', limit=90) #http://pandas.pydata.org/pandas-docs/dev/generated/pandas.Series.interpolate.html
         df = df.resample(str(minutes)+'Min', how='first',closed='left',label='left', base=bse) #modify '60Min' to change the resulting frequency
         return df
     
@@ -667,7 +667,7 @@ class transport:
             df = df.drop(['dp'+p,'ma'+p,'mst'+p],axis=1)
         except(NameError,ValueError):
             pass  
-        df = df.interpolate(method='time')
+        df = df.interpolate(method='time', limit=30)
         df = df[1:-1]
         return df
         
