@@ -358,8 +358,8 @@ def gantt(df, sites):
     USGS_sum_stats = USGS_sum_stats.transpose()
     USGS_Site_Info = pd.merge(USGS_sum_stats,USGS_Site_Info, left_index=True, right_index=True, how='outer' )
     # designate variables
-    x2 = USGS_Site_Info['fin_date'].astype(datetime).values
-    x1 = USGS_Site_Info['start_date'].astype(datetime).values
+    x2 = pd.DatetimeIndex(USGS_Site_Info['fin_date']).to_pydatetime()
+    x1 = pd.DatetimeIndex(USGS_Site_Info['start_date']).to_pydatetime()
 
     labs, tickloc, col = [], [], []
     
@@ -374,19 +374,17 @@ def gantt(df, sites):
         c=next(color)
         
         plt.hlines(i+1, x1[i], x2[i], label=sites[i], color=c, linewidth=2)
-        labs.append(str(sites[i]).title()+" ("+str(sites[i])+")")
+        labs.append(sites[i])
         tickloc.append(i+1)
         col.append(c)
     plt.ylim(0,len(sites)+1)
     plt.yticks(tickloc, labs)
     
     # create custom x labels
-    plt.xticks(np.arange(datetime(np.min(x1).year,1,1),np.max(x2)+timedelta(days=365.25),timedelta(days=365.25*5)),rotation=45)
-    plt.xlim(datetime(np.min(x1).year,1,1),np.max(x2)+timedelta(days=365.25))
     plt.xlabel('Date')
-    plt.ylabel('USGS Official Station Name and Station Id')
+    plt.ylabel('Station Id')
     plt.grid()
-    plt.title('USGS Station Measurement Duration')
+    plt.title('Station Measurement Duration')
     # color y labels to match lines
     gytl = plt.gca().get_yticklabels()
     for i in range(len(gytl)):
