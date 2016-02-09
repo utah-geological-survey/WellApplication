@@ -335,56 +335,75 @@ class fdc:
         # plot data via matplotlib
         plt.plot(prob,data,label=site+' '+str(begyear)+'-'+str(endyear))
         
-def gantt(df, sites):
+def gantt(df, stations):
+    '''
+    INPUT
+    -----
+    df = pandas dataframe with datetime as index and columns as site time-series data; each column name should be the site name
+    sites = list of columns you want to subset from your dataframe
+    
+    RETURNS
+    -------
+    gantt chart and site info table
+    
+    '''
     q = {}
     m = {}
-    for site in sites:
+    for site in stations:
         q[site] = df[site].first_valid_index()
         m[site] = df[site].last_valid_index()
     
-    USGS_start_date = pd.DataFrame(data=q, index=[0])
-    USGS_finish_date = pd.DataFrame(data=m, index=[0])
-    USGS_start_date = USGS_start_date.transpose()
-    USGS_start_date['start_date'] = USGS_start_date[0]
-    USGS_start_date = USGS_start_date.drop([0],axis=1)
-    USGS_finish_date = USGS_finish_date.transpose()
-    USGS_finish_date['fin_date'] = USGS_finish_date[0]
-    USGS_finish_date = USGS_finish_date.drop([0],axis=1)
-    USGS_start_fin = pd.merge(USGS_finish_date,USGS_start_date, left_index=True, right_index=True, how='outer' )
-    USGS_Site_Info = pd.merge(USGS_start_fin,df, left_index=True, right_index=True, how='outer' )
+    start_date = pd.DataFrame(data=q, index=[0])
+    finish_date = pd.DataFrame(data=m, index=[0])
+    start_date = start_date.transpose()
+    start_date['start_date'] = start_date[0]
+    start_date = start_date.drop([0],axis=1)
+    finish_date = finish_date.transpose()
+    finish_date['fin_date'] = finish_date[0]
+    finish_date = finish_date.drop([0],axis=1)
+    start_fin = pd.merge(finish_date, start_date, left_index=True, right_index=True, how='inner' )
+
+    sum_stats = df[stations].describe()
+    sum_stats = sum_stats.transpose()
+    Site_Info = pd.merge(sum_stats, start_fin, left_index=True, right_index=True, how='inner' )
     
-    
-    USGS_sum_stats = df[sites].describe()
-    USGS_sum_stats = USGS_sum_stats.transpose()
-    USGS_Site_Info = pd.merge(USGS_sum_stats,USGS_Site_Info, left_index=True, right_index=True, how='outer' )
-    # designate variables
-    x2 = pd.DatetimeIndex(USGS_Site_Info['fin_date']).to_pydatetime()
-    x1 = pd.DatetimeIndex(USGS_Site_Info['start_date']).to_pydatetime()
+    dateranges = {}
+    for station in stations:
+        dateranges[station] = []
+        first = df.ix[:,station].first_valid_index()
+        last =  df.ix[:,station].last_valid_index()
+        records = df.ix[first:last,station]
+        dateranges[station].append(pd.to_datetime(first))
+        for i in range(len(records)-1):
+            if np.isnan(records[i+1]) and np.isfinite(records[i]):
+                dateranges[station].append(pd.to_datetime(records.index)[i])
+            elif np.isnan(records[i]) and np.isfinite(records[i+1]):
+                dateranges[station].append(pd.to_datetime(records.index)[i])
+        dateranges[station].append(pd.to_datetime(last))
 
     labs, tickloc, col = [], [], []
-    
+
     # create color iterator for multi-color lines in gantt chart
-    color=iter(plt.cm.Dark2(np.linspace(0,1,len(sites))))
-    
+    color=iter(plt.cm.Dark2(np.linspace(0,1,len(stations))))
+
     plt.figure(figsize=[8,10])
     fig, ax = plt.subplots()
-    
-    # generate a line and line properties for each station
-    for i in range(len(sites)):
+
+    for i in range(len(stations)):
         c=next(color)
-        
-        plt.hlines(i+1, x1[i], x2[i], label=sites[i], color=c, linewidth=2)
-        labs.append(sites[i])
+        for j in range(len(dateranges[stations[i]])-1):
+            if (j+1)%2 != 0:
+                plt.hlines(i+1, dateranges[stations[i]][j], dateranges[stations[i]][j+1], label = stations[i], color=c, linewidth=2)
+        labs.append(stations[i])
         tickloc.append(i+1)
         col.append(c)
-    plt.ylim(0,len(sites)+1)
-    plt.yticks(tickloc, labs)
+        plt.ylim(0,len(stations)+1)
+        plt.yticks(tickloc, labs)
     
-    # create custom x labels
     plt.xlabel('Date')
-    plt.ylabel('Station Id')
+    plt.ylabel('Station Name')
     plt.grid()
-    plt.title('Station Measurement Duration')
+    #plt.title('USGS Station Measurement Duration')
     # color y labels to match lines
     gytl = plt.gca().get_yticklabels()
     for i in range(len(gytl)):
@@ -392,3 +411,5 @@ def gantt(df, sites):
     plt.tight_layout()
     
     plt.show()
+    
+    return Site_Info
