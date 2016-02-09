@@ -11,10 +11,10 @@ install:
   # See:
   # https://groups.google.com/a/continuum.io/forum/#!topic/conda/RSFENqovnro
   - conda config --add channels soft-matter
-  - conda create -n testenv --yes $DEPS pip nose setuptools python=$TRAVIS_PYTHON_VERSION
+  - conda create -n testenv --yes $DEPS pip nose setuptools python=$TRAVIS_PYTHON_VERSION xmltodict pyproj
   - source activate testenv
-  - conda install -c https://conda.anaconda.org/asmeurer xmltodict
-  - conda install -c https://conda.anaconda.org/jjhelmus pyproj
+  #- conda install -c https://conda.anaconda.org/asmeurer xmltodict
+  #- conda install -c https://conda.anaconda.org/jjhelmus pyproj
   # for debugging...
   - echo $PATH
   - which python
