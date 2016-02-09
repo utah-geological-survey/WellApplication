@@ -21,6 +21,7 @@ install:
   - which python
   - conda info
   - conda list
+  - pip install xmltodict pyproj
   - python setup.py install
 
 before_install:
@@ -28,6 +29,5 @@ before_install:
   - chmod +x miniconda.sh
   - ./miniconda.sh -b -p /home/travis/mc
   - export PATH=/home/travis/mc/bin:$PATH
-  - pip install nose xmltodict querycsv
 
 script: nosetests --nologcapture -a '!slow'
