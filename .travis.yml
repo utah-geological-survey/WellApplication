@@ -17,15 +17,10 @@ before_install:
   
 # Install packages
 install:
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION atlas numpy scipy matplotlib nose dateutil pandas statsmodels xmltodict docopt querycsv nose-cov mock flake8
-  # Coverage packages are on my binstar channel
-  - conda install --yes -c dan_blanchard python-coveralls nose-cov
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib nose dateutil pandas statsmodels xmltodict docopt querycsv nose-cov mock flake8
   - python setup.py install
 
 # Run test
 script:
-  - nosetests --with-cov --cov wellapplication --cov-config .coveragerc --logging-level=INFO
+  - nosetests --with-cov
 
-# Calculate coverage
-after_success:
-  - coveralls --config_file .coveragerc
