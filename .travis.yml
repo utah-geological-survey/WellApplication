@@ -10,18 +10,16 @@ matrix:
 install:
   # See:
   # https://groups.google.com/a/continuum.io/forum/#!topic/conda/RSFENqovnro
-  # - conda update --yes --no-deps conda
-  # OK, this used to *fix* the build, but now it *breaks* the build.
-  # If you're reading this, good luck out there. I'm not sure what to tell you.
   - conda config --add channels soft-matter
   - conda create -n testenv --yes $DEPS pip nose setuptools python=$TRAVIS_PYTHON_VERSION
   - source activate testenv
+  - conda install -c https://conda.anaconda.org/asmeurer xmltodict
+  - conda install -c https://conda.anaconda.org/jjhelmus pyproj
   # for debugging...
   - echo $PATH
   - which python
   - conda info
   - conda list
-  - pip install xmltodict pyproj
   - python setup.py install
 
 before_install:
