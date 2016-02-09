@@ -28,6 +28,6 @@ before_install:
   - chmod +x miniconda.sh
   - ./miniconda.sh -b -p /home/travis/mc
   - export PATH=/home/travis/mc/bin:$PATH
-  - pip install nose dateutil xmltodict querycsv
+  - pip install nose xmltodict querycsv
 
 script: nosetests --nologcapture -a '!slow'
