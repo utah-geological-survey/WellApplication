@@ -335,7 +335,7 @@ class fdc:
         # plot data via matplotlib
         plt.plot(prob,data,label=site+' '+str(begyear)+'-'+str(endyear))
         
-def gantt(df, stations):
+def gantt(df, stations = [], labels = []):
     '''
     INPUT
     -----
@@ -347,6 +347,9 @@ def gantt(df, stations):
     gantt chart and site info table
     
     '''
+    if len(stations) == 0:
+        stations = df.columns
+    
     q = {}
     m = {}
     for site in stations:
@@ -384,7 +387,7 @@ def gantt(df, stations):
     labs, tickloc, col = [], [], []
 
     # create color iterator for multi-color lines in gantt chart
-    color=iter(plt.cm.Dark2(np.linspace(0,1,len(stations))))
+    color = iter(plt.cm.Dark2(np.linspace(0,1,len(stations))))
 
     plt.figure(figsize=[8,10])
     fig, ax = plt.subplots()
@@ -393,23 +396,26 @@ def gantt(df, stations):
         c=next(color)
         for j in range(len(dateranges[stations[i]])-1):
             if (j+1)%2 != 0:
-                plt.hlines(i+1, dateranges[stations[i]][j], dateranges[stations[i]][j+1], label = stations[i], color=c, linewidth=2)
+                plt.hlines(i+1, dateranges[stations[i]][j], dateranges[stations[i]][j+1], label = stations[i], color=c, linewidth=3)
         labs.append(stations[i])
         tickloc.append(i+1)
         col.append(c)
-        plt.ylim(0,len(stations)+1)
+    plt.ylim(0,len(stations)+1)
+
+    if len(labels) == 0 or len(labels)!=len(stations):
+        labels = stations
         plt.yticks(tickloc, labs)
+    else:
+        plt.yticks(tickloc, labels)
     
     plt.xlabel('Date')
     plt.ylabel('Station Name')
-    plt.grid()
+    plt.grid(linewidth=0.2)
     #plt.title('USGS Station Measurement Duration')
     # color y labels to match lines
     gytl = plt.gca().get_yticklabels()
     for i in range(len(gytl)):
         gytl[i].set_color(col[i])
     plt.tight_layout()
-    
-    plt.show()
-    
-    return Site_Info
+        
+    return Site_Info, fig
