@@ -246,3 +246,5 @@ class usgs:
         plt.ylabel('Change in Average Depth to Water (ft)')
         plt.xticks(rotation=45)
         self.wlPlot = fig2
+        
+        return fig1, fig2, wlLongSt, wlLongSt2
