@@ -218,7 +218,7 @@ class usgs:
         self.zPlot = seasonal variation plot
         self.wlPlot = plots of stadardized and differenced wl variations of duration of measurement
         '''
-        df1,df2 = self.HUCdf(siteinfo, data)
+        df1,df2 = self.WLStatdf(siteinfo, data)
         wlLongSt = df1[df1['cnt']>2]
         wlLongSt2 = df2[df2['cnt']>2]
         
