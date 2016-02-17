@@ -153,21 +153,20 @@ class usgs:
         CleanData = data[~data['lev_status_cd'].isin(['Z', 'R', 'V', 'P', 'O', 'F', 'W', 'G', 'S', 'C', 'E', 'N'])]
         return CleanData
     
-    def HUCdf(self, HUC):
+    def WLStatdf(self, siteinfo, data):
         '''
         generates average water level statistics for a huc or list of hucs
         INPUT
         -----
-        HUC = 8-digit huc as int or string; list of hucs can be used if separated by comma        
+        siteinfo = pandas dataframe of site information of nwis sites (made using a get station info function)
+        data = pandas dataframe of data from nwis sites (made using a get station data function)
         
         RETURNS
         -------
         wlLongStatsGroups = pandas dataframe of standardized water levels over duration of measurement
         wlLongStatsGroups2 = pandas dataframe of change in average water levels over duration of measurement
         '''
-        #stations = USGS.getStationsfromHUC(str(HUC))
-        siteinfo = self.getStationInfoFromHUC(str(HUC))
-        data = self.getWLfromHUC(HUC)
+
         try:
             data.drop([u'agency_cd', u'site_tp_cd'], inplace=True, axis=1)
         except(ValueError):
@@ -203,10 +202,20 @@ class usgs:
         
         return wlLongStatsGroups, wlLongStatsGroups2
 
-    def HUCplot(self, HUC):
-        df1,df2 = self.HUCdf(HUC)
+    def HUCplot(self, siteinfo, data):
+        '''
+        Generates Statistics plots of NWIS WL data
+        
+        INPUT
+        -----
+        s
+        
+        df1,df2 = self.HUCdf(siteinfo, data)
         wlLongSt = df1[df1['cnt']>2]
         wlLongSt2 = df2[df2['cnt']>2]
+        
+        self.stand = wlLongSt
+        self.diffs = wlLongSt2
           
         fig1 = plt.figure()
         x = wlLongSt.index
