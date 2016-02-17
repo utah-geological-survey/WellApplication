@@ -208,8 +208,16 @@ class usgs:
         
         INPUT
         -----
-        s
+        siteinfo = pandas dataframe of site information of nwis sites (made using a get station info function)
+        data = pandas dataframe of data from nwis sites (made using a get station data function)
         
+        RETURNS
+        -------
+        self.stand = standardized statistics
+        self.diffs = difference statistics
+        self.zPlot = seasonal variation plot
+        self.wlPlot = plots of stadardized and differenced wl variations of duration of measurement
+        '''
         df1,df2 = self.HUCdf(siteinfo, data)
         wlLongSt = df1[df1['cnt']>2]
         wlLongSt2 = df2[df2['cnt']>2]
