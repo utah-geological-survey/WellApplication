@@ -584,43 +584,55 @@ class transport:
     
     
     # Use `g[wellinfo[wellinfo['Well']==wellname]['closest_baro']]` instead if you want to match the closest barometer to the data
-    @staticmethod
-    def manualset(wellbaro,manualfile, manmeas=0, meas=1):
-        '''
-        wellbaro = Pandas DataFrame containing aligned Barometric and Level data
-        manualfile = Pandas DataFrame containing manual measurements
-		
-        '''
-        breakpoints = []
-        bracketedwls = {}
-    
-        for i in range(len(manualfile)+1):
-            breakpoints.append(transport.fcl(wellbaro, manualfile.index.to_datetime()[i-1]).name)
-    
-        last_man_wl,first_man_wl,last_tran_wl,driftlen = [],[],[],[]
-    
-        for i in range(len(manualfile)-1):
-            # Break up time series into pieces based on timing of manual measurements
-            bracketedwls[i+1] = wellbaro.loc[(wellbaro.index.to_datetime() > breakpoints[i+1])&(wellbaro.index.to_datetime() < breakpoints[i+2])]
-            bracketedwls[i+1].loc[:,'diff_wls'] = bracketedwls[i+1].loc[:,meas].diff() 
-    
-    
-            bracketedwls[i+1].loc[:,'DeltaLevel'] = bracketedwls[i+1].loc[:,meas] - bracketedwls[i+1].ix[0,meas]
-            bracketedwls[i+1].loc[:,'MeasuredDTW'] = transport.fcl(manualfile,breakpoints[i+1])[manmeas] - bracketedwls[i+1].loc[:,'DeltaLevel']
-    
-            last_man_wl.append(transport.fcl(manualfile,breakpoints[i+2])[manmeas])
-            first_man_wl.append(transport.fcl(manualfile,breakpoints[i+1])[manmeas])
-            last_tran_wl.append(float(bracketedwls[i+1].loc[max(bracketedwls[i+1].index.to_datetime()),'MeasuredDTW']))
-            driftlen.append(len(bracketedwls[i+1].index))
-            bracketedwls[i+1].loc[:,'last_diff_int'] = np.round((last_tran_wl[i]-last_man_wl[i]),4)/np.round(driftlen[i]-1.0,4)
-            bracketedwls[i+1].loc[:,'DriftCorrection'] = np.round(bracketedwls[i+1].loc[:,'last_diff_int'].cumsum()-bracketedwls[i+1].loc[:,'last_diff_int'],4)
-    
-        wellbarofixed = pd.concat(bracketedwls)
-        wellbarofixed.reset_index(inplace=True)
-        wellbarofixed.set_index('DateTime',inplace=True)
-        # Get Depth to water below casing
-        wellbarofixed.loc[:,'DTWBelowCasing'] = wellbarofixed['MeasuredDTW'] - wellbarofixed['DriftCorrection']
-        return wellbarofixed
+
+	@staticmethod
+	def manualset(wellbaro, meas, manualfile, manmeas, outcolname = 'corr_wl'):
+	    '''
+	    INPUT
+	    -----
+	    wellbaro = Pandas DataFrame containing aligned Barometric and Level data
+	    meas = name of column in wellbaro dataframe that contains transducer water level data
+	    
+	    manualfile = Pandas DataFrame containing manual measurements
+	    manmeas = name of column in manualfile dataframe that contains manual measurements
+	    
+	    outcolname = name of output column for corrected data
+	    
+	    manual and transducer water level measurements should be in the same units
+	    
+	    RETURNS
+	    -------
+	    dataframe with outcolname field
+	    '''
+	    breakpoints = []
+	    bracketedwls = {}
+	    dtnm = wellbaro.index.name
+	    manualfile['julian'] = manualfile.index.to_julian_date() 
+	
+	    for i in range(len(manualfile)):
+	        breakpoints.append(transport.fcl(wellbaro, manualfile.index.to_datetime()[i]).name)
+	    breakpoints = sorted(list(set(breakpoints)))
+	
+	    for i in range(len(breakpoints)-1):
+	        # Break up pandas dataframe time series into pieces based on timing of manual measurements
+	        bracketedwls[i] = wellbaro.loc[(wellbaro.index.to_datetime() > breakpoints[i])&(wellbaro.index.to_datetime() < breakpoints[i+1])]
+	        if len(bracketedwls[i]) > 0:
+	            bracketedwls[i].loc[:,'julian'] = bracketedwls[i].index.to_julian_date()
+	    
+	            last_man = transport.fcl(manualfile,breakpoints[i+1])
+	            first_man = transport.fcl(manualfile,breakpoints[i])
+	            b = first_man[manmeas] - bracketedwls[i].ix[0, meas]
+	            m = (last_man[manmeas] - first_man[manmeas])/(last_man['julian'] - first_man['julian'])
+	            bracketedwls[i].loc[:,'datechange'] = bracketedwls[i].ix[:,'julian'] - bracketedwls[i].ix[0,'julian']
+	            bracketedwls[i].loc[:,'wldiff'] = bracketedwls[i].loc[:,meas]-bracketedwls[i].ix[0,meas]
+	            bracketedwls[i].loc[:,outcolname] = bracketedwls[i][['datechange',meas]].apply(lambda x: x[1]+(m*x[0]+b), 1)
+	        else:
+	            pass
+	    wellbarofixed = pd.concat(bracketedwls)
+	    wellbarofixed.reset_index(inplace=True)
+	    wellbarofixed.set_index(dtnm ,inplace=True)
+	
+	    return wellbarofixed
     
     @staticmethod
     def smoother(df, p, win=30, sd=3):
