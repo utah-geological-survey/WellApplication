@@ -80,8 +80,8 @@ class piper:
             if ion in df1.columns:
                 df1['cations'] += df1[ion+'_meq']
         
-        df1['EC'] = df1['anions'] + df1['cations']
-        
+        df1['EC'] = df1['anions'] - df1['cations']
+        df1['CBE'] = df1['EC']/(df1['anions'] + df1['cations'])
         
         return df1
 
@@ -110,7 +110,7 @@ class piper:
         SO4ClEC = df[['ClEC','SO4EC']].apply(lambda x: x[0]+x[1],1).values
         
         Elev = len(df)*[0] # Fix this
-        stationtypes= list(df['type'].values)
+        stationtypes= list(df['type'].unique())
         
         # Change default settings for figures
         plt.rc('xtick', labelsize = 10)
