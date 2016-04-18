@@ -110,7 +110,7 @@ class piper:
         SO4ClEC = df[['ClEC','SO4EC']].apply(lambda x: x[0]+x[1],1).values
         
         Elev = len(df)*[0] # Fix this
-        stationtypes= df['type'].values
+        stationtypes= list(df['type'].values)
         
         # Change default settings for figures
         plt.rc('xtick', labelsize = 10)
