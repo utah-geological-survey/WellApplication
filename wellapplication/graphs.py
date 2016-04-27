@@ -353,8 +353,9 @@ def gantt(df, stations = [], labels = []):
     q = {}
     m = {}
     for site in stations:
-        q[site] = df[site].first_valid_index()
-        m[site] = df[site].last_valid_index()
+        if site in df.columns:
+            q[site] = df[site].first_valid_index()
+            m[site] = df[site].last_valid_index()
     
     start_date = pd.DataFrame(data=q, index=[0])
     finish_date = pd.DataFrame(data=m, index=[0])
