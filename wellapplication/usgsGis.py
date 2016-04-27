@@ -106,13 +106,7 @@ class usgs:
         siteinfo = self.getInfo(html)
         return siteinfo    
     
-    def getStationInfoFromList(self, ListOfSites):
-        siteno = self.parsesitelist(ListOfSites)
-        html = "http://waterservices.usgs.gov/nwis/site/?format=rdb&sites=" + siteno + "&siteOutput=expanded"
-        siteinfo = self.getInfo(html)
-        return siteinfo
-
-    def getStationInfoFromHUC(self, HUCS):
+    def getGWStationInfoFromHUC(self, HUCS):
         HUC = self.parsesitelist(HUCS)
         stationhtml = "http://waterservices.usgs.gov/nwis/site/?format=rdb,1.0&huc=" + str(HUC) + "&siteType=GW&hasDataTypeCd=gw"
         siteinfo = self.getInfo(stationhtml)
@@ -138,21 +132,16 @@ class usgs:
         wls = self.getInfo(html)
         return wls
         
-    def getQfromSiteList(self, ListOfSites):
+    def getQfromSites(self, ListOfSites):
         siteno = self.parsesitelist(ListOfSites)
         html = "http://waterservices.usgs.gov/nwis/dv/?format=rdb&sites="+str(siteno)+"&parameterCd=00060"+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
         wls = self.getInfo(html)
+        wls.columns = ['agency_cd','site_no','datetime','discharge_cfs','quality_code']
         return wls
     
     def getQfromHUC(self, HUCS):
         siteno = self.parsesitelist(HUCS)
         html = "http://waterservices.usgs.gov/nwis/dv/?format=rdb&huc="+str(HUC)+"&parameterCd=00060"+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
-        wls = self.getInfo(html)
-        return wls
-    
-    def getWLfromSiteList(self, ListOfSites):
-        siteno = self.parsesitelist(ListOfSites)
-        html = "http://waterservices.usgs.gov/nwis/gwlevels/?format=rdb&sites="+str(siteno)+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
         wls = self.getInfo(html)
         return wls
     
