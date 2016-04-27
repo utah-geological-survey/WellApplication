@@ -77,7 +77,7 @@ class usgs:
             try:
                 response = urllib2.urlopen(html)
                 htmlresp = response.read()
-                skip = htmlresp[:htmlresp.rfind('#\n')+2].count('\n')
+                skip = htmlresp[:htmlresp.rfind('#\na')+2].count('\n')
                 skiplist = range(0,skip)
                 skiplist.append(skip+1)
                 df = pd.read_table(html, sep="\t",skiprows=skiplist)
@@ -135,6 +135,18 @@ class usgs:
     def getWLfromSite(self, sitenos):
         siteno = self.parsesitelist(sitenos)
         html = "http://waterservices.usgs.gov/nwis/gwlevels/?format=rdb&sites="+str(siteno)+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
+        wls = self.getInfo(html)
+        return wls
+        
+    def getQfromSiteList(self, ListOfSites):
+        siteno = self.parsesitelist(ListOfSites)
+        html = "http://waterservices.usgs.gov/nwis/dv/?format=rdb&sites="+str(siteno)+"&parameterCd=00060"+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
+        wls = self.getInfo(html)
+        return wls
+    
+    def getQfromHUC(self, HUCS):
+        siteno = self.parsesitelist(HUCS)
+        html = "http://waterservices.usgs.gov/nwis/dv/?format=rdb&huc="+str(HUC)+"&parameterCd=00060"+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
         wls = self.getInfo(html)
         return wls
     
