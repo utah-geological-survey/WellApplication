@@ -99,16 +99,38 @@ class usgs:
         siteno = siteno.replace('"',"")        
         return siteno
     
-
     def getStationInfo(self, sitenos):
+        '''
+        INPUT
+        -----
+        sitenos = list of usgs sites to get site info
+        
+        RETURNS
+        -------
+        siteinfo = pandas dataframe with station info
+        '''
         siteno = self.parsesitelist(sitenos)        
         html = "http://waterservices.usgs.gov/nwis/site/?format=rdb&sites=" + siteno + "&siteOutput=expanded"
         siteinfo = self.getInfo(html)
         return siteinfo    
     
-    def getGWStationInfoFromHUC(self, HUCS):
+    def getStationInfoFromHUC(self, HUCS, sitetype=['GW'],datatype=['gw']):
+        '''
+        HUCS = list of HUCS to find sites
+        sitetype = list of types of site you are searching for; options include 
+            ST = Stream,SP = Spring,GW = Groundwater, SB = Other underground
+            defaults to GW
+        datatype = list of data types you are searching for; options include
+            iv = instantaneous ,dv = daily values, sv = site visit, gw = groundwater level, qw = water quality, id =historical instantaneous
+            defaults to gw
+        RETURNS
+        -------
+        Pandas dataframe of sites in HUC
+        '''
+        sitetypes = self.parsesitelist(sitetype)
+        datatypes = self.parsesitelist(datatype)
         HUC = self.parsesitelist(HUCS)
-        stationhtml = "http://waterservices.usgs.gov/nwis/site/?format=rdb,1.0&huc=" + str(HUC) + "&siteType=GW&hasDataTypeCd=gw"
+        stationhtml = "http://waterservices.usgs.gov/nwis/site/?format=rdb,1.0&huc=" + str(HUC) + "&siteType=" + sitetypes + "&hasDataTypeCd=" + datatypes
         siteinfo = self.getInfo(stationhtml)
         return siteinfo       
     
@@ -133,6 +155,9 @@ class usgs:
         return wls
         
     def getQfromSites(self, ListOfSites):
+        '''
+        get discharge data from site list
+        '''
         siteno = self.parsesitelist(ListOfSites)
         html = "http://waterservices.usgs.gov/nwis/dv/?format=rdb&sites="+str(siteno)+"&parameterCd=00060"+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
         wls = self.getInfo(html)
@@ -140,6 +165,9 @@ class usgs:
         return wls
     
     def getQfromHUC(self, HUCS):
+        '''
+        get discharge data from HUC
+        '''
         siteno = self.parsesitelist(HUCS)
         html = "http://waterservices.usgs.gov/nwis/dv/?format=rdb&huc="+str(HUC)+"&parameterCd=00060"+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
         wls = self.getInfo(html)
