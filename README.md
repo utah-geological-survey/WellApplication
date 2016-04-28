@@ -1,8 +1,5 @@
 # Well Application
 
-[![codecov.io](https://codecov.io/github/inkenbrandt/WellApplication/coverage.svg?branch=master)](https://codecov.io/github/inkenbrandt/WellApplication?branch=master)
-[![travis-ci.io](https://travis-ci.org/inkenbrandt/WellApplication.svg?branch=master)](https://travis-ci.org/inkenbrandt/WellApplication)
-
 
 ## Uses
 
