@@ -1,31 +1,9 @@
 language: python
-sudo: false
 
-matrix:
-  include:
-    # "Recommended" environments: More recent versions, for Py2 and Py3.
-    - python: "2.7"
+python:
+  - "2.7"
       env: DEPS="numpy scipy matplotlib pandas statsmodels"
 
-install:
-  # See:
-  # https://groups.google.com/a/continuum.io/forum/#!topic/conda/RSFENqovnro
-  - conda config --add channels soft-matter
-  - conda create -n testenv --yes $DEPS pip nose setuptools python=$TRAVIS_PYTHON_VERSION xmltodict pyproj
-  - source activate testenv
-  #- conda install -c https://conda.anaconda.org/asmeurer xmltodict
-  #- conda install -c https://conda.anaconda.org/jjhelmus pyproj
-  # for debugging...
-  - echo $PATH
-  - which python
-  - conda info
-  - conda list
-  - python setup.py install
-
-before_install:
-  - if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh; else wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh; fi
-  - chmod +x miniconda.sh
-  - ./miniconda.sh -b -p /home/travis/mc
-  - export PATH=/home/travis/mc/bin:$PATH
+install: pip install --user -r requirements.txt
 
 script: nosetests
