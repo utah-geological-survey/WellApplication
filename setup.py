@@ -13,7 +13,7 @@ if not sys.version_info[0] in [2,3]:
     print('  Your version of Python: {}'.format(sys.version_info[0]))
     sys.exit(1)  # return non-zero value for failure
 
-long_description = ''
+long_description = 'A tool for hydrogeologists to upload and display hydrographs and geochemical data'
 
 try:
     import pypandoc
