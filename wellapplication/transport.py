@@ -95,9 +95,9 @@ class transport:
         see http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases
         
         '''
-        dfResamp = df.resample('1Min', how='first', closed='left', base=bse)
+        dfResamp = df.resample('1Min', closed='left', base=bse).first()
         dfResamp = dfResamp.interpolate(method='time')
-        dfResamp = dfResamp.resample('60Min', how='first', closed='left', base=bse)
+        dfResamp = dfResamp.resample('60Min', closed='left', base=bse).first()
         return dfResamp
     
     @staticmethod 
@@ -128,7 +128,7 @@ class transport:
         '''
         df = df.resample('1Min') #you can make this smaller to accomodate for a higher sampling frequency
         df = df.interpolate(method='time', limit=90) #http://pandas.pydata.org/pandas-docs/dev/generated/pandas.Series.interpolate.html
-        df = df.resample(str(minutes)+'Min', how='first',closed='left',label='left', base=bse) #modify '60Min' to change the resulting frequency
+        df = df.resample(str(minutes)+'Min', closed='left',label='left', base=bse).first() #modify '60Min' to change the resulting frequency
         return df
     
     @staticmethod 
