@@ -239,7 +239,8 @@ class transport:
     
         f = f.reset_index()
         f = f.set_index('DateTime')
-        f['MeasuredLevel'] = f[str(ch1ID).title()]
+        f['Level'] = f[str(ch1ID).title()]
+        f['MeasuredLevel'] = f['Level']
         f = f.drop(['Date','Time','@id','ch1','ch2','index','ms'],axis=1)
         
          
@@ -497,10 +498,17 @@ class transport:
             g['BaroEfficiencyLevel'] = g[['MeasuredLevel',bp]].apply(lambda x: x[0] - x[1] + x[1]*float(be), 1)
         else: # Reads Global Water Raw File
             f = pd.read_csv(infile,skiprows=1,parse_dates=[[0,1]])
-            f = f.reset_index()
+            #f = f.reset_index()
             f['DateTime'] = pd.to_datetime(f['Date_ Time'],errors='coerce')
             f = f[f.DateTime.notnull()]
-            f['Level'] = f[' Feet']
+            if ' Feet' in list(f.columns.values):
+                f['Level'] = f[' Feet']
+                f.drop([' Feet'],inplace=True,axis=1)        
+            elif 'Feet' in list(f.columns.values):
+                f['Level'] = f['Feet']
+                f.drop(['Feet'],inplace=True,axis=1)        
+            else:
+                f['Level'] = f.iloc[:,1]
             # Remove first and/or last measurements if the transducer was out of the water
             f = transport.dataendclean(f,'Level')      
             flist = f.columns.tolist()
@@ -515,10 +523,10 @@ class transport:
             f['datediff'] = f['date'].diff()
             f = f[f['datediff']>0]
             f = f[f['datediff']<1]
-            f = f.resample("60Min")
-            f = f.interpolate(method='time')
-            f.drop(['index',u' Volts',' Feet',u'date',u'datediff'],inplace=True,axis=1)        
             bse = int(f.index.to_datetime().minute[0])
+            f = transport.hourly_resample(f,bse)
+            f.drop([u' Volts',u'date',u'datediff'],inplace=True,axis=1)        
+ 
             try:
                 bp = str(wellinfo[wellinfo['Well']==wellname]['BE barologger'].values[0])
                 b = transport.hourly_resample(baro[bp], bse)

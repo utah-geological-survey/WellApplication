@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-__version__ = '0.2.10'
+__version__ = '0.2.11'
 __author__ = 'Paul Inkenbrandt'
 __name__ = 'wellapplication'
 
