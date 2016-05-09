@@ -152,17 +152,14 @@ class transport:
         try:
             for i in range(len(jump)):
                 if jump.index[i] < df.index[50]:
-                    dfTrim = df[df.index > jump.index[i]]
+                    df = df[df.index > jump.index[i]]
                     print("Dropped from beginning to " + str(jump.index[i]))
                 if jump.index[i] > df.index[-50]:
-                    dfTrim = df[df.index < jump.index[i]]
+                    df = df[df.index < jump.index[i]]
                     print("Dropped from end to " + str(jump.index[i]))
-                else:
-                    dfTrim = df
         except(IndexError):
-            dfTrim = df
             print('No Jumps')
-        return dfTrim    
+        return df
     
 
     @staticmethod 
