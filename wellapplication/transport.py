@@ -39,7 +39,7 @@ class transport:
         
         taken from: http://stackoverflow.com/questions/15115547/find-closest-row-of-dataframe-to-given-time-in-pandas
         '''
-        return df.iloc[np.argmin(np.abs(df.index.to_pydatetime() - dtObj))]
+        return df.iloc[np.argmin(np.abs(pd.to_datetime(df.index) - dtObj))] # remove to_pydatetime()
     
     @staticmethod
     def getfilename(path):
