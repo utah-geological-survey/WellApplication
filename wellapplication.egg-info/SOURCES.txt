@@ -1,0 +1,15 @@
+setup.py
+wellapplication/MannKendall.py
+wellapplication/__init__.py
+wellapplication/avgMeths.py
+wellapplication/chem.py
+wellapplication/graphs.py
+wellapplication/transport.py
+wellapplication/usgsGis.py
+wellapplication.egg-info/PKG-INFO
+wellapplication.egg-info/SOURCES.txt
+wellapplication.egg-info/dependency_links.txt
+wellapplication.egg-info/requires.txt
+wellapplication.egg-info/top_level.txt
+wellapplication/test/__init__.py
+wellapplication/test/test.py

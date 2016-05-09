@@ -239,7 +239,7 @@ class transport:
     
         f = f.reset_index()
         f = f.set_index('DateTime')
-		f['MeasuredLevel'] = f[str(ch1ID).title()]
+        f['MeasuredLevel'] = f[str(ch1ID).title()]
         f = f.drop(['Date','Time','@id','ch1','ch2','index','ms'],axis=1)
         
          
