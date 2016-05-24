@@ -71,7 +71,18 @@ class usgs:
             skip = htmlresp[:htmlresp.rfind('#\n')+2].count('\n')
             skiplist = range(0,skip)
             skiplist.append(skip+1)
-            df = pd.read_table(html, sep="\t",skiprows=skiplist)
+            endcom = htmlresp.find('\n#', endhead)
+            if endcom <> -1:
+                while endcom <= htmlresp.rfind('\n#'):
+                
+                    linenum = htmlresp[:endcom].count('\n')+1
+                    endcomment = htmlresp.find('#\na',endcom)
+                    commentnum = htmlresp[endcom:endcomment].count('\n')
+                    skiplist = skiplist+range(linenum,commentnum+linenum+2)
+                    endcom = htmlresp.find('\n#', endcomment)
+                    if commentnum == 0:
+                        break
+            df = pd.read_table(html, sep="\t",skiprows=skiplist)#, comment='#')
             return df
         except(BadStatusLine):
             try:
@@ -80,7 +91,18 @@ class usgs:
                 skip = htmlresp[:htmlresp.rfind('#\na')+2].count('\n')
                 skiplist = range(0,skip)
                 skiplist.append(skip+1)
-                df = pd.read_table(html, sep="\t",skiprows=skiplist)
+                    endcom = htmlresp.find('\n#', endhead)
+                if endcom <> -1:
+                    while endcom <= htmlresp.rfind('\n#'):
+                    
+                        linenum = htmlresp[:endcom].count('\n')+1
+                        endcomment = htmlresp.find('#\na',endcom)
+                        commentnum = htmlresp[endcom:endcomment].count('\n')
+                        skiplist = skiplist+range(linenum,commentnum+linenum+2)
+                        endcom = htmlresp.find('\n#', endcomment)
+                        if commentnum == 0:
+                            break
+                df = pd.read_table(html, sep="\t",skiprows=skiplist)#, comment='#')
                 return df
             except(BadStatusLine):
                 print "could not fetch %s" % html        
