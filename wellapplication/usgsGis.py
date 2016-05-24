@@ -154,16 +154,6 @@ class usgs:
         wls = self.getInfo(html)
         return wls
     
-    def getDVfromSites(self, ListOfSites):
-        '''
-        get daily values from site list
-        '''
-        siteno = self.parsesitelist(ListOfSites)
-        html = "http://waterservices.usgs.gov/nwis/dv/?format=waterml,2.0&sites=" + siteno
-        wls = self.getInfo(html)
-        wls.columns = ['agency_cd','site_no','datetime','discharge_cfs','quality_code']
-        return wls
-    
     def getQfromSites(self, ListOfSites):
         '''
         get discharge data from site list
