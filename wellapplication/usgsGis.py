@@ -68,7 +68,8 @@ class usgs:
         try:
             response = urllib2.urlopen(html)
             htmlresp = response.read()
-            skip = htmlresp[:htmlresp.rfind('#\n')+2].count('\n')
+            endhead = htmlresp.rfind('#\n')+2
+            skip = htmlresp[:endhead].count('\n')
             skiplist = range(0,skip)
             skiplist.append(skip+1)
             endcom = htmlresp.find('\n#', endhead)
@@ -88,10 +89,11 @@ class usgs:
             try:
                 response = urllib2.urlopen(html)
                 htmlresp = response.read()
-                skip = htmlresp[:htmlresp.rfind('#\na')+2].count('\n')
+                endhead = htmlresp.rfind('#\n')+2
+                skip = htmlresp[:endhead].count('\n')
                 skiplist = range(0,skip)
                 skiplist.append(skip+1)
-                    endcom = htmlresp.find('\n#', endhead)
+                endcom = htmlresp.find('\n#', endhead)
                 if endcom <> -1:
                     while endcom <= htmlresp.rfind('\n#'):
                     
