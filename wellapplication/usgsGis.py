@@ -153,7 +153,17 @@ class usgs:
         html = "http://waterservices.usgs.gov/nwis/gwlevels/?format=rdb&sites="+str(siteno)+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
         wls = self.getInfo(html)
         return wls
-        
+    
+    def getDVfromSites(self, ListOfSites):
+        '''
+        get daily values from site list
+        '''
+        siteno = self.parsesitelist(ListOfSites)
+        html = "http://waterservices.usgs.gov/nwis/dv/?format=waterml,2.0&sites=" + siteno
+        wls = self.getInfo(html)
+        wls.columns = ['agency_cd','site_no','datetime','discharge_cfs','quality_code']
+        return wls
+    
     def getQfromSites(self, ListOfSites):
         '''
         get discharge data from site list
