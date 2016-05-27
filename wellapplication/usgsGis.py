@@ -110,6 +110,32 @@ class usgs:
                 print "could not fetch %s" % html        
                 pass            
 
+    def getQInfo(self,html):
+        '''
+        Input
+        -----
+        html = location of data to be queried <http://waterservices.usgs.gov>         
+    
+        Output
+        ------
+        df = Pandas Dataframe containing data downloaded from USGS
+        '''
+    
+        response = urllib2.urlopen(html)
+        htmlresp = response.read()
+    
+        USGSdict = xmltodict.parse(htmlresp)
+        f={}
+        for i in range(len(USGSdict['ns1:timeSeriesResponse']['ns1:timeSeries'])):
+            f[USGSdict['ns1:timeSeriesResponse']['ns1:timeSeries'][i]['@name'][5:13]] = pd.DataFrame(USGSdict['ns1:timeSeriesResponse']['ns1:timeSeries'][i]['ns1:values']['ns1:value'])
+        df = pd.concat(f)
+        df.reset_index(inplace=True)
+        df['datetime'] = pd.to_datetime(df['@dateTime'])
+        df['Q_cfs'] = pd.to_numeric(df['#text'])
+        df.set_index('datetime',inplace=True)
+        df.drop([u'level_1', '#text', '@dateTime'],axis=1,inplace=True)
+        df.columns = ['site_no','qualifiers','value']
+        return df
     
     def parsesitelist(self, ListOfSites):
         '''
@@ -183,8 +209,8 @@ class usgs:
         get discharge data from site list
         '''
         siteno = self.parsesitelist(ListOfSites)
-        html = "http://waterservices.usgs.gov/nwis/dv/?format=rdb&sites="+str(siteno)+"&parameterCd=00060"+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
-        wls = self.getInfo(html)
+        html = "http://waterservices.usgs.gov/nwis/dv/?format=waterml,2.0&sites="+str(siteno)+"&parameterCd=00060"+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
+        wls = self.getQInfo(html)
         wls.columns = ['agency_cd','site_no','datetime','discharge_cfs','quality_code']
         return wls
     
