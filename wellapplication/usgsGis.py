@@ -209,7 +209,7 @@ class usgs:
         get discharge data from site list
         '''
         siteno = self.parsesitelist(ListOfSites)
-        html = "http://waterservices.usgs.gov/nwis/dv/?format=waterml,2.0&sites="+str(siteno)+"&parameterCd=00060"+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
+        html = "http://waterservices.usgs.gov/nwis/dv/?format=waterml,1.1&sites="+str(siteno)+"&parameterCd=00060"+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
         wls = self.getQInfo(html)
         wls.columns = ['agency_cd','site_no','datetime','discharge_cfs','quality_code']
         return wls
