@@ -661,8 +661,8 @@ class transport:
         '''
         df1 = df
         df1.loc[:,'dp'+ p] = df1.loc[:,p].diff()
-        df1.loc[:,'ma'+ p] = pd.rolling(df1.loc[:,'dp'+ p], window=win, center=True).mean()
-        df1.loc[:,'mst'+p] = pd.rolling(df1.loc[:,'dp'+ p], window=win, center=True).std()
+        df1.loc[:,'ma'+ p] = df1.loc[:,'dp'+ p].rolling(window=win, center=True).mean()
+        df1.loc[:,'mst'+p] = df1.loc[:,'dp'+ p].rolling(window=win, center=True).std()
         for i in df.index:
             try:
                 if abs(df1.loc[i,'dp'+ p] - df1.loc[i,'ma'+ p]) >= abs(df1.loc[i,'mst'+p]*sd):
