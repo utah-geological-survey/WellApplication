@@ -13,6 +13,79 @@ import numpy as np
 from collections import OrderedDict
 from datetime import datetime, timedelta
 
+class recess:
+    def fitit(self,x,y,Q):
+        from scipy.optimize import curve_fit
+        def func(x, c):
+            return Q*np.exp(-1*c*x)
+    
+        popt, pcov = curve_fit(func, x, y, p0=(1e-1))#, bounds = [0,40000], method='trf')
+        return popt, pcov
+    
+    def recession(self,df, Q, st, end=[datetime.now().year,datetime.now().month, datetime.now().day], unit='gpm', excs=[0,0,0], excf=[0,0,0]):
+        '''
+        Creates recession curve and modeled output to describe spring and streamflow recession.
+        
+        INPUT
+        -----
+        df = dataframe with spring discharge data
+        Q = string indicating discharge field in df in units of gpm
+        st = start date to examine data in [YYYY, MM, DD] format, where values are integers in an array
+        end = end date to examine data
+        unit = preferred units to use in analysis; defaults to gpm; can convert to lpm
+        excs = begin date of exclusion period
+        excf = end date of exclusion period
+        
+        OUTPUT
+        ------
+        popt = alpha value for recession curve
+        x1 = days from start of recession
+        x2 = dates of recession curve analysis
+        y1 = points used for recession curve analysis
+        y2 = recession curve values
+        Plot of recession curve
+        
+        '''
+
+        # account for hours in time input
+        if len(st) == 3 and len(end) == 3:
+            df1 = df[(df.index >= pd.datetime(st[0],st[1],st[2]))&(df.index <= pd.datetime(end[0],end[1],end[2]))]
+        else:
+            df1 = df[(df.index >= pd.datetime(st[0],st[1],st[2],st[3],st[4]))&(df.index <= pd.datetime(end[0],end[1],end[2],st[3],st[4]))]
+    
+        # account for hours in time input
+        if excs[0]==0:
+            pass
+        else:
+            if len(excs)==3:
+                df1 = df1[(df1.index < pd.datetime(excs[0],excs[1],excs[2]))|(df1.index > pd.datetime(excf[0],excf[1],excf[2]))]
+            else:
+                df1 =  df1[(df1.index < pd.datetime(excs[0],excs[1],excs[2],excs[3],excs[4]))|(df1.index > pd.datetime(excf[0],excf[1],excf[2],excf[3],excf[4]))]
+    
+        
+        # let user define units
+        if unit=='lpm':
+            df1[Q+'lpm'] = 3.78541*df1[Q]
+            df1[Q] = df1[Q+'lpm'] 
+            Qlab='Discharge (lpm)'
+        else:
+            Qlab = 'Discharge (gpm)'
+        
+        df2 = df1.dropna(subset=[Q])
+        
+        y1 = df2[Q]
+        x1 = (df2.index.to_julian_date() - df2.index.to_julian_date()[0])#convert to numeric days for opt. function
+        popt1,pcov1 = self.fitit(x1, y1, y1[0]) # fit curve
+        x2 = [df2.index[0] + timedelta(i) for i in x1] # convert back to dates for labels
+        y2 = [y1[0]*np.exp(-1*popt1[0]*i) for i in x1] # run function with optimized variables
+        plt.plot(x2,y2, label='Recession (alpha = %.3f)'%popt1[0]) # report alpha value
+        plt.scatter(x2,y1, label='Discharge')
+        plt.ylabel(Qlab)
+        plt.legend(scatterpoints=1)
+        plt.show()
+        return popt1,x1,x2,y1,y2
+
+
 class piper:
     """
     Created on Thu May 29 10:57:49 2014
