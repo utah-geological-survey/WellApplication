@@ -8,6 +8,31 @@ import xmltodict
     
     
 class transport:
+
+    @staticmethod
+    def rollmeandiff(df1,p1,df2,p2,win):
+        '''
+        returns the rolling mean difference of two columns from two different dataframes
+        df1 = dataframe 1
+        p1 = column in df1
+        df2 = dataframe 2
+        p2 =column in df2
+        win = window in days
+        '''
+        win = win*60*24
+        df1 = df1.resample('1Min').mean()
+        df1 = df1.interpolate(method='time')
+        df2 = df2.resample('1Min').mean()
+        df2 = df2.interpolate(method='time')
+        df1['rm'+p1] = df1[p1].rolling(window=win, center=True).mean()
+        df2['rm'+p2] = df2[p2].rolling(window=win, center=True).mean()
+        df3 = pd.merge(df1,df2,left_index=True, right_index=True, how='outer')
+        df3 = df3[np.isfinite(df3['rm'+p1])]
+        df4 = df3[np.isfinite(df3['rm'+p2])]
+        df5 = df4['rm'+p1] - df4['rm'+p2]
+        diff = round(df5.mean(),3)
+        del (df3,df4,df5)
+        return diff
     
     @staticmethod
     def jumpfix(df, meas, threashold=0.005):
