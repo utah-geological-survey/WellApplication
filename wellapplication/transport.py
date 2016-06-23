@@ -17,17 +17,18 @@ class transport:
         meas = name of field with jolts
         threashold = size of jolt to search for
         '''
-        df['delta'+meas] = df.loc[:,meas].diff()
-        jump = df[abs(df['delta'+meas])>threashold]
+        df1 = df.copy(deep=True)
+        df1['delta'+meas] = df1.loc[:,meas].diff()
+        jump = df1[abs(df1['delta'+meas])>threashold]
         jump['cumul'] = jump.loc[:,'delta'+meas].cumsum()
-        df['newVal'] = df.loc[:,meas]
+        df1['newVal'] = df1.loc[:,meas]
         print jump
         for i in range(len(jump)):
             jt = jump.index[i]
             ja = jump['cumul'][i]
-            df.loc[jt:,'newVal'] = df[meas].apply(lambda x: x-ja,1)
-        df[meas]=df['newVal']
-        return df
+            df1.loc[jt:,'newVal'] = df1[meas].apply(lambda x: x-ja,1)
+        df1[meas]=df1['newVal']
+        return df1
     
     @staticmethod
     def fcl(df, dtObj):
