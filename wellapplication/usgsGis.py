@@ -327,3 +327,23 @@ class usgs:
         self.wlPlot = fig2
         
         return fig1, fig2, wlLongSt, wlLongSt2
+        
+    def get_huc(self, x):
+        import json
+        """
+        Receive the content of ``url``, parse it as JSON and return the object.
+    
+        Parameters
+        ----------
+        x = [longitude, latitude]
+    
+        Returns
+        -------
+        HUC12, HUC12_Name
+        """
+        huc_url = 'http://services.nationalmap.gov/arcgis/rest/services/nhd/mapserver/6/query?geometry='+ str(x[0])\
+    +'%2C'+ str(x[1]) + '&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=HUC12%2C'+\
+    '+Name&returnGeometry=false&returnDistinctValues=true&f=pjson'
+        response = urllib2.urlopen(huc_url)
+        data = response.read().decode("utf-8")
+        return json.loads(data)['features'][0]['attributes']['HUC12'],json.loads(data)['features'][0]['attributes']['NAME']
