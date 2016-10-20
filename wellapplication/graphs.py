@@ -355,7 +355,7 @@ class fdc:
         plt.title('Flow duration curve for ' + site)
     
     @staticmethod
-    def fdc_simple(df, site, begyear=1900, endyear=2015, normalizer=1):
+    def fdc_simple(df, site, begyear=1900, endyear=2015, normalizer=1, plot=True):
         '''
         Generate flow duration curve for hydrologic time series data
         
@@ -406,7 +406,11 @@ class fdc:
         prob = [(ranks[i]/(len(data)+1)) for i in range(len(data)) ]
         
         # plot data via matplotlib
-        plt.plot(prob,data,label=site+' '+str(begyear)+'-'+str(endyear))
+        if plot == True:
+            plt.plot(prob,data,label=site+' '+str(begyear)+'-'+str(endyear))
+        else:
+            pass
+        return prob, data
         
 def gantt(df, stations = [], labels = []):
     '''
