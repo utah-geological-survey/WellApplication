@@ -126,7 +126,6 @@ class piper:
                 print(name)
                 df[name] = 0
       
-        
         return df
     
     def convertIons(self, df):
@@ -411,92 +410,134 @@ class fdc:
         else:
             pass
         return prob, data
-        
-def gantt(df, stations = [], labels = []):
-    '''
-    INPUT
-    -----
-    df = pandas dataframe with datetime as index and columns as site time-series data; each column name should be the site name
-    sites = list of columns you want to subset from your dataframe
+
+class gantt:
     
-    RETURNS
-    -------
-    gantt chart and site info table
-    
-    '''
-    if len(stations) == 0:
+    @staticmethod
+    def markGaps(df):
+        '''
+        produces dictionary of list of gaps in time series data based on the presence of nan values;
+        used for gantt plotting
+
+        INPUT
+        -----
+        df = date-indexed dataframe containing columns that are station names containing station values
+
+        RETURNS
+        -------
+        dateranges = dictionary with station names as keys and lists of begin and end dates as values
+        '''
+        dateranges = {}
         stations = df.columns
+        for station in stations:
+            dateranges[station] = []
+            first = df.ix[:,station].first_valid_index()
+            last =  df.ix[:,station].last_valid_index()
+            records = df.ix[first:last,station]
+            dateranges[station].append(pd.to_datetime(first))
+            for i in range(len(records)-1):
+                if np.isnan(records[i+1]) and np.isfinite(records[i]):
+                    dateranges[station].append(pd.to_datetime(records.index)[i])
+                elif np.isnan(records[i]) and np.isfinite(records[i+1]):
+                    dateranges[station].append(pd.to_datetime(records.index)[i])
+            dateranges[station].append(pd.to_datetime(last))
+        return dateranges
     
-    q = {}
-    m = {}
-    for site in stations:
-        if site in df.columns:
-            q[site] = df[site].first_valid_index()
-            m[site] = df[site].last_valid_index()
+    @staticmethod    
+    def site_info(df, stations):
+        stat,first,last,minum,maxum,stdev,medin,avg,q25,q75 = [],[],[],[],[],[],[],[],[],[]
+        for station in stations:
+            stdt = df.ix[:,station]
+            stat.append(station)
+            first.append(stdt.first_valid_index())
+            last.append(stdt.last_valid_index())
+            minum.append(stdt.min())
+            maxum.append(stdt.max())
+            stdev.append(stdt.std())
+            medin.append(stdt.median())
+            avg.append(stdt.mean())
+            q25.append(stdt.quantile(0.25))
+            q75.append(stdt.quantile(0.75))
+        colm = {'StationId':stat,'first':first,'last':last,'min':minum,'max':maxum,
+                'std':stdev,'median':medin,'mean':avg,'q25':q25,'q75':q75}
+        Site_Info = pd.DataFrame(colm)
+        return Site_Info
     
-    start_date = pd.DataFrame(data=q, index=[0])
-    finish_date = pd.DataFrame(data=m, index=[0])
-    start_date = start_date.transpose()
-    start_date['start_date'] = start_date[0]
-    start_date = start_date.drop([0],axis=1)
-    finish_date = finish_date.transpose()
-    finish_date['fin_date'] = finish_date[0]
-    finish_date = finish_date.drop([0],axis=1)
-    start_fin = pd.merge(finish_date, start_date, left_index=True, right_index=True, how='inner' )
+    @staticmethod 
+    def ganttPlotter(dateranges,stations,labels):
+        '''
+        plots gantt plot using dictionary of stations and associated start and end dates;
+        uses output from markGaps function
 
-    sum_stats = df[stations].describe()
-    sum_stats = sum_stats.transpose()
-    Site_Info = pd.merge(sum_stats, start_fin, left_index=True, right_index=True, how='inner' )
+        INPUT
+        -----
+        dateranges = dictionary of stationids as keys and date ranges of data as values
+        stations = list of stations to show on plot
+        labels = labels to use on plot
+
+        OUTPUT
+        ------
+        graph of data
+        '''
+        labs, tickloc, col = [], [], []
+
+        # create color iterator for multi-color lines in gantt chart
+        color = iter(plt.cm.Dark2(np.linspace(0,1,len(stations))))
+
+        plt.figure(figsize=[8,10])
+        fig, ax = plt.subplots()
+
+        for i in range(len(stations)):
+            c=next(color)
+            for j in range(len(dateranges[stations[i]])-1):
+                if (j+1)%2 != 0:
+                    if len(labels) == 0 or len(labels)!=len(stations):
+                        plt.hlines(i+1, dateranges[stations[i]][j], dateranges[stations[i]][j+1], label = stations[i], color=c, linewidth=3)
+                    else:
+                        plt.hlines(i+1, dateranges[stations[i]][j], dateranges[stations[i]][j+1], label = labels[i], color=c, linewidth=3)
+            labs.append(stations[i])
+            tickloc.append(i+1)
+            col.append(c)
+        plt.ylim(0,len(stations)+1)
+
+        if len(labels) == 0 or len(labels)!=len(stations):
+            labels = stations
+            plt.yticks(tickloc, labs)
+        else:
+            plt.yticks(tickloc, labels)
+
+        plt.xlabel('Date')
+        plt.ylabel('Station Name')
+        plt.grid(linewidth=0.2)
+
+        gytl = plt.gca().get_yticklabels()
+        for i in range(len(gytl)):
+            gytl[i].set_color(col[i])
+        plt.tight_layout()
+        return fig
     
-    dateranges = {}
-    for station in stations:
-        dateranges[station] = []
-        first = df.ix[:,station].first_valid_index()
-        last =  df.ix[:,station].last_valid_index()
-        records = df.ix[first:last,station]
-        dateranges[station].append(pd.to_datetime(first))
-        for i in range(len(records)-1):
-            if np.isnan(records[i+1]) and np.isfinite(records[i]):
-                dateranges[station].append(pd.to_datetime(records.index)[i])
-            elif np.isnan(records[i]) and np.isfinite(records[i+1]):
-                dateranges[station].append(pd.to_datetime(records.index)[i])
-        dateranges[station].append(pd.to_datetime(last))
+    @staticmethod
+    def gantt(df, stations = [], labels = []):
+        '''
+        INPUT
+        -----
+        df = pandas dataframe with datetime as index and columns as site time-series data; 
+             each column name should be the site name
+        stations = list of columns (stationids) you want to subset from your dataframe
+        labels = list of labels that will appear on the outputted chart
 
-    labs, tickloc, col = [], [], []
+        RETURNS
+        -------
+        Site_Info = summary statistics
+        dateranges = dictionary of stationids as keys and list of begin-end dates for each measurement interval
+        gantt chart and site info table
 
-    # create color iterator for multi-color lines in gantt chart
-    color = iter(plt.cm.Dark2(np.linspace(0,1,len(stations))))
-
-    plt.figure(figsize=[8,10])
-    fig, ax = plt.subplots()
-
-    for i in range(len(stations)):
-        c=next(color)
-        for j in range(len(dateranges[stations[i]])-1):
-            if (j+1)%2 != 0:
-                if len(labels) == 0 or len(labels)!=len(stations):
-                    plt.hlines(i+1, dateranges[stations[i]][j], dateranges[stations[i]][j+1], label = stations[i], color=c, linewidth=3)
-                else:
-                    plt.hlines(i+1, dateranges[stations[i]][j], dateranges[stations[i]][j+1], label = labels[i], color=c, linewidth=3)
-        labs.append(stations[i])
-        tickloc.append(i+1)
-        col.append(c)
-    plt.ylim(0,len(stations)+1)
-
-    if len(labels) == 0 or len(labels)!=len(stations):
-        labels = stations
-        plt.yticks(tickloc, labs)
-    else:
-        plt.yticks(tickloc, labels)
-    
-    plt.xlabel('Date')
-    plt.ylabel('Station Name')
-    plt.grid(linewidth=0.2)
-    #plt.title('USGS Station Measurement Duration')
-    # color y labels to match lines
-    gytl = plt.gca().get_yticklabels()
-    for i in range(len(gytl)):
-        gytl[i].set_color(col[i])
-    plt.tight_layout()
-        
-    return Site_Info, fig
+        '''
+        if len(stations) == 0:
+            stations = df.columns
+        df1 = df.ix[:,stations]
+        df1.sort_index(inplace=True)
+        Site_Info = gantt.site_info(df1,stations)
+        dateranges = gantt.markGaps(df1)
+        fig = gantt.ganttPlotter(dateranges,stations,labels)
+        return Site_Info, dateranges, fig
