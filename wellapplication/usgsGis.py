@@ -66,46 +66,30 @@ class usgs:
         '''
         
         try:
-            response = urllib2.urlopen(html)
-            htmlresp = response.read()
-            endhead = htmlresp.rfind('#\n')+2
-            skip = htmlresp[:endhead].count('\n')
-            skiplist = range(0,skip)
-            skiplist.append(skip+1)
-            endcom = htmlresp.find('\n#', endhead)
-            if endcom <> -1:
-                while endcom <= htmlresp.rfind('\n#'):
-                
-                    linenum = htmlresp[:endcom].count('\n')+1
-                    endcomment = htmlresp.find('#\na',endcom)
-                    commentnum = htmlresp[endcom:endcomment].count('\n')
-                    skiplist = skiplist+range(linenum,commentnum+linenum+2)
-                    endcom = htmlresp.find('\n#', endcomment)
-                    if commentnum == 0:
-                        break
-            df = pd.read_table(html, sep="\t",skiprows=skiplist)#, comment='#')
+            linefile = urllib2.urlopen(html).readlines()
+            numlist=[]
+            num=0
+            for line in linefile:
+                if line.startswith("#"):
+                    numlist.append(num)
+                num += 1
+            numlist.append(numlist[-1]+2)
+            df = pd.read_table(html, sep="\t",skiprows=numlist)#, comment='#')
             return df
         except(BadStatusLine):
             try:
-                response = urllib2.urlopen(html)
-                htmlresp = response.read()
-                endhead = htmlresp.rfind('#\n')+2
-                skip = htmlresp[:endhead].count('\n')
-                skiplist = range(0,skip)
-                skiplist.append(skip+1)
-                endcom = htmlresp.find('\n#', endhead)
-                if endcom <> -1:
-                    while endcom <= htmlresp.rfind('\n#'):
-                    
-                        linenum = htmlresp[:endcom].count('\n')+1
-                        endcomment = htmlresp.find('#\na',endcom)
-                        commentnum = htmlresp[endcom:endcomment].count('\n')
-                        skiplist = skiplist+range(linenum,commentnum+linenum+2)
-                        endcom = htmlresp.find('\n#', endcomment)
-                        if commentnum == 0:
-                            break
-                df = pd.read_table(html, sep="\t",skiprows=skiplist)#, comment='#')
+                linefile = urllib2.urlopen(html).readlines()
+                numlist=[]
+                num=0
+                for line in linefile:
+                    if line.startswith("#"):
+                        numlist.append(num)
+                    num += 1
+                numlist.append(numlist[-1]+2)
+                df = pd.read_table(html, sep="\t",skiprows=numlist)#, comment='#')
                 return df
+                    df = pd.read_table(html, sep="\t",skiprows=numlist)#, comment='#')
+                    return df
             except(BadStatusLine):
                 print "could not fetch %s" % html        
                 pass            
