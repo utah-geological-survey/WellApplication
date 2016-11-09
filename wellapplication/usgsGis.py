@@ -112,7 +112,7 @@ class usgs:
         numlist.append(numlist[-1]+2)
         df = pd.read_table(html, sep="\t",skiprows=numlist, index_col='datetime',parse_dates=True)
         df.columns = ['agency','site','discharge','qual']
-        df['discharge'] = pd.to_numeric(df['discharge'])
+        df['discharge'] = pd.to_numeric(df['discharge'], errors='coerce')
         return df
     
     def parsesitelist(self, ListOfSites):
