@@ -102,21 +102,17 @@ class usgs:
         ------
         df = Pandas Dataframe containing data downloaded from USGS
         '''
-    
-        response = urllib2.urlopen(html)
-        htmlresp = response.read()
-    
-        USGSdict = xmltodict.parse(htmlresp)
-        f={}
-        for i in range(len(USGSdict['ns1:timeSeriesResponse']['ns1:timeSeries'])):
-            f[USGSdict['ns1:timeSeriesResponse']['ns1:timeSeries'][i]['@name'][5:13]] = pd.DataFrame(USGSdict['ns1:timeSeriesResponse']['ns1:timeSeries'][i]['ns1:values']['ns1:value'])
-        df = pd.concat(f)
-        df.reset_index(inplace=True)
-        df['datetime'] = pd.to_datetime(df['@dateTime'])
-        df['Q_cfs'] = pd.to_numeric(df['#text'])
-        df.set_index('datetime',inplace=True)
-        df.drop([u'level_1', '#text', '@dateTime'],axis=1,inplace=True)
-        df.columns = ['site_no','qualifiers','value']
+        linefile = urllib2.urlopen(html).readlines()
+        numlist=[]
+        num=0
+        for line in linefile:
+            if line.startswith("#"):
+                numlist.append(num)
+            num += 1
+        numlist.append(numlist[-1]+2)
+        df = pd.read_table(html, sep="\t",skiprows=numlist, index_col='datetime',parse_dates=True,na)
+        df.columns = ['agency','site','discharge','qual']
+        df['discharge'] = pd.to_numeric(df['discharge'])
         return df
     
     def parsesitelist(self, ListOfSites):
