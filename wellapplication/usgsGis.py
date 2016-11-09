@@ -108,8 +108,9 @@ class usgs:
         for line in linefile:
             if line.startswith("#"):
                 numlist.append(num)
+            elif line.startswith("5s"):
+                numlist.append(num)
             num += 1
-        numlist.append(numlist[-1]+2)
         df = pd.read_table(html, sep="\t",skiprows=numlist, index_col='datetime',parse_dates=True)
         df.columns = ['agency','site','discharge','qual']
         df['discharge'] = pd.to_numeric(df['discharge'], errors='coerce')
