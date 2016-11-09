@@ -88,8 +88,6 @@ class usgs:
                 numlist.append(numlist[-1]+2)
                 df = pd.read_table(html, sep="\t",skiprows=numlist)#, comment='#')
                 return df
-                    df = pd.read_table(html, sep="\t",skiprows=numlist)#, comment='#')
-                    return df
             except(BadStatusLine):
                 print "could not fetch %s" % html        
                 pass            
