@@ -187,9 +187,8 @@ class usgs:
         get discharge data from site list
         '''
         siteno = self.parsesitelist(ListOfSites)
-        html = "http://waterservices.usgs.gov/nwis/dv/?format=waterml,1.1&sites="+str(siteno)+"&parameterCd=00060"+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
+        html = "http://waterservices.usgs.gov/nwis/dv/?format=rdb&sites={0}&parameterCd=00060&startDT=1800-01-01&endDT={1}".format(siteno,datetime.today())
         wls = self.getQInfo(html)
-        #wls.columns = ['agency_cd','site_no','datetime','discharge_cfs','quality_code']
         return wls
     
     def getQfromHUC(self, HUCS):
@@ -197,7 +196,7 @@ class usgs:
         get discharge data from HUC
         '''
         siteno = self.parsesitelist(HUCS)
-        html = "http://waterservices.usgs.gov/nwis/dv/?format=rdb&huc="+str(HUC)+"&parameterCd=00060"+"&startDT=1800-01-01&endDT="+str(datetime.today().year)+"-"+str(datetime.today().month).zfill(2)+"-"+str(datetime.today().day).zfill(2)
+        html = "http://waterservices.usgs.gov/nwis/dv/?format=rdb&parameterCd=00060&huc={0}&startDT=1800-01-01&endDT={1:%Y-%m-%d}".format(HUCS,datetime.today())
         wls = self.getInfo(html)
         return wls
     
