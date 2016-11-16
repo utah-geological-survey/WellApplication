@@ -445,7 +445,7 @@ class gantt:
     
     @staticmethod    
     def site_info(df, stations):
-        stat,first,last,minum,maxum,stdev,medin,avg,q25,q75 = [],[],[],[],[],[],[],[],[],[]
+        stat,first,last,minum,maxum,stdev,medin,avg,q25,q75,count = [],[],[],[],[],[],[],[],[],[],[]
         for station in stations:
             stdt = df.ix[:,station]
             stat.append(station)
@@ -458,8 +458,9 @@ class gantt:
             avg.append(stdt.mean())
             q25.append(stdt.quantile(0.25))
             q75.append(stdt.quantile(0.75))
+            count.append(stdt.count())
         colm = {'StationId':stat,'first':first,'last':last,'min':minum,'max':maxum,
-                'std':stdev,'median':medin,'mean':avg,'q25':q25,'q75':q75}
+                'std':stdev,'median':medin,'mean':avg,'q25':q25,'q75':q75,'count':count}
         Site_Info = pd.DataFrame(colm)
         return Site_Info
     
