@@ -411,10 +411,32 @@ class fdc:
             pass
         return prob, data
 
-class gantt:
+class gantt():
+    '''
+    Class to create gantt plots and to summarize pandas timeseries dataframes.
+    Finds gaps and measuring duration of data
+    The pandas dataframe with datetime as index and columns as site time-series data; 
+             each column name should be the site name or the site labels should be input for chart
+    The datetime index should be a regular measurement interval.  The resulting gantt plot will be based on the index.
     
-    @staticmethod
-    def markGaps(df):
+    `.stations` produces a list describing the stations put into the class
+    `.labels` produces a list describing the labels put into the class
+    `.dateranges` is a dictionary describing gaps in the dataframe based on the presence of nan values in the frame
+    `.ganttPlotter()` plots a gantt plot
+    
+    '''
+    def __init__(self,df,stations=[],labels=[]):
+        if len(stations) == 0:
+            stations = df.columns
+        if len(labels) == 0:
+            labels = stations
+        self.stations = stations
+        self.labels = labels
+        self.dateranges = self.markGaps(df)
+        self.sitestats = self.site_info(df,stations)
+        print('Data Loaded \nType .ganttPlotter() after your defined object to make plot\nType .sitestats after your defined object to get summary stats') 
+        
+    def markGaps(self, df):
         '''
         produces dictionary of list of gaps in time series data based on the presence of nan values;
         used for gantt plotting
@@ -443,8 +465,11 @@ class gantt:
             dateranges[station].append(pd.to_datetime(last))
         return dateranges
     
-    @staticmethod    
-    def site_info(df, stations):
+
+    def site_info(self, df, stations=None):
+        if stations is None:
+            stations = self.stations
+        
         stat,first,last,minum,maxum,stdev,medin,avg,q25,q75,count = [],[],[],[],[],[],[],[],[],[],[]
         for station in stations:
             stdt = df.ix[:,station]
@@ -464,8 +489,8 @@ class gantt:
         Site_Info = pd.DataFrame(colm)
         return Site_Info
     
-    @staticmethod 
-    def ganttPlotter(dateranges,stations,labels):
+
+    def ganttPlotter(self, dateranges=None, stations=None, labels=None):
         '''
         plots gantt plot using dictionary of stations and associated start and end dates;
         uses output from markGaps function
@@ -481,6 +506,13 @@ class gantt:
         graph of data
         '''
         labs, tickloc, col = [], [], []
+        
+        if dateranges is None:
+            dateranges = self.dateranges
+        if stations is None:
+            stations = self.stations
+        if labels is None:
+            labels = self.labels
 
         # create color iterator for multi-color lines in gantt chart
         color = iter(plt.cm.Dark2(np.linspace(0,1,len(stations))))
@@ -489,7 +521,7 @@ class gantt:
         fig, ax = plt.subplots()
 
         for i in range(len(stations)):
-            c=next(color)
+            c = next(color)
             for j in range(len(dateranges[stations[i]])-1):
                 if (j+1)%2 != 0:
                     if len(labels) == 0 or len(labels)!=len(stations):
@@ -517,8 +549,7 @@ class gantt:
         plt.tight_layout()
         return fig
     
-    @staticmethod
-    def gantt(df, stations = [], labels = []):
+    def gantt(self, df, stations = None, labels = None):
         '''
         INPUT
         -----
@@ -534,11 +565,15 @@ class gantt:
         gantt chart and site info table
 
         '''
-        if len(stations) == 0:
-            stations = df.columns
+        if stations is None:
+            stations = self.stations
+        if labels is None:
+            labels = self.labels
+        
         df1 = df.ix[:,stations]
         df1.sort_index(inplace=True)
-        Site_Info = gantt.site_info(df1,stations)
-        dateranges = gantt.markGaps(df1)
-        fig = gantt.ganttPlotter(dateranges,stations,labels)
+        Site_Info = self.site_info(df1,stations)
+        dateranges = self.markGaps(df1)
+        fig = self.ganttPlotter(dateranges,stations,labels)
         return Site_Info, dateranges, fig
+
