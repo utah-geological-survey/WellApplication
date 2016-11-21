@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/48931715.svg)](https://zenodo.org/badge/latestdoi/48931715)
+
 # Well Application
 
 
