@@ -7,4 +7,4 @@
  install: pip install -r requirements.txt
    
  script:
-   - py.test --cov wellapplication --mpl --mpl-baseline-path tests/reference_plots/
+   - py.test
