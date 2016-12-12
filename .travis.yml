@@ -2,7 +2,10 @@ language: python
 
 python:
   - "2.7"
+  
 cache: pip
+
+env: DEPS="numpy scipy matplotlib pandas statsmodels"
 
 install: 
   - pip install -r requirements.txt   
