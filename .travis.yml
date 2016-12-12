@@ -6,4 +6,5 @@
  sudo: required 
  install: pip install -r requirements.txt
    
- #script: nosetests
+ script:
+   - py.test --cov wellapplication --mpl --mpl-baseline-path tests/reference_plots/
