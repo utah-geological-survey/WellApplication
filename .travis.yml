@@ -5,11 +5,14 @@ python:
   
 sudo: required
 
+before_install:
+    - pip install pytest
+
+
 env: DEPS="numpy scipy matplotlib pandas statsmodels"
 
 install: 
   - pip install -r requirements.txt   
 
 script:
-  - python test.py
-   
+    - py.test
