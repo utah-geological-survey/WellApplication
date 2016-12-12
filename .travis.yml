@@ -1,10 +1,12 @@
- language: python
-  
- python:
- - "2.7"
- -env: DEPS="numpy scipy matplotlib pandas statsmodels"
- sudo: required 
- install: pip install -r requirements.txt
+language: python
+
+python:
+  - "2.7"
+cache: pip
+
+install: 
+  - pip install -r requirements.txt   
+
+script:
+  - python test.py
    
- script:
-   -python test.py
