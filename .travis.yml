@@ -3,7 +3,7 @@
  python:
  - "2.7"
  -env: DEPS="numpy scipy matplotlib pandas statsmodels"
-  
- install: pip install --user -r requirements.txt
+ sudo: required 
+ install: pip install -r requirements.txt
    
  script: nosetests
