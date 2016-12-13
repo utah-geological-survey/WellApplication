@@ -53,7 +53,91 @@ class usgs:
             SS = str(int(round((((abs(dec) - int(DD))*60) - int(MM))*60, 0))).zfill(2)
             return DD+MM+SS
         return dms(x[1])+dms(x[0])+'01'
-        
+    
+    def get_nwis_stream(self, by, val_list, start_date = '1800-01-01', end_date = ''):
+        """
+        Request stream gauge data from the USGS NWIS.
+        Args:
+            site (str):
+                a valid site is 01585200
+            service (str):
+                can either be 'iv' or 'dv' for instantaneous or daily data.
+            start_date (str):
+               should take on the form yyyy-mm-dd
+            end_date (str):
+                should take on the form yyyy-mm-dd
+        Returns:
+            a response object.
+                * response.url: the url we requested data from.
+                * response.status_code:
+                * response.json: the content translated as json
+                * response.ok: "True" when we get a '200'
+        Raises:
+            ConnectionError  due to connection problems like refused connection
+            or DNS Error.
+
+        Example::
+            >>> from hydrofunctions import hydrofunctions as hf
+            >>> response = hf.get_nwis('01585200', 'dv', '2012-06-01', '2012-07-01')
+            >>> response
+            <respones [200]>
+            >>> response.ok
+            True
+            >>> response.json()
+            *JSON ensues*
+        The specification for this service is located here:
+        http://waterservices.usgs.gov/rest/IV-Service.html
+        """
+        val_list = self.parsesitelist(val_list)
+
+        if end_date == '':
+            dy = datetime.datetime.today()
+            end_date = str(dy.year)+'-'+str(dy.month)+'-'+str(dy.day)
+
+        header = {
+            'Accept-encoding': 'gzip',
+            'max-age': '250'
+            }
+
+        if by =='site':
+
+            values = {
+                'format': 'json',
+                'sites': val_list,
+                'parameterCd': '00060',  # represents stream discharge.
+                'startDT': start_date,
+                'endDT': end_date,
+                }
+
+        else by == 'HUC':
+            values = {
+                'format': 'json',
+                'huc': val_list,
+                'parameterCd': '00060',  # represents stream discharge.
+                'startDT': start_date,
+                'endDT': end_date,
+                }
+
+
+        url = 'http://waterservices.usgs.gov/nwis/'
+        service = 'dv'
+        url = url + service + '/?'
+        response_ob = requests.get(url, params=values, headers=header)
+
+        nwis_dict = response_ob.json()
+
+        data = nwis_dict['value']['timeSeries'][0]['values'][0]['value']
+
+        df= pd.DataFrame(data, columns=['dateTime', 'value'])
+        df.index = pd.to_datetime(df.pop('dateTime'))
+        df.value = df.value.astype(float)
+
+        df.index.name = 'datetime'
+        df.replace(to_replace='-999999', value=np.nan)
+
+        return df
+    
+    
     def getInfo(self, html):
         '''
         Input
