@@ -325,91 +325,63 @@ class piper:
         self.plot = fig
         self.df = df
         
-class fdc:
     
-    @staticmethod
-    def fdc(df,site,begyear,endyear):
-        '''
-        Generate flow duration curve for hydrologic time series data
-        
-        df = pandas dataframe containing data
-        site = column within dataframe that contains the flow values
-        begyear = start year for analysis
-        endyear = end year for analysis
-        '''
-            
-        data = df[(df.index.to_datetime() > pd.datetime(begyear,1,1))&(df.index.to_datetime() < pd.datetime(endyear,1,1))]
-        data = data[site].dropna().values
-        data = np.sort(data)
-        ranks = sp.rankdata(data, method='average')
-        ranks = ranks[::-1]
-        prob = [100*(ranks[i]/(len(data)+1)) for i in range(len(data)) ]
-        plt.figure()
-        plt.scatter(prob,data,label=site)
-        plt.yscale('log')
-        plt.grid(which = 'both')
-        plt.xlabel('% of time that indicated discharge was exceeded or equaled')
-        plt.ylabel('discharge (cfs)')
-        plt.xticks(range(0,100,5))
-        plt.title('Flow duration curve for ' + site)
-    
-    @staticmethod
-    def fdc_simple(df, site, begyear=1900, endyear=2015, normalizer=1, plot=True):
-        '''
-        Generate flow duration curve for hydrologic time series data
-        
-        PARAMETERS:
-            df = pandas dataframe of interest; must have a date or date-time as the index
-            site = pandas column containing discharge data; must be within df
-            begyear = beginning year of analysis; defaults to 1900
-            endyear = end year of analysis; defaults to 2015
-            normalizer = value to use to normalize discharge; defaults to 1 (no normalization)
-        
-        RETURNS:
-            matplotlib plot displaying the flow duration curve of the data
-            
-        REQUIRES:
-            numpy as np
-            pandas as pd
-            matplotlib.pyplot as plt
-            scipy.stats as sp
-        '''
-        # limit dataframe to only the site
-        df = df[[site]]
-        
-        # filter dataframe to only include dates of interest
-        data = df[(df.index.to_datetime() > pd.datetime(begyear,1,1))&(df.index.to_datetime() < pd.datetime(endyear,1,1))]
-    
-        # remove na values from dataframe
-        data = data.dropna()
-    
-        # take average of each day of year (from 1 to 366) over the selected period of record
-        data['doy']=data.index.dayofyear
-        dailyavg = data[site].groupby(data['doy']).mean()
-            
-        data = np.sort(dailyavg)
-    
-        ## uncomment the following to use normalized discharge instead of discharge
-        #mean = np.mean(data)
-        #std = np.std(data)
-        #data = [(data[i]-np.mean(data))/np.std(data) for i in range(len(data))]
-        data = [(data[i])/normalizer for i in range(len(data))]
-        
-        # ranks data from smallest to largest
-        ranks = sp.rankdata(data, method='average')
-    
-        # reverses rank order
-        ranks = ranks[::-1]
-        
-        # calculate probability of each rank
-        prob = [(ranks[i]/(len(data)+1)) for i in range(len(data)) ]
-        
-        # plot data via matplotlib
-        if plot == True:
-            plt.plot(prob,data,label=site+' '+str(begyear)+'-'+str(endyear))
-        else:
-            pass
-        return prob, data
+def fdc(df, site, begyear=1900, endyear=2015, normalizer=1, plot=True):
+    '''
+    Generate flow duration curve for hydrologic time series data
+
+    PARAMETERS:
+        df = pandas dataframe of interest; must have a date or date-time as the index
+        site = pandas column containing discharge data; must be within df
+        begyear = beginning year of analysis; defaults to 1900
+        endyear = end year of analysis; defaults to 2015
+        normalizer = value to use to normalize discharge; defaults to 1 (no normalization)
+
+    RETURNS:
+        matplotlib plot displaying the flow duration curve of the data
+
+    REQUIRES:
+        numpy as np
+        pandas as pd
+        matplotlib.pyplot as plt
+        scipy.stats as sp
+    '''
+    # limit dataframe to only the site
+    df = df[[site]]
+
+    # filter dataframe to only include dates of interest
+    data = df[(df.index.to_datetime() > pd.datetime(begyear,1,1))&(df.index.to_datetime() < pd.datetime(endyear,1,1))]
+
+    # remove na values from dataframe
+    data = data.dropna()
+
+    # take average of each day of year (from 1 to 366) over the selected period of record
+    data['doy']=data.index.dayofyear
+    dailyavg = data[site].groupby(data['doy']).mean()
+
+    data = np.sort(dailyavg)
+
+    ## uncomment the following to use normalized discharge instead of discharge
+    #mean = np.mean(data)
+    #std = np.std(data)
+    #data = [(data[i]-np.mean(data))/np.std(data) for i in range(len(data))]
+    data = [(data[i])/normalizer for i in range(len(data))]
+
+    # ranks data from smallest to largest
+    ranks = sp.rankdata(data, method='average')
+
+    # reverses rank order
+    ranks = ranks[::-1]
+
+    # calculate probability of each rank
+    prob = [(ranks[i]/(len(data)+1)) for i in range(len(data)) ]
+
+    # plot data via matplotlib
+    if plot == True:
+        plt.plot(prob,data,label=site+' '+str(begyear)+'-'+str(endyear))
+    else:
+        pass
+    return prob, data
 
 class gantt():
     '''
