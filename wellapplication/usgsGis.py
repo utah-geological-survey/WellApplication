@@ -140,6 +140,7 @@ class usgs:
         stations = pd.DataFrame(stat_dict)
         if len(dt) > 1:
             data = pd.concat(f)
+            data.index.set_names('station_id',level=0,inplace=True)
         else:
             data = f[dt[0]['sourceInfo']['siteCode'][0]['value']]
             data['station_id'] = dt[0]['sourceInfo']['siteCode'][0]['value']
