@@ -12,7 +12,7 @@ from httplib import BadStatusLine
 import matplotlib.pyplot as plt
 import numpy as np
 import avgMeths
-import response
+import requests
 import json
 
 class usgs:
