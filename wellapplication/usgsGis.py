@@ -56,88 +56,94 @@ class usgs:
             return DD+MM+SS
         return dms(x[1])+dms(x[0])+'01'
     
-    def get_nwis_stream(self, by, val_list, start_date = '1800-01-01', end_date = ''):
+    def get_nwis(self, val_list, selectType ='dv_site', start_date = '1800-01-01', end_date = ''):
         """
         Request stream gauge data from the USGS NWIS.
         Args:
-            site (str):
-                a valid site is 01585200
-            service (str):
-                can either be 'iv' or 'dv' for instantaneous or daily data.
+            val_list (str or int or list of either):
+                can be a list or 8-digit hucs or stations or single 
+                a valid site is 01585200; a valid huc is 16010204
+            selectType (str):
+                options: 'dv_site','dv_huc','gw_site',or 'gw_huc'
             start_date (str):
-               should take on the form yyyy-mm-dd
+               should take on the form yyyy-mm-dd; default is '1800-01-01'
             end_date (str):
-                should take on the form yyyy-mm-dd
+                should take on the form yyyy-mm-dd; default is today
         Returns:
-            a response object.
-                * response.url: the url we requested data from.
-                * response.status_code:
-                * response.json: the content translated as json
-                * response.ok: "True" when we get a '200'
+            a station and a data Pandas dataframe.
         Raises:
             ConnectionError  due to connection problems like refused connection
             or DNS Error.
 
         Example::
-            >>> from hydrofunctions import hydrofunctions as hf
-            >>> response = hf.get_nwis('01585200', 'dv', '2012-06-01', '2012-07-01')
-            >>> response
-            <respones [200]>
-            >>> response.ok
-            True
-            >>> response.json()
-            *JSON ensues*
+            >>> import wellapplication as wa
+            >>> USGS = wa.usgs()
+            >>> site, data = USGS.get_nwis('01585200', 'dv_site', '2012-06-01', '2012-07-01')
+
         The specification for this service is located here:
         http://waterservices.usgs.gov/rest/IV-Service.html
+        
+        This function was adapted from: https://github.com/mroberge/hydrofunctions
         """
         val_list = self.parsesitelist(val_list)
 
         if end_date == '':
-            dy = datetime.datetime.today()
+            dy = datetime.today()
             end_date = str(dy.year)+'-'+str(dy.month)+'-'+str(dy.day)
 
-        header = {
-            'Accept-encoding': 'gzip',
-            'max-age': '250'
+        header = {'Accept-encoding': 'gzip'}
+
+        
+        valdict = {
+            'dv_site':{'format': 'json', 'sites': val_list, 'parameterCd': '00060',
+                      'startDT': start_date, 'endDT': end_date},
+            'dv_huc':{'format': 'json', 'huc': val_list, 'parameterCd': '00060',
+                      'startDT': start_date, 'endDT': end_date},
+            'gw_site':{'format': 'json', 'sites': val_list, 'siteType':'GW','siteStatus':'all',
+                      'startDT': start_date, 'endDT': end_date},
+            'gw_huc':{'format': 'json', 'huc': val_list, 'siteType':'GW','siteStatus':'all',
+                      'startDT': start_date, 'endDT': end_date}
             }
-
-        if by =='site':
-
-            values = {
-                'format': 'json',
-                'sites': val_list,
-                'parameterCd': '00060',  # represents stream discharge.
-                'startDT': start_date,
-                'endDT': end_date,
-                }
-
-        else by == 'HUC':
-            values = {
-                'format': 'json',
-                'huc': val_list,
-                'parameterCd': '00060',  # represents stream discharge.
-                'startDT': start_date,
-                'endDT': end_date,
-                }
 
 
         url = 'http://waterservices.usgs.gov/nwis/'
-        service = 'dv'
+            
+        if selectType == 'dv_site' or selectType == 'dv_huc':
+            service = 'dv'
+        elif selectType == 'gw_site' or selectType == 'gw_huc':
+            service = 'gwlevels'
         url = url + service + '/?'
-        response_ob = requests.get(url, params=values, headers=header)
+        response_ob = requests.get(url, params=valdict[selectType], headers=header)
 
         nwis_dict = response_ob.json()
 
-        data = nwis_dict['value']['timeSeries'][0]['values'][0]['value']
+        dt = nwis_dict['value']['timeSeries']
 
-        df= pd.DataFrame(data, columns=['dateTime', 'value'])
-        df.index = pd.to_datetime(df.pop('dateTime'))
-        df.value = df.value.astype(float)
+        station_id,lat,lon,srs,station_type,station_nm =  [],[],[],[],[],[]
+        f = {}
+        for i in range(len(dt)):
 
-        df.index.name = 'datetime'
-        df.replace(to_replace='-999999', value=np.nan)
+            station_id.append(dt[i]['sourceInfo']['siteCode'][0]['value'])
+            lat.append(dt[i]['sourceInfo']['geoLocation'][u'geogLocation']['latitude'])
+            lon.append(dt[i]['sourceInfo']['geoLocation'][u'geogLocation']['longitude'])
+            srs.append(dt[i]['sourceInfo']['geoLocation'][u'geogLocation']['srs'])
+            station_type.append(dt[i]['sourceInfo']['siteProperty'][0]['value'])
+            station_nm .append(dt[i]['sourceInfo'][ u'siteName'])
 
-        return df
+            df = pd.DataFrame(dt[i]['values'][0]['value'], columns=['dateTime', 'value'])
+            df.index = pd.to_datetime(df.pop('dateTime'))
+            df.value = df.value.astype(float)
+            df.index.name = 'datetime'
+            df.replace(to_replace='-999999', value=np.nan)
+            f[dt[i]['sourceInfo']['siteCode'][0]['value']] = df
+        stat_dict = {'station_id':station_id,'lat':lat,'lon':lon,'srs':srs,'station_nm':station_nm,'stat_type':station_type}
+        stations = pd.DataFrame(stat_dict)
+        if len(dt) > 1:
+            data = pd.concat(f)
+        else:
+            data = f[dt[0]['sourceInfo']['siteCode'][0]['value']]
+            data['station_id'] = dt[0]['sourceInfo']['siteCode'][0]['value']
+        return stations,data
     
     
     def getInfo(self, html):
