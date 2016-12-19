@@ -96,38 +96,8 @@ class transport:
         wellid = wellinfo[wellinfo['Well']==wellname]['WellID'].values[0]
         return wellname, wellid
     
-    @staticmethod    
-    def hourly_resample(df,bse=0):
-        '''
-        INPUT
-        -----
-        df = Pandas DataFrame containing time series needing resampling
-        bse = base time to set; default is zero (on the hour); 
-        
-        RETURNS
-        -------
-        df = A Pandas DataFrame that has been resampled to every hour, at the minute defined by the base (bse)
-        
-        DESCRIPTION
-        -----------
-        see http://pandas.pydata.org/pandas-docs/dev/generated/pandas.DataFrame.resample.html for more info
-        
-        This function uses pandas powerful time-series manipulation to upsample to every minute, then downsample to every hour, 
-        on the hour.
-        
-        This function will need adjustment if you do not want it to return hourly samples, or if you are sampling more frequently than
-        once per minute.
-        
-        see http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases
-        
-        '''
-        dfResamp = df.resample('1Min', closed='left', base=bse).first()
-        dfResamp = dfResamp.interpolate(method='time')
-        dfResamp = dfResamp.resample('60Min', closed='left', base=bse).first()
-        return dfResamp
-    
     @staticmethod 
-    def hourly_resample_minutes(df,bse=0,minutes=60):
+    def hourly_resample(df,bse=0,minutes=60):
         '''
         INPUT
         -----
@@ -581,25 +551,30 @@ class transport:
                     
         g['DeltaLevel'] = g['BaroEfficiencyLevel'] - g['BaroEfficiencyLevel'][0]
         
-        # Match manual water level to closest date
+        # Match manual water level to closest date ------------------------
         g['MeasuredDTW'] = transport.fcl(manual[manual['WellID']== wellid],min(g.index.to_datetime()))[1]-g['DeltaLevel']
     
-        # Drift Correction
+        # Drift Correction ------------------------
         #lastdtw = g['MeasuredDTW'][-1]
+	# get first and last manual measurements that match 1st and last transducer measurements
         last = transport.fcl(manual[manual['WellID']== wellid],max(g.index.to_datetime()))[1]
         first = transport.fcl(manual[manual['WellID']== wellid],min(g.index.to_datetime()))[1]
+	# get last transducer measurement
         lastg = float(g[g.index.to_datetime()==max(g.index.to_datetime())]['MeasuredDTW'].values)
-        driftlen = len(g.index)
+        # get number of measurements between first and last transducer measurement
+	driftlen = len(g.index)
+	# determine increment of drift for each time step
         g['last_diff_int'] = np.round((lastg-last),4)/np.round(driftlen-1.0,4)
+	# make increment cumulative over duration of transducer measurement
         g['DriftCorrection'] = np.round(g['last_diff_int'].cumsum()-g['last_diff_int'],4)
         print('Max Drift = '+str(g['DriftCorrection'][-1]))
         # Assign well id to column
         g['WellID'] = wellid
         
-        # Get Depth to water below casing
+        # Get Depth to water below casing ------------------------
         g['DTWBelowCasing'] = g['MeasuredDTW'] - g['DriftCorrection']
     
-        # subtract casing height from depth to water below casing
+        # subtract casing height from depth to water below casing ------------------------
         g['DTWBelowGroundSurface'] = g['DTWBelowCasing'] - wellinfo[wellinfo['WellID']==wellid]['Offset'].values[0]
         
         # subtract depth to water below ground surface from well surface elevation
