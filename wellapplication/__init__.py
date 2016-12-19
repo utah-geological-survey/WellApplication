@@ -4,7 +4,7 @@ __version__ = '0.2.23'
 __author__ = 'Paul Inkenbrandt'
 __name__ = 'wellapplication'
 
-from transport import transport
+from transport import *
 from usgs import usgs
 from chem import WQP
 from graphs import piper, fdc, gantt
