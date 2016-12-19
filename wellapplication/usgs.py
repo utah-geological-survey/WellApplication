@@ -412,8 +412,11 @@ class usgs:
         -------
         HUC12, HUC12_Name
         """
+        
+        x =  self.parsesitelist(x)
+        
         values = {
-            'geometry': '-111.406,40.3499',
+            'geometry': x,
             'geometryType':'esriGeometryPoint',
             'inSR':'4326',
             'spatialRel':'esriSpatialRelIntersects',
