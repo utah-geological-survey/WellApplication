@@ -10,16 +10,14 @@ import wellapplication as wa
 
 
 
-class TestStringMethods(unittest.TestCase):
-
-    def __init__(self):
-        USGS = wa.usgs()
-        return USGS
-        
-    def test_USGSdf(self):
-        USGS.HUCdf(16020301)
-        self.assertEqual(USGS.wlMonthPlot, matplotlib.axes._subplots.AxesSubplot)
-            
+class TestMethods(unittest.TestCase):
+    def setUp(self):
+        pass
+    
+    def test_getelev(self):
+        x = [-111.21,41.4]
+        g = wa.getelev(x)
+        self.assertTrue(g > 100.0)
 
 if __name__ == '__main__':
     unittest.main()
