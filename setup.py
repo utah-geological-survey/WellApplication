@@ -35,5 +35,6 @@ setup(name=__name__,
                         "Matplotlib >= 1.4.3", 
                         "xmltodict >= 0.9.2",
                         "scipy >= 0.16.0",
-                        "pyproj >= 1.9.4"],
+                        "pyproj >= 1.9.4"
+                        "requests >= 2.11.1"],
       packages = find_packages(exclude=['contrib', 'docs', 'tests*']))
