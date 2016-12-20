@@ -16,4 +16,4 @@ install:
 
     
 script:
-  - python setup.py test
+  - pytest test/test.py
