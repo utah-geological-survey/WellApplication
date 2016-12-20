@@ -1,4 +1,5 @@
 [![DOI](https://zenodo.org/badge/48931715.svg)](https://zenodo.org/badge/latestdoi/48931715)
+[![Build Status](https://travis-ci.org/inkenbrandt/WellApplication.svg?branch=master)](https://travis-ci.org/inkenbrandt/WellApplication)
 
 # Well Application
 
