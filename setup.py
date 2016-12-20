@@ -48,7 +48,7 @@ setup(name=__name__,
                         "scipy >= 0.16.0",
                         "pyproj >= 1.9.4"
                         "requests >= 2.11.1"],
-      packages = find_packages(exclude=['contrib', 'docs', 'tests*'])
+      packages = find_packages(exclude=['contrib', 'docs', 'tests*']),
       tests_require=['pytest'],
       cmdclass = {'test': pytest})
 
