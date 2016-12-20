@@ -7,6 +7,7 @@ __name__ = 'wellapplication'
 from transport import *
 from usgs import *
 from chem import WQP
+from mesopy import *
 from graphs import piper, fdc, gantt
 import MannKendall
 import avgMeths
