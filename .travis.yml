@@ -14,5 +14,4 @@ env: DEPS="numpy scipy matplotlib pandas statsmodels"
 install: 
   - pip install -r requirements.txt   
 
-script:
-    - py.test
+    
