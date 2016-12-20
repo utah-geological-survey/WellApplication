@@ -6,16 +6,6 @@ from setuptools.command.test import test as TestCommand
 
 from wellapplication import __version__, __name__, __author__
 
-class PyTest(TestCommand):
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-    def run_tests(self):
-        #import here, cause outside the eggs aren't loaded
-        import pytest
-        pytest.main(self.test_args)
-
 # trap someone trying to install flopy with something other
 #  than python 2 or 3
 if not sys.version_info[0] in [2,3]:
@@ -48,9 +38,7 @@ setup(name=__name__,
                         "scipy >= 0.16.0",
                         "pyproj >= 1.9.4"
                         "requests >= 2.11.1"],
-      packages = find_packages(exclude=['contrib', 'docs', 'tests*']),
-      tests_require=['pytest'],
-      cmdclass = {'test': pytest})
+      packages = find_packages(exclude=['contrib', 'docs', 'tests*']))
 
 
 
