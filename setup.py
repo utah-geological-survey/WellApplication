@@ -1,6 +1,5 @@
 import sys
 from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
 # To use:
 #	   python setup.py bdist --format=wininst
 
