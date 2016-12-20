@@ -13,8 +13,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import avgMeths
 import requests
-import json
-
 
 def getelev(x):
     """Uses USGS elevation service to retrieve elevation
