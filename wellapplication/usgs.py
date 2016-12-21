@@ -246,8 +246,8 @@ def get_station_info(val_list, sitetype='sites', datatype=['all']):
     }
 
     url = "https://waterservices.usgs.gov/nwis/site/?"
-    response_ob = requests.get(url, params=valdict[sitetype])
-    linefile = response_ob.iter_lines()
+    resp = requests.get(url, params=valdict[sitetype])
+    linefile = resp.iter_lines()
     numlist = []
     num = 0
     for line in linefile:
@@ -255,7 +255,7 @@ def get_station_info(val_list, sitetype='sites', datatype=['all']):
             numlist.append(num)
         num += 1
     numlist.append(numlist[-1] + 2)
-    siteinfo = pd.read_table(html, sep="\t", skiprows=numlist) 
+    siteinfo = pd.read_table(resp.url, sep="\t", skiprows=numlist) 
 
     return siteinfo
 
