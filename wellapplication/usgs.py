@@ -104,8 +104,7 @@ def get_nwis(val_list, selectType='dv_site', start_date='1800-01-01', end_date='
 
     Example::
         >>> import wellapplication as wa
-        >>> USGS = wa.usgs()
-        >>> site, data = USGS.get_nwis('01585200', 'dv_site', '2012-06-01', '2012-07-01')
+        >>> site, data = wa.get_nwis('01585200', 'dv_site', '2012-06-01', '2012-07-01')
 
     The specification for this service is located here:
     http://waterservices.usgs.gov/rest/IV-Service.html
@@ -160,15 +159,15 @@ def get_nwis(val_list, selectType='dv_site', start_date='1800-01-01', end_date='
         df.index.name = 'datetime'
         df.replace(to_replace='-999999', value=np.nan)
         f[dt[i]['sourceInfo']['siteCode'][0]['value']] = df
-    stat_dict = {'station_id': station_id, 'lat': lat, 'lon': lon, 'srs': srs, 'station_nm': station_nm,
-                 'stat_type': station_type}
+    stat_dict = {'site_no': station_id, 'dec_lat_va': lat, 'dec_long_va': lon, 'dec_coord_datum_cd': srs, 
+                 'station_nm': station_nm, 'data_type_cd': station_type}
     stations = pd.DataFrame(stat_dict)
     if len(dt) > 1:
         data = pd.concat(f)
-        data.index.set_names('station_id', level=0, inplace=True)
+        data.index.set_names('site_no', level=0, inplace=True)
     else:
         data = f[dt[0]['sourceInfo']['siteCode'][0]['value']]
-        data['station_id'] = dt[0]['sourceInfo']['siteCode'][0]['value']
+        data['site_no'] = dt[0]['sourceInfo']['siteCode'][0]['value']
     return stations, data
 
 def getInfo(html):
