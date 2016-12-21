@@ -16,18 +16,17 @@ def mk_test(x, alpha = 0.05):
     this perform the MK (Mann-Kendall) test to check if there is any trend present in 
     data or not
     
-    Input:
+    Args:
         x:   a vector of data
         alpha: significance level
     
-    Output:
+    Returns:
         trend: tells the trend (increasing, decreasing or no trend)
         h: True (if trend is present) or False (if trend is absence)
         p: p value of the sifnificance test
         z: normalized test statistics 
         
-    Examples
-    --------
+    Examples::
       >>> x = np.random.rand(100)
       >>> trend,h,p,z = mk_test(x,0.05) 
       
