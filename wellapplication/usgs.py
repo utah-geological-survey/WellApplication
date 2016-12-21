@@ -247,7 +247,7 @@ def get_station_info(val_list, sitetype='sites', datatype=['all']):
 
     url = "https://waterservices.usgs.gov/nwis/site/?"
     response_ob = requests.get(url, params=valdict[sitetype])
-    linefile = response_ob.readlines()
+    linefile = response_ob.iter_lines()
     numlist = []
     num = 0
     for line in linefile:
