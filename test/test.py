@@ -18,3 +18,8 @@ def test_gethuc():
     x = [-111.21,41.4]
     g = wa.get_huc(x)
     assert len(g[0])>0
+
+def test_USGSID():
+    x = [-111.21,41.4]
+    g = wa.USGSID([-111.21,41.4])
+    assert g == '412400111123601'
