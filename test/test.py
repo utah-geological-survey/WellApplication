@@ -28,7 +28,20 @@ def test_get_nwis():
     val_list = '01585200'
     g = wa.get_nwis(val_list, 'dv_site', '2012-06-01', '2012-07-01')
     assert len(g) == 2
+
+def test_get_nwis_huc():
+    g = wa.get_nwis('16010204', 'gw_huc')
+    assert len(g) == 2
     
 def test_get_station_info():
     assert len(wa.get_station_info(['01585200','10136500'])) == 2
     
+def test_cleanGWL():
+    stat, levs = wa.get_nwis('16010204', 'gw_huc')
+    levs2 = wa.cleanGWL(levs)
+    assert type(levs2.qualifiers[0]) == str
+    
+def test_avg_wl():
+    g = wa.avg_wl('16030006',numObs= 50, grptype = 'monthly', avgtype = 'avgDiffWL')
+    assert len(g)==12
+ 
