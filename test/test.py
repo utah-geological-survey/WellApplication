@@ -44,4 +44,8 @@ def test_cleanGWL():
 def test_avg_wl():
     g = wa.avg_wl('16030006',numObs= 50, grptype = 'monthly', avgtype = 'avgDiffWL')
     assert len(g)==12
- 
+
+def test_mktest():
+    x = range(0,100)
+    trend = wa.MannKendall.mk_test(x,0.05)
+    assert trend.trend == 'increasing'
