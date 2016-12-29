@@ -1,6 +1,7 @@
 [![DOI](https://zenodo.org/badge/48931715.svg)](https://zenodo.org/badge/latestdoi/48931715)
 [![Build Status](https://travis-ci.org/inkenbrandt/WellApplication.svg?branch=master)](https://travis-ci.org/inkenbrandt/WellApplication)
 [![PyPI version](https://badge.fury.io/py/WellApplication.svg)](https://badge.fury.io/py/WellApplication)
+[![Coverage Status](https://coveralls.io/repos/github/inkenbrandt/WellApplication/badge.svg?branch=master)](https://coveralls.io/github/inkenbrandt/WellApplication?branch=master)
 # Well Application
 
 
