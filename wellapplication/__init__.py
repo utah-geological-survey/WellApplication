@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-__version__ = '0.3.5'
+__version__ = '0.3.6'
 __author__ = 'Paul Inkenbrandt'
 __name__ = 'wellapplication'
 
@@ -10,4 +10,3 @@ from chem import WQP
 from mesopy import *
 from graphs import piper, fdc, gantt
 import MannKendall
-import avgMeths

@@ -4,42 +4,49 @@ Created on Sun Jan  3 00:30:36 2016
 
 @author: p
 """
-import urllib2
-import xmltodict
 import pandas as pd
 from datetime import datetime
 from httplib import BadStatusLine
 import matplotlib.pyplot as plt
 import numpy as np
-import avgMeths
 import requests
 
-def getelev(x):
+
+def getelev(x, units='Meters'):
     """Uses USGS elevation service to retrieve elevation
     Args:
         x (array of floats):
             longitude and latitude of point where elevation is desired
-
+        units (str):
+            units for returned value; defaults to Meters; options are 'Meters' or 'Feet'
     Returns:
         ned float elevation of location in meters
+
+    Example::
+        >>> getelev([-111.21,41.4])
+        1951.99
     """
-    elev = "http://ned.usgs.gov/epqs/pqs.php?x=" + str(x[0]) + "&y=" + str(x[1]) + "&units=Meters&output=xml"
-    try:
-        response = urllib2.urlopen(elev)
-        html = response.read()
-        d = xmltodict.parse(html)
-        g = float(d['USGS_Elevation_Point_Query_Service']['Elevation_Query']['Elevation'])
-    except(BadStatusLine):
+    values = {
+        'x': x[0],
+        'y': x[1],
+        'units': units,
+        'output': 'json'
+    }
+
+    elev_url = 'http://ned.usgs.gov/epqs/pqs.php?'
+
+    attempts = 0
+    while attempts < 4:
         try:
-            response = urllib2.urlopen(elev)
-            html = response.read()
-            d = xmltodict.parse(html)
-            g = float(d['USGS_Elevation_Point_Query_Service']['Elevation_Query']['Elevation'])
+            response = requests.get(elev_url, params=values).json()
+            g = float(response['USGS_Elevation_Point_Query_Service']['Elevation_Query']['Elevation'])
+            break
         except(BadStatusLine):
-            print "could not fetch {:}".format(html)
+            print "Connection attempt {:} of 3 failed.".format(attempts)
+            attempts += 1
             g = 0
-            pass
     return g
+
 
 def get_huc(x):
     """Receive the content of ``url``, parse it as JSON and return the object.
@@ -60,11 +67,12 @@ def get_huc(x):
         'returnDistinctValues': 'true',
         'f': 'pjson'
     }
-    
+
     huc_url = 'https://services.nationalmap.gov/arcgis/rest/services/USGSHydroNHDLarge/MapServer/10/query?'
-    #huc_url2 = 'https://services.nationalmap.gov/arcgis/rest/services/nhd/mapserver/8/query?'
+    # huc_url2 = 'https://services.nationalmap.gov/arcgis/rest/services/nhd/mapserver/8/query?'
     response = requests.get(huc_url, params=values).json()
     return response['features'][0]['attributes']['HUC12'], response['features'][0]['attributes']['NAME']
+
 
 def USGSID(x):
     """Parses decimal latitude and longitude values into DDMMSSDDDMMSS01 USGS site id.
@@ -77,19 +85,21 @@ def USGSID(x):
     Returns:
         USGS-style site id (groundwater) DDMMSSDDDMMSS01
     """
+
     def dms(dec):
         DD = str(int(abs(dec)))
         MM = str(int((abs(dec) - int(DD)) * 60)).zfill(2)
         SS = str(int(round((((abs(dec) - int(DD)) * 60) - int(MM)) * 60, 0))).zfill(2)
         if SS == '60':
-            MM = str(int(MM)+1)
+            MM = str(int(MM) + 1)
             SS = '00'
         if MM == '60':
-            DD = str(int(DD)+1)
-            MM = '00' 
+            DD = str(int(DD) + 1)
+            MM = '00'
         return DD + MM + SS
 
     return dms(x[1]) + dms(x[0]) + '01'
+
 
 def get_nwis(val_list, selectType='dv_site', start_date='1800-01-01', end_date=''):
     """Request stream gauge data from the USGS NWIS.
@@ -148,6 +158,7 @@ def get_nwis(val_list, selectType='dv_site', start_date='1800-01-01', end_date='
 
     nwis_dict = response_ob.json()
 
+    # dictionary from json object; each value in this dictionary is a station timeseries
     dt = nwis_dict['value']['timeSeries']
 
     station_id, lat, lon, srs, station_type, station_nm = [], [], [], [], [], []
@@ -160,13 +171,13 @@ def get_nwis(val_list, selectType='dv_site', start_date='1800-01-01', end_date='
         station_type.append(dt[i]['sourceInfo']['siteProperty'][0]['value'])
         station_nm.append(dt[i]['sourceInfo'][u'siteName'])
 
-        df = pd.DataFrame(dt[i]['values'][0]['value'], columns=['dateTime', 'value'])
+        df = pd.DataFrame(dt[i]['values'][0]['value'])
         df.index = pd.to_datetime(df.pop('dateTime'))
         df.value = df.value.astype(float)
         df.index.name = 'datetime'
         df.replace(to_replace='-999999', value=np.nan)
         f[dt[i]['sourceInfo']['siteCode'][0]['value']] = df
-    stat_dict = {'site_no': station_id, 'dec_lat_va': lat, 'dec_long_va': lon, 'dec_coord_datum_cd': srs, 
+    stat_dict = {'site_no': station_id, 'dec_lat_va': lat, 'dec_long_va': lon, 'dec_coord_datum_cd': srs,
                  'station_nm': station_nm, 'data_type_cd': station_type}
     stations = pd.DataFrame(stat_dict)
     if len(dt) > 1:
@@ -177,18 +188,18 @@ def get_nwis(val_list, selectType='dv_site', start_date='1800-01-01', end_date='
         data['site_no'] = dt[0]['sourceInfo']['siteCode'][0]['value']
     return stations, data
 
-def getInfo(html):
+
+def get_info(resp):
     """Downloads data from usgs service as text file; converted to Pandas DataFrame.
     Args:
-        html:
-            location of data to be queried <http://waterservices.usgs.gov>
+        resp (str):
+            response of request
 
     Returns:
         df:
             Pandas DataFrame containing data downloaded from USGS
     """
-
-    linefile = urllib2.urlopen(html).readlines()
+    linefile = resp.iter_lines()
     numlist = []
     num = 0
     for line in linefile:
@@ -196,9 +207,8 @@ def getInfo(html):
             numlist.append(num)
         num += 1
     numlist.append(numlist[-1] + 2)
-    df = pd.read_table(html, sep="\t", skiprows=numlist) 
+    df = pd.read_table(resp.url, sep="\t", skiprows=numlist)
     return df
-
 
 
 def parsesitelist(ListOfSites):
@@ -248,135 +258,137 @@ def get_station_info(val_list, sitetype='sites', datatype=['all']):
     datatype = parsesitelist(datatype)
 
     valdict = {
-        'sites': {'format': 'rdb,1.0', 'sites': val_list, 'hasDataTypeCd':  datatype, 'siteOutput':'expanded'},
-        'huc': {'format': 'rdb,1.0', 'huc': val_list, 'hasDataTypeCd':  datatype, 'siteOutput':'expanded'},
+        'sites': {'format': 'rdb,1.0', 'sites': val_list, 'hasDataTypeCd': datatype, 'siteOutput': 'expanded'},
+        'huc': {'format': 'rdb,1.0', 'huc': val_list, 'hasDataTypeCd': datatype, 'siteOutput': 'expanded'},
     }
 
     url = "https://waterservices.usgs.gov/nwis/site/?"
     resp = requests.get(url, params=valdict[sitetype])
-    linefile = resp.iter_lines()
-    numlist = []
-    num = 0
-    for line in linefile:
-        if line.startswith("#"):
-            numlist.append(num)
-        num += 1
-    numlist.append(numlist[-1] + 2)
-    siteinfo = pd.read_table(resp.url, sep="\t", skiprows=numlist) 
+    siteinfo = get_info(resp)
 
     return siteinfo
 
 
-def cleanGWL(self, data):
-    """
-    Drops water level data of suspect quality based on lev_status_cd
+def xcheck(x):
+    """Converts empty list to empty string and filled list into string of first value"""
+    if type(x) == list:
+        if len(x) == 0:
+            return ''
+        else:
+            return str(x[0])
+    else:
+        return x
 
+
+def cleanGWL(df, colm='qualifiers'):
+    """Drops water level data of suspect quality based on lev_status_cd
     returns Pandas DataFrame
+    Args:
+        df (pandas dataframe):
+            groundwater dataframe
+        colm (str):
+            column to parse; defaults to 'qualifiers'
+    Returns:
+        sitno (str):
+            subset of input dataframe as new dataframe
+
     """
-    CleanData = data[~data['lev_status_cd'].isin(['Z', 'R', 'V', 'P', 'O', 'F', 'W', 'G', 'S', 'C', 'E', 'N'])]
+    data = df.copy(deep=True)
+    data[colm] = data[colm].apply(lambda x: xcheck(x), 1)
+    CleanData = data[~data[colm].isin(['Z', 'R', 'V', 'P', 'O', 'F', 'W', 'G', 'S', 'C', 'E', 'N'])]
     return CleanData
 
-class usgs_stats:
-    def WLStatdf(self, siteinfo, data):
-        """Generates average water level statistics for a huc or list of hucs
+def avg_wl(val_list, selectType='gw_huc',numObs = 50, avgtype = 'stdWL', grptype = 'bytime', grper = '12M'):
+    """calculates standardized statistics for a list of stations or a huc from the USGS
+    """
+    siteinfo, data = get_nwis(val_list, selectType)
+    data = cleanGWL(data)
+    #stationWL = pd.merge(siteinfo, data, on = 'site_no')
+    data.reset_index(inplace=True)
+    data.set_index(['datetime'], inplace=True)
+    # get averages by year, month, and site number
+    site_size = data.groupby('site_no').size()
+    wl_long = data[data['site_no'].isin(list(site_size[site_size >= numObs].index.values))]
+    siteList = list(wl_long.site_no.unique())
+    for site in siteList:
+        mean = wl_long.ix[wl_long.site_no==site, 'value'].mean()
+        std = wl_long.ix[wl_long.site_no==site, 'value'].std()
+        wl_long.ix[wl_long.site_no==site, 'avgDiffWL'] = wl_long.ix[wl_long.site_no==site, 'value'] - mean
+        wl_long.ix[wl_long.site_no==site, 'stdWL'] = wl_long.ix[wl_long.site_no==site, 'avgDiffWL']/std
 
-        Args:
-            siteinfo:
-                Pandas DataFrame of site information of nwis sites (made using a get station info function)
-            data:
-                Pandas DataFrame of data from nwis sites (made using a get station data function)
+    if grptype == 'bytime':
+        grp = pd.TimeGrouper(grper)
+    elif grptype == 'monthly':
+        grp = wl_long.index.month
+    else:
+        grp = grptype
+    wl_stats = wl_long.groupby([grp])[avgtype].agg({'mean': np.mean, 'median': np.median,
+                                                                    'standard': np.std,
+                                                                    'cnt': (lambda x: np.count_nonzero(~np.isnan(x))),
+                                                                    'err_pls': (lambda x: np.mean(x)+(np.std(x)*1.96)),
+                                                                    'err_min': (lambda x: np.mean(x)-(np.std(x)*1.96))})
 
-        Returns:
-            wlLongStatsGroups:
-                Pandas DataFrame of standardized water levels over duration of measurement
-            wlLongStatsGroups2:
-                Pandas DataFrame of change in average water levels over duration of measurement
-        """
-
-        try:
-            data.drop([u'agency_cd', u'site_tp_cd'], inplace=True, axis=1)
-        except(ValueError):
-            pass
-        stationWL = pd.merge(data, siteinfo, on='site_no', how='left')
-
-        stationWL['date'], stationWL['Year'], stationWL['Month'] = zip(
-            *stationWL['lev_dt'].apply(lambda x: avgMeths.getyrmnth(x), 1))
-        stationWL.reset_index(inplace=True)
-        stationWL.set_index('date', inplace=True)
-        stationWL = self.cleanGWL(stationWL)
-        # get averages by year, month, and site number
-        grpstat = stationWL.groupby('site_no')['lev_va'].agg(
-            [np.std, np.mean, np.median, np.min, np.max, np.size]).reset_index()
-        USGS_Site_Inf = stationWL.groupby('site_no')['lev_dt'].agg([np.min, np.max, np.size]).reset_index()
-        USGS_Site_Info = USGS_Site_Inf[USGS_Site_Inf['size'] > 50]
-        wlLong = stationWL[stationWL['site_no'].isin(list(USGS_Site_Info['site_no'].values))]
-        wlLongStats = pd.merge(wlLong, grpstat, on='site_no', how='left')
-        wlLongStats['stdWL'] = wlLongStats[['lev_va', 'mean', 'std']].apply(lambda x: avgMeths.stndrd(x), 1)
-        wlLongStats['YRMO'] = wlLongStats[['Year', 'Month']].apply(lambda x: avgMeths.yrmo(x), 1)
-        wlLongStats['date'] = wlLongStats[['Year', 'Month']].apply(lambda x: avgMeths.adddate(x), 1)
-        self.wlMonthPlot = wlLongStats.groupby(['Month'])['stdWL'].mean().to_frame().plot()
-        wlLongStats['levDiff'] = wlLongStats['lev_va'].diff()
-
-        wlLongStatsGroups = wlLongStats.groupby(['date'])['stdWL'].agg({'mean': np.mean, 'median': np.median,
-                                                                        'standard': np.std, 'cnt': (
-                lambda x: np.count_nonzero(~np.isnan(x))),
-                                                                        'err': (lambda x: 1.96 * avgMeths.sumstats(x))})
-        wlLongStatsGroups2 = wlLongStats.groupby(['date'])['levDiff'].agg(
-            {'mean': np.mean, 'median': np.median, 'standard': np.std,
-             'cnt': (lambda x: np.count_nonzero(~np.isnan(x))), 'err': (lambda x: 1.96 * avgMeths.sumstats(x))})
-
-        wlLongStatsGroups['meanpluserr'] = wlLongStatsGroups['mean'] + wlLongStatsGroups['err']
-        wlLongStatsGroups['meanminuserr'] = wlLongStatsGroups['mean'] - wlLongStatsGroups['err']
-
-        wlLongStatsGroups2['meanpluserr'] = wlLongStatsGroups2['mean'] + wlLongStatsGroups2['err']
-        wlLongStatsGroups2['meanminuserr'] = wlLongStatsGroups2['mean'] - wlLongStatsGroups2['err']
-
-        return wlLongStatsGroups, wlLongStatsGroups2
-
-    def HUCplot(self, siteinfo, data):
-        """Generates Statistics plots of NWIS WL data
-
-        Args:
-            siteinfo:
-                pandas dataframe of site information of nwis sites (made using a get station info function)
-            data:
-                pandas dataframe of data from nwis sites (made using a get station data function)
-
-        Returns:
-            self.stand = standardized statistics
-            self.diffs = difference statistics
-            self.zPlot = seasonal variation plot
-            self.wlPlot = plots of stadardized and differenced wl variations of duration of measurement
-        """
-        df1, df2 = self.WLStatdf(siteinfo, data)
-        wlLongSt = df1[df1['cnt'] > 2]
-        wlLongSt2 = df2[df2['cnt'] > 2]
-
-        self.stand = wlLongSt
-        self.diffs = wlLongSt2
-
-        fig1 = plt.figure()
-        x = wlLongSt.index
-        y = wlLongSt['mean']
-        plt.plot(x, y, label='Average Groundwater Level Variation')
-        plt.fill_between(wlLongSt.index, wlLongSt['meanpluserr'], wlLongSt['meanminuserr'],
-                         facecolor='blue', alpha=0.4, linewidth=0.5, label="Std Error")
-        plt.grid(which='both')
-        plt.ylabel('Depth to Water z-score')
-        plt.xticks(rotation=45)
-        self.zPlot = fig1
-
-        fig2 = plt.figure()
-        x = wlLongSt2.index
-        y = wlLongSt2['mean']
-        plt.plot(x, y, label='Average Groundwater Level Changes')
-        plt.fill_between(wlLongSt.index, wlLongSt2['meanpluserr'], wlLongSt2['meanminuserr'],
-                         facecolor='blue', alpha=0.4, linewidth=0.5, label="Std Error")
-        plt.grid(which='both')
-        plt.ylabel('Change in Average Depth to Water (ft)')
-        plt.xticks(rotation=45)
-        self.wlPlot = fig2
-
-        return fig1, fig2, wlLongSt, wlLongSt2
+    return wl_stats
 
 
+def plt_avg_wl(grpd, beg='', end=''):
+    x2 = grpd.index
+    y2 = grpd['mean']
+    y3 = grpd['median']
+    snakegrp = grpd.median().to_frame()
+    atitle = 'Deviation from mean water level (ft)'
+
+    SIZE = 11
+    matplotlib.rc('font', size=SIZE)
+    matplotlib.rc('pdf', fonttype=42)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    plt.plot(x2, y3, '.-', color='green', label='Median')
+    ax.plot(x2, y2, '.-', color='red', label='Average')
+    ax.fill_between(x2, grpd['err_min'], grpd['err_pls'], alpha=0.2, label='2 Standard Deviations', linewidth=0)
+
+    # ax1.set_ylim(3.5,-3.5)
+    ax.set_ylabel(atitle, color='red')
+    ax.invert_yaxis()
+    ax.grid()
+
+    if len(grpd) == 12 and type(grpd.index[0]) == np.int64:
+        plt.xlim(0, 13)
+        plt.xticks(range(1, 13, 1))
+        plt.grid()
+        ax.set_xlabel('Month')
+        medlist = grpd['median'].values
+        for i in range(len(grpd.index)):
+            plt.text(grpd.index[i], medlist[i] - 3.2, 'n = ' + str(int(list(grpd['cnt'].values)[i])),
+                     horizontalalignment='center')
+        plt.legend()
+    else:
+        if beg == '':
+            beg = grpd.index.min
+        else:
+            beg = pd.datetime(*beg)
+        if end == '':
+            end = pd.datetime.today()
+        else:
+            end = pd.datetime(*end)
+
+        ax2 = ax.twinx()
+        ax2.plot(x2, grpd['cnt'], '.-', label='Observations count')
+        top = int(round(grpd['cnt'].max(), -1))
+        ax2.set_ylim(0, top * 3)
+        ax2.set_yticks(range(0, top + top / 10, top / 10))
+        ax2.set_ylabel('Number of Observations', color='blue')
+        ax2.yaxis.set_label_coords(1.04, 0.2)
+        ax.set_xlim(beg, end)
+        date_range = pd.date_range(beg, end, freq='36M')
+        date_rang = date_range.map(lambda t: t.strftime('%Y-%m-%d'))
+        ax.set_xticks(date_rang)
+        ax.set_xlabel('date')
+        # ask matplotlib for the plotted objects and their labels
+        lines, labels = ax.get_legend_handles_labels()
+        lines2, labels2 = ax2.get_legend_handles_labels()
+        ax2.legend(lines + lines2, labels + labels2, loc=0)
+    plt.tight_layout()
+    return fig

@@ -10,21 +10,21 @@ import numpy as np
 import datetime
 
 class WQP:
-    ''' 
-    WQP manipulates and imports data from this site: <a href=http://www.waterqualitydata.us/>WQP</a> 
-    '''
+    """
+    WQP manipulates and imports data from this site: <a href=http://www.waterqualitydata.us/>WQP</a>
+    """
     @staticmethod
-    def datetimefix(x,format):
-        '''
+    def datetimefix(x,form):
+        """
         This script cleans date-time errors
-        
+
         input
         x = date-time string
         format = format of date-time string
-        
-        output 
+
+        output
         formatted datetime type
-        '''
+        """
         d = str(x[0]).lstrip().rstrip()[0:10]
         t = str(x[1]).lstrip().rstrip()[0:5].zfill(5)
         try:
@@ -43,7 +43,7 @@ class WQP:
             t = "00:00"
         else:
             t = t[0:2].zfill(2) + ":" + t[3:5]
-        return datetime.datetime.strptime(d + " " + t, format)    
+        return datetime.datetime.strptime(d + " " + t, form)
     
     @staticmethod
     def parnorm(x):
@@ -81,23 +81,22 @@ class WQP:
     
     @staticmethod
     def WQPimportRes(csv):
-        '''
-        Bring data from WQP site into a Pandas Dataframe for analysis
-        
+        """Bring data from WQP site into a Pandas DataFrame for analysis
+
         INPUT
         -----
         csv = path to csv file containing WQP data download
-        
+
         RETURNS
         -------
         df = dataframe containing WQP data
-        '''
+        """
         
         # set data types
         Rdtypes = {"OrganizationIdentifier":np.str_, "OrganizationFormalName":np.str_, "ActivityIdentifier":np.str_, 
                "ActivityStartTime/Time":np.str_,
                "ActivityTypeCode":np.str_, "ActivityMediaName":np.str_, "ActivityMediaSubdivisionName":np.str_, 
-               "ActivityStartDate":np.str_, "ActivityStartTime/Time":np.str_, "ActivityStartTime/TimeZoneCode":np.str_, 
+               "ActivityStartDate":np.str_, "ActivityStartTime/TimeZoneCode":np.str_,
                "ActivityEndDate":np.str_, "ActivityEndTime/Time":np.str_, "ActivityEndTime/TimeZoneCode":np.str_, 
                "ActivityDepthHeightMeasure/MeasureValue":np.float16, "ActivityDepthHeightMeasure/MeasureUnitCode":np.str_, 
                "ActivityDepthAltitudeReferencePointText":np.str_, "ActivityTopDepthHeightMeasure/MeasureValue":np.float16, 
@@ -133,17 +132,17 @@ class WQP:
     
     @staticmethod
     def WQPmassageResults(df):
-        '''
+        """
         Massage WQP result data for analysis
-        
+
         INPUT
         -----
         df = dataframe containing raw WQP data
-        
+
         RETURNS
         -------
         df = dataframe containing cleaned up WQP data
-        '''
+        """
         # Map new names for columns
         ResFieldDict = {"AnalysisStartDate":"AnalysisDate", "ResultAnalyticalMethod/MethodIdentifier":"AnalytMeth", 
                 "ResultAnalyticalMethod/MethodName":"AnalytMethId", "ResultDetectionConditionText":"DetectCond", 
@@ -160,8 +159,7 @@ class WQP:
                 "ActivityStartTime/Time":"SampleTime", "ActivityMediaSubdivisionName":"SampMedia", 
                 "SampleCollectionMethod/MethodIdentifier":"SampMeth", "SampleCollectionMethod/MethodName":"SampMethName", 
                 "ActivityTypeCode":"SampType", "MonitoringLocationIdentifier":"StationId", 
-                "ResultMeasure/MeasureUnitCode":"Unit", "USGSPCode":"USGSPCode",
-                "ActivityStartDate":"StartDate","ActivityStartTime/Time":"StartTime"} 
+                "ResultMeasure/MeasureUnitCode":"Unit", "USGSPCode":"USGSPCode"}
                 
         # Rename Data
         df1 = df.rename(columns=ResFieldDict)
@@ -204,17 +202,17 @@ class WQP:
         
     @staticmethod
     def WQPmassageStations(df):
-        '''
+        """
         Massage WQP station data for analysis
-        
+
         INPUT
         -----
         df = dataframe containing raw WQP data
-        
+
         RETURNS
         -------
         df = dataframe containing cleaned up WQP data
-        '''
+        """
         StatFieldDict = {"MonitoringLocationIdentifier":"StationId", "AquiferName":"Aquifer", "AquiferTypeName":"AquiferType", 
              "ConstructionDateText":"ConstDate", "CountyCode":"CountyCode", "WellDepthMeasure/MeasureValue":"Depth", 
              "WellDepthMeasure/MeasureUnitCode":"DepthUnit", "VerticalMeasure/MeasureValue":"Elev", 
@@ -237,8 +235,7 @@ class WQP:
         
         df.drop(statdroplist,inplace=True,axis=1)
         
-        TypeDict = {"Stream: Canal":"Stream", "River/Stream":"Stream", 
-            "Stream: Canal":"Stream", "Well: Test hole not completed as a well":"Well"}
+        TypeDict = {"River/Stream":"Stream", "Stream: Canal":"Stream", "Well: Test hole not completed as a well":"Well"}
 
         # Make station types in the StationType field consistent for easier summary and compilation later on.
         df.StationType = df["StationType"].apply(lambda x: TypeDict.get(x,x),1)

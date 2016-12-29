@@ -27,8 +27,8 @@ def xle_head_table(folder):
     for fn in next(os.walk(folder))[2]:
         filenames.append(os.path.join(folder, fn))
 
-    instType, modelNum, serialNum, firmWare, project, well, stopTime, batteryPct = [], [], [], [], [], [], [], []
-
+    instType, downld_inst, modelNum, serialNum, firmWare,  = [], [], [], [], []
+    project, well, startTime, stopTime, batteryPct = [],[],[],[],[]
     for infile in filenames:
 
         # get the extension of the input file
@@ -39,6 +39,7 @@ def xle_head_table(folder):
                 # parse xml
                 obj = xmltodict.parse(fd.read(), encoding="ISO-8859-1")
             # navigate through xml to the data
+            downld_inst.append(obj['File_info']['Created_by'])
             instType.append(obj['Body_xle']['Instrument_info']['Instrument_type'])
             modelNum.append(obj['Body_xle']['Instrument_info']['Model_number'])
             serialNum.append(obj['Body_xle']['Instrument_info']['Serial_number'])
@@ -46,10 +47,12 @@ def xle_head_table(folder):
             firmWare.append(obj['Body_xle']['Instrument_info']['Firmware'])
             project.append(obj['Body_xle']['Instrument_info_data_header']['Project_ID'])
             well.append(obj['Body_xle']['Instrument_info_data_header']['Location'])
+            startTime.append(obj['Body_xle']['Instrument_info_data_header']['Stop_time'])
             stopTime.append(obj['Body_xle']['Instrument_info_data_header']['Stop_time'])
     properties = pd.DataFrame(
         {'instType': instType, 'modelNum': modelNum, 'serialNum': serialNum, 'firmWare': firmWare,
-         'project': project, 'well': well, 'stopTime': stopTime, 'batteryPct': batteryPct})
+         'project': project, 'well': well, 'stopTime': stopTime, 'batteryPct': batteryPct,
+         'downloadInstrument':downld_inst,'startTime':startTime})
 
     return properties
 
