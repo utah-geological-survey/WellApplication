@@ -23,3 +23,12 @@ def test_USGSID():
     x = [-111.21,41.4]
     g = wa.USGSID([-111.21,41.4])
     assert g == '412400111123601'
+
+def test_get_nwis():
+    val_list = '01585200'
+    g = wa.get_nwis(val_list, 'dv_site', '2012-06-01', '2012-07-01')
+    assert len(g) == 2
+    
+def test_get_station_info():
+    assert len(get_station_info(['01585200','10136500'])) == 2
+    
