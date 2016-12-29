@@ -18,7 +18,6 @@ install:
     
 script:
   - pytest test/test.py
-  - coverage run test/test.py
 
 after_success:
   - codecov
