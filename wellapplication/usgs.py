@@ -338,10 +338,6 @@ def plt_avg_wl(grpd, beg='', end=''):
     snakegrp = grpd.median().to_frame()
     atitle = 'Deviation from mean water level (ft)'
 
-    SIZE = 11
-    matplotlib.rc('font', size=SIZE)
-    matplotlib.rc('pdf', fonttype=42)
-
     fig = plt.figure()
     ax = fig.add_subplot(111)
 
