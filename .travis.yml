@@ -12,11 +12,16 @@ before_install:
 env: DEPS="numpy scipy matplotlib pandas statsmodels"
 
 install: 
+  - pip install codecov
   - pip install -r requirements.txt   
 
     
 script:
   - pytest test/test.py
+  - coverage run test/test.py
+
+after_success:
+  - codecov
   
 deploy:
   provider: pypi
