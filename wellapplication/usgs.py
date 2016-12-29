@@ -81,6 +81,12 @@ def USGSID(x):
         DD = str(int(abs(dec)))
         MM = str(int((abs(dec) - int(DD)) * 60)).zfill(2)
         SS = str(int(round((((abs(dec) - int(DD)) * 60) - int(MM)) * 60, 0))).zfill(2)
+        if SS == '60':
+            MM = str(int(DD)+1)
+            SS = '00'
+        if MM == '60':
+            DD = str(int(DD)+1)
+            MM = '00' 
         return DD + MM + SS
 
     return dms(x[1]) + dms(x[0]) + '01'
