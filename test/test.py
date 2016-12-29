@@ -30,5 +30,5 @@ def test_get_nwis():
     assert len(g) == 2
     
 def test_get_station_info():
-    assert len(get_station_info(['01585200','10136500'])) == 2
+    assert len(wa.get_station_info(['01585200','10136500'])) == 2
     
