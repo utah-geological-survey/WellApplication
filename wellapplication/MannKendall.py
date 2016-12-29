@@ -27,7 +27,9 @@ def mk_test(x, alpha = 0.05):
         
     Examples::
       >>> x = np.random.rand(100)
-      >>> trend,h,p,z = mk_test(x,0.05) 
+      >>> trend = mk_test(x,0.05)
+      >>> print(trend.trend)
+      increasing
       
     Credit: http://pydoc.net/Python/ambhas/0.4.0/ambhas.stats/
     """
