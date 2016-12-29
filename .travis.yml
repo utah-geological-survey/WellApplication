@@ -13,11 +13,12 @@ env: DEPS="numpy scipy matplotlib pandas statsmodels"
 
 install: 
   - pip install codecov
+  - pip install pytest-cov
   - pip install -r requirements.txt   
 
     
 script:
-  - pytest test/test.py
+  - pytest test/test.py --cov=./
 
 after_success:
   - codecov
