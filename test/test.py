@@ -86,5 +86,5 @@ def test_mkts():
 
     usgsP['PO4'] = pd.to_numeric(usgsP['PO4'])
     usgsP.dropna(inplace=True)
-    g = wa.mk_ts(usgsP, 'PO4', 'month', 'year',0.05)
+    g = wa.MannKendall.mk_ts(usgsP, 'PO4', 'month', 'year',0.05)
     assert g.S == -87
