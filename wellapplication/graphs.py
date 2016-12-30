@@ -173,7 +173,7 @@ class piper:
 
         return df
 
-    def piperplot(self, df):
+    def piperplot(self, df,  type_col = ''):
 
         self.fillMissing(df)
         self.convertIons(df)
@@ -185,10 +185,17 @@ class piper:
         SO4EC = df['SO4EC'].values
         NaKEC = df['NaKEC'].values
         SO4ClEC = df[['ClEC', 'SO4EC']].apply(lambda x: x[0] + x[1], 1).values
-
-        Elev = len(df) * [0]  # Fix this
-        stationtypes = list(df['type'].unique())
-
+        
+        num = len(df)
+        Elev = num * [0]  # Fix this
+        
+        if type_col == '':
+            typ = ['Station']*num
+            stationtypes = ['Station]
+        else:
+            stationtypes = list(df['type'].unique())
+            typ = df['type'].values
+                            
         # Change default settings for figures
         plt.rc('xtick', labelsize=10)
         plt.rc('ytick', labelsize=10)
@@ -218,14 +225,14 @@ class piper:
 
         # count variable for legend (n)
         # nstatTypes = len(list(set(stationtypes)))
-        typeSet = [0] * len(stationtypes)
-        # nstatTypes = [typ.count(i) for i in stationtypes]
-        typ = []
+        #typeSet = [0] * len(stationtypes)
+        nstatTypes = [typ.count(i) for i in stationtypes]
+
         typdict = {}
         nstatTypesDict = {}
         for i in range(len(stationtypes)):
             typdict[stationtypes[i]] = mrkrSymbl[i]
-            nstatTypesDict[stationtypes[i]] = str(typeSet[i])
+            nstatTypesDict[stationtypes[i]] = str(nstatTypes[i])
 
         # CATIONS-----------------------------------------------------------------------------
         # 2 lines below needed to create 2nd y-axis (ax1b) for first subplot
