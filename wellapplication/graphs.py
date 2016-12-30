@@ -194,7 +194,7 @@ class piper:
 
         if type_col == '':
             typ = ['Station']*num_samps
-            stationtypes = ['Station]
+            stationtypes = ['Station']
         else:
             stationtypes = list(df[type_col].unique())
             typ = df[type_col].values
