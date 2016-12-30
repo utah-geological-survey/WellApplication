@@ -173,7 +173,7 @@ class piper:
 
         return df
 
-    def piperplot(self, df,  type_col = ''):
+    def piperplot(self, df,  type_col = '', var_col=''):
 
         self.fillMissing(df)
         self.convertIons(df)
@@ -186,15 +186,18 @@ class piper:
         NaKEC = df['NaKEC'].values
         SO4ClEC = df[['ClEC', 'SO4EC']].apply(lambda x: x[0] + x[1], 1).values
         
-        num = len(df)
-        Elev = num * [0]  # Fix this
-        
+        num_samps = len(df)
+        if var_col == '':
+            Elev = ''
+        else:
+            Elev = df[var_col].values
+
         if type_col == '':
-            typ = ['Station']*num
+            typ = ['Station']*num_samps
             stationtypes = ['Station]
         else:
-            stationtypes = list(df['type'].unique())
-            typ = df['type'].values
+            stationtypes = list(df[type_col].unique())
+            typ = df[type_col].values
                             
         # Change default settings for figures
         plt.rc('xtick', labelsize=10)
@@ -215,7 +218,7 @@ class piper:
         if len(Elev) > 0:
             vart = Elev
         else:
-            vart = [1] * len(df)
+            vart = [1] * len(num_samps)
         cNorm = plt.Normalize(vmin=min(vart), vmax=max(vart))
         cmap = plt.cm.coolwarm
         # pdf = PdfPages(fileplace)
