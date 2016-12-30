@@ -37,7 +37,8 @@ setup(name=__name__,
                         "scipy >= 0.16.0",
                         "statsmodels >= 0.6.0",
                         "pyproj >= 1.9.4",
-                        "requests >= 2.11.1"],
+                        "requests >= 2.11.1",
+                        "xlrd >= 0.9.4"],
       packages = find_packages(exclude=['contrib', 'docs', 'tests*']))
 
 
