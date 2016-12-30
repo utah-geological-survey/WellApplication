@@ -91,7 +91,7 @@ def test_mkts():
 def test_pipr():
     import pandas as pd
     chem = pd.read_excel('https://nevada.usgs.gov/tech/excelforhydrology/WaterQualityTools/PiperPlot-QW.XLS',1,skiprows=3,
-              parse_cols=[0,1,2,3,4,5,12,13,14,15,16])
+                         parse_cols=[0,1,2,3,4,5,12,13,14,15,16])
     pipr = wa.piper()    
     pipr.piperplot(chem,type_col='Group')
     type(pipr.plot) == matplotlib.figure.Figure
