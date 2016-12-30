@@ -89,10 +89,3 @@ def test_mkts():
     usgsP.dropna(inplace=True)
     g = wa.MannKendall.mk_ts(usgsP, 'PO4', 'month', 'year',0.05)
     assert g.S == -87
-def test_pipr():
-    import pandas as pd
-    chem = pd.read_excel('https://nevada.usgs.gov/tech/excelforhydrology/WaterQualityTools/PiperPlot-QW.XLS',1,skiprows=3,
-                         parse_cols=[0,1,2,3,4,5,12,13,14,15,16])
-    pipr = wa.piper()    
-    pipr.piperplot(chem,type_col='Group')
-    type(pipr.plot) == matplotlib.figure.Figure
