@@ -45,6 +45,10 @@ def test_avg_wl():
     g = wa.avg_wl('16030006',numObs= 50, grptype = 'monthly', avgtype = 'avgDiffWL')
     assert len(g)==12
 
+def test_plt_avg_wl():
+    g = wa.avg_wl('16030006',numObs= 50, grptype = 'monthly', avgtype = 'avgDiffWL')
+    assert type(wa.plt_avg_wl(g)) == matplotlib.figure.Figure
+
 def test_mktest():
     x = range(0,100)
     trend = wa.MannKendall.mk_test(x,0.05)
