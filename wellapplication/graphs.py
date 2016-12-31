@@ -94,13 +94,10 @@ class recess:
 class piper:
     """
     Created on Thu May 29 10:57:49 2014
-
     Hydrochemistry - Construct Rectangular Piper plot
-
     Adopted from: Ray and Mukherjee (2008) Groundwater 46(6): 893-896 
     and from code found at:
     http://python.hydrology-amsterdam.nl/scripts/piper_rectangular.py
-
     Based on code by:
     B.M. van Breukelen <b.m.vanbreukelen@vu.nl>  
       
@@ -108,7 +105,7 @@ class piper:
 
     def __init__(self):
 
-        self.fieldnames = [u'Na', u'K', u'Ca', u'Mg', u'Cl', u'HCO3', u'CO3', u'SO4']
+        self.fieldnames = [u'Na', u'K', u'NaK', u'Ca', u'Mg', u'Cl', u'HCO3', u'CO3', u'SO4']
         self.anions = ['Cl', 'HCO3', 'CO3', 'SO4']
         self.cations = ['Na', 'K', 'Ca', 'Mg', 'NaK']
         print('ok')
@@ -146,11 +143,10 @@ class piper:
             if name in df.columns:
                 df1[name + '_meq'] = df1[name].apply(lambda x: float(d.get(name, 0)) * x, 1)
 
-        if 'Na_meq' in df1.columns and 'K_meq' in df1.columns:
-            if df1['Na_meq'].sum == 0 and df1['K_meq'].sum == 0 and df1['NaK_meq'] != 0:
-                pass
-            else:
-                df1['NaK_meq'] = df1[['Na_meq', 'K_meq']].apply(lambda x: x[0] + x[1], 1)
+        if df1['NaK_meq'].sum > 0:
+            pass
+        else:
+            df1['NaK_meq'] = df1[['Na_meq', 'K_meq']].apply(lambda x: x[0] + x[1], 1)
 
         df1['anions'] = 0
         df1['cations'] = 0
@@ -230,16 +226,13 @@ class piper:
                      '.', 'o', '*', 'v', '^', '+', 's', ',', '.', 'o', '*']
 
         # count variable for legend (n)
-        # nstatTypes = len(list(set(stationtypes)))
-        #typeSet = [0] * len(stationtypes)
-        nstatTypes = [typ.size(i) for i in stationtypes]
-
+        unique, counts = np.unique(typ, return_counts=True)
+        nstatTypesDict = dict(zip(unique, counts))
+ 
         typdict = {}
-        nstatTypesDict = {}
         for i in range(len(stationtypes)):
             typdict[stationtypes[i]] = mrkrSymbl[i]
-            nstatTypesDict[stationtypes[i]] = str(nstatTypes[i])
-
+ 
         # CATIONS-----------------------------------------------------------------------------
         # 2 lines below needed to create 2nd y-axis (ax1b) for first subplot
         ax1 = fig.add_subplot(131)
@@ -280,7 +273,7 @@ class piper:
 
         if len(typ) > 0:
             for j in range(len(typ)):
-                labs = typ[j] + " n= " + nstatTypesDict[typ[j]]
+                labs =  "{:} n= {:}".format(typ[j],nstatTypesDict[typ[j]])
                 if float(nstatTypesDict[typ[j]]) > 1:
                     s = ax.scatter(ClEC[j], SO4EC[j], s=markSize, c=vart[j], cmap=cmap, norm=cNorm,
                                    marker=typdict[typ[j]], label=labs, linewidths=lineW)
@@ -333,23 +326,24 @@ class piper:
         # Add colorbar below legend
         # [left, bottom, width, height] where all quantities are in fractions of figure width and height
 
-
-        if len(Elev) > 0:
-            cax = fig.add_axes([0.25, 0.10, 0.50, 0.02])
-            cb1 = plt.colorbar(s, cax=cax, cmap=cmap, norm=cNorm, orientation='horizontal')  # use_gridspec=True
-            cb1.set_label("Test", size=8)
-
         if len(typ) > 0:
             handles, labels = ax.get_legend_handles_labels()
             by_label = OrderedDict(zip(labels, handles))
 
             plt.legend(by_label.values(), by_label.keys(), loc='lower center', ncol=5, shadow=False, fancybox=True,
-                       bbox_to_anchor=(0.5, 0.6), scatterpoints=1)
+                       bbox_to_anchor=(0.5, -0.3), scatterpoints=1)
+
+        if len(Elev) > 0:
+            cax = fig.add_axes([0.25, 0.10, 0.50, 0.02])
+            cb1 = plt.colorbar(s, cax=cax, cmap=cmap, norm=cNorm, orientation='horizontal')  # use_gridspec=True
+            cb1.set_label(var_col, size=8)
+
+
 
         self.plot = fig
         self.df = df
 
-
+        
 def fdc(df, site, begyear=1900, endyear=2015, normalizer=1, plot=True):
     """Generate flow duration curve for hydrologic time series data
 
