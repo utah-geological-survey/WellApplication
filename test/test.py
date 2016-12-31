@@ -129,3 +129,9 @@ def test_gannt():
 def test_recess():
     cession = wa.graphs.recess()
     assert cession.ymd[0] > 2000
+
+def test_reccur():
+    cession = wa.graphs.recess()
+    df = wa.get_nwis('01585200',selectType='dv_site', start_date='1968-01-01', end_date='1968-06-01')[1]
+    df['value'].plot()
+    type(cession.recession(df,'value',[1968,1,15],[1968,1,20])[1]) == pd.indexes.numeric.Float64Index
