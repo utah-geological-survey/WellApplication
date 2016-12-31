@@ -101,7 +101,7 @@ def test_piper():
     chem3 = pipr.ionPercentage(chem2)
     assert "CO3EC" in list(chem3.columns)
     
-def test_pipe()
+def test_pipe():
     pipr = piper()
     Chem =  {'Type':[1,2,2,3], 'Cl':[1.72,0.90,4.09,1.52], 'HCO3':[4.02,1.28,4.29,3.04], 
              'SO4':[0.58,0.54,0.38,0.46], 'NaK':[1.40,0.90,3.38,2.86], 'Ca':[4.53,None,4.74,1.90], 
@@ -114,3 +114,10 @@ def test_pipe()
 def test_fdc():
     sites,levs = wa.get_nwis('01585200')
     assert len(wa.fdc(levs,'value')[0]) > 100
+
+def test_gannt():
+    sites,levs = wa.get_nwis('01585200')
+    levs.drop(['qualifiers','site_no'],axis=1,inplace=True)
+    levs['value'] = pd.to_numeric(levs['value'])
+    gnt = wa.gantt(levs,stations=['value'])
+    assert gnt.sitestats['StationId'].values[0] == 'value'
