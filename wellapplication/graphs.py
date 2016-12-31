@@ -232,7 +232,7 @@ class piper:
         # count variable for legend (n)
         # nstatTypes = len(list(set(stationtypes)))
         #typeSet = [0] * len(stationtypes)
-        nstatTypes = [typ.count(i) for i in stationtypes]
+        nstatTypes = [typ.size(i) for i in stationtypes]
 
         typdict = {}
         nstatTypesDict = {}
