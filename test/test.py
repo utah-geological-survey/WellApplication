@@ -100,3 +100,7 @@ def test_piper():
     chem2 = pipr.convertIons(chem1)
     chem3 = pipr.ionPercentage(chem2)
     assert "CO3EC" in list(chem3.columns)
+    
+def test_fdc():
+    sites,levs = wa.get_nwis('01585200')
+    assert len(wa.fdc(levs,'value')[0]) > 100
