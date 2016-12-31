@@ -7,8 +7,7 @@ Created on Sat Jan 23 13:03:00 2016
 
 import wellapplication as wa
 import matplotlib
-import matplotlib.pyplot as plt
-
+import pandas as pd
 
 def test_getelev():
     x = [-111.21,41.4]
