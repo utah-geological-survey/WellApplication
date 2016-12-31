@@ -90,7 +90,7 @@ def test_mkts():
     g = wa.MannKendall.mk_ts(usgsP, 'PO4', 'month', 'year',0.05)
     assert g.S == -87
 
- def test_piper():
+def test_piper():
     pipr = wa.piper()
     Chem =  {'Type':[1,2,2,3], 'Cl':[1.72,0.90,4.09,1.52], 'HCO3':[4.02,1.28,4.29,3.04], 
              'SO4':[0.58,0.54,0.38,0.46], 'NaK':[1.40,0.90,3.38,2.86], 'Ca':[4.53,None,4.74,1.90], 
