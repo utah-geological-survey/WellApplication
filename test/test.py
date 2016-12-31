@@ -125,3 +125,7 @@ def test_gannt():
     levs['value'] = pd.to_numeric(levs['value'])
     gnt = wa.gantt(levs,stations=['value'])
     assert gnt.sitestats['StationId'].values[0] == 'value'
+
+def test_recess():
+    cession = wa.graphs.recess()
+    assert cession.ymd[0] > 2000
