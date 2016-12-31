@@ -137,7 +137,7 @@ class piper:
     def convertIons(self, df):
         """Convert from mg/L to meq"""
         # Conversion factors from mg/L to meq/L
-        d = {'Ca': 0.04990269, 'Mg': 0.082287595, 'Na': 0.043497608, 'K': 0.02557656, 'Cl': 0.028206596,
+        d = {'Ca': 0.04990269, 'Mg': 0.082287595, 'Na': 0.043497608, 'K': 0.02557656, 'Cl': 0.028206596, 'NaK': 0.043497608,
              'HCO3': 0.016388838, 'CO3': 0.033328223, 'SO4': 0.020833333, 'NO2': 0.021736513, 'NO3': 0.016129032}
 
         df1 = df
@@ -147,7 +147,10 @@ class piper:
                 df1[name + '_meq'] = df1[name].apply(lambda x: float(d.get(name, 0)) * x, 1)
 
         if 'Na_meq' in df1.columns and 'K_meq' in df1.columns:
-            df1['NaK_meq'] = df1[['Na_meq', 'K_meq']].apply(lambda x: x[0] + x[1], 1)
+            if df1['Na_meq'].sum == 0 and df1['K_meq'].sum == 0 and df1['NaK_meq'] != 0:
+                pass
+            else:
+                df1['NaK_meq'] = df1[['Na_meq', 'K_meq']].apply(lambda x: x[0] + x[1], 1)
 
         df1['anions'] = 0
         df1['cations'] = 0
@@ -218,7 +221,7 @@ class piper:
         if len(Elev) > 0:
             vart = Elev
         else:
-            vart = [1] * len(num_samps)
+            vart = [1] * num_samps
         cNorm = plt.Normalize(vmin=min(vart), vmax=max(vart))
         cmap = plt.cm.coolwarm
         # pdf = PdfPages(fileplace)
