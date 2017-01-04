@@ -144,7 +144,7 @@ def get_nwis(val_list, selectType='dv_site', start_date='1800-01-01', end_date='
         'gw_site': {'format': 'json', 'sites': val_list, 'siteType': 'GW', 'siteStatus': 'all',
                     'startDT': start_date, 'endDT': end_date},
         'gw_huc': {'format': 'json', 'huc': val_list, 'siteType': 'GW', 'siteStatus': 'all',
-                   'startDT': start_date, 'endDT': end_date}
+                   'startDT': start_date, 'endDT': end_date},
         'gw_bbox':{'format': 'json', 'bbox': val_list, 'siteType': 'GW', 'siteStatus': 'all',
                    'startDT': start_date, 'endDT': end_date}
     }
