@@ -29,6 +29,7 @@ def xle_head_table(folder):
 
     instType, downld_inst, modelNum, serialNum, firmWare,  = [], [], [], [], []
     project, well, startTime, stopTime, batteryPct = [],[],[],[],[]
+    filenm = []
     for infile in filenames:
 
         # get the extension of the input file
@@ -39,6 +40,7 @@ def xle_head_table(folder):
                 # parse xml
                 obj = xmltodict.parse(fd.read(), encoding="ISO-8859-1")
             # navigate through xml to the data
+            filenm.append(filename)
             downld_inst.append(obj['File_info']['Created_by'])
             instType.append(obj['Body_xle']['Instrument_info']['Instrument_type'])
             modelNum.append(obj['Body_xle']['Instrument_info']['Model_number'])
@@ -50,7 +52,7 @@ def xle_head_table(folder):
             startTime.append(obj['Body_xle']['Instrument_info_data_header']['Stop_time'])
             stopTime.append(obj['Body_xle']['Instrument_info_data_header']['Stop_time'])
     properties = pd.DataFrame(
-        {'instType': instType, 'modelNum': modelNum, 'serialNum': serialNum, 'firmWare': firmWare,
+        {'file name':filenm,'instType': instType, 'modelNum': modelNum, 'serialNum': serialNum, 'firmWare': firmWare,
          'project': project, 'well': well, 'stopTime': stopTime, 'batteryPct': batteryPct,
          'downloadInstrument':downld_inst,'startTime':startTime})
 
@@ -688,13 +690,12 @@ def new_xle_imp(infile):
     f = f.reset_index()
     f = f.set_index('DateTime')
     f['Level'] = f[str(ch1ID).title()]
-    f['MeasuredLevel'] = f['Level']
     f = f.drop(['Date', 'Time', '@id', 'ch1', 'ch2', 'index', 'ms'], axis=1)
 
     return f
 
 
-def dataendclean(df, x):
+def dataendclean(df, x, inplace=False):
     """Trims off ends and beginnings of datasets that exceed 2.0 standard deviations of the first and last 30 values
 
     Args:
@@ -713,6 +714,11 @@ def dataendclean(df, x):
     :return: 
     """
     # Examine Mean Values
+    if inplace==True:
+        df = df
+    else:
+        df = df.copy()
+
     jump = df[abs(df.loc[:, x].diff()) > 1.0]
     try:
         for i in range(len(jump)):

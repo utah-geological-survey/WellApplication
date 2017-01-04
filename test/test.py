@@ -38,8 +38,7 @@ class test_usgs:
         levs2 = wa.cleanGWL(levs)
         assert type(levs2.qualifiers[0]) == str
 
-    def test_plt_avg_wl(self, f):
-        assert type(wa.plt_avg_wl(f)) == matplotlib.figure.Figure
+
 
 def test_mktest():
     x = range(0,100)

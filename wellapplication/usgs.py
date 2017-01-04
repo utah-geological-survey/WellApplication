@@ -106,9 +106,9 @@ def get_nwis(val_list, selectType='dv_site', start_date='1800-01-01', end_date='
     Args:
         val_list (str or int or list of either):
             can be a list or 8-digit hucs or stations or single
-            a valid site is 01585200; a valid huc is 16010204
+            a valid site is 01585200; a valid huc is 16010204; valid bbox [-83.000000,36.500000,-81.000000,38.500000]
         selectType (str):
-            options: 'dv_site','dv_huc','gw_site',or 'gw_huc'
+            options: 'dv_site','dv_huc','gw_site','gw_bbox',or 'gw_huc'
         start_date (str):
            should take on the form yyyy-mm-dd; default is '1800-01-01'
         end_date (str):
@@ -144,6 +144,8 @@ def get_nwis(val_list, selectType='dv_site', start_date='1800-01-01', end_date='
         'gw_site': {'format': 'json', 'sites': val_list, 'siteType': 'GW', 'siteStatus': 'all',
                     'startDT': start_date, 'endDT': end_date},
         'gw_huc': {'format': 'json', 'huc': val_list, 'siteType': 'GW', 'siteStatus': 'all',
+                   'startDT': start_date, 'endDT': end_date}
+        'gw_bbox':{'format': 'json', 'bbox': val_list, 'siteType': 'GW', 'siteStatus': 'all',
                    'startDT': start_date, 'endDT': end_date}
     }
 
