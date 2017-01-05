@@ -18,7 +18,7 @@ stat, levs = wa.get_nwis(val_huc, 'gw_huc')
 g = wa.get_nwis(val_list, 'dv_site', '2012-06-01', '2012-07-01')
 f = wa.avg_wl('16030006',numObs= 50, grptype = 'monthly', avgtype = 'avgDiffWL')
         
-def test_getelev():
+def test_getelev(x):
     m = wa.getelev(x)
     assert m > 100.0
 
@@ -27,7 +27,7 @@ def test_gethuc(x):
     assert len(huc_data[0])>0
 
 def test_USGSID(x):
-    usgs_id = wa.USGSID([-111.21,41.4])
+    usgs_id = wa.USGSID(x)
     assert usgs_id == '412400111123601'
 
 def test_get_station_info():
