@@ -9,36 +9,33 @@ import wellapplication as wa
 import matplotlib
 import pandas as pd
 
-class test_usgs:
-    
-    def __init__(self):
-        x = [-111.21,41.4]
-        val_list = '01585200'
-        val_huc = '16010204'
-        stat, levs = wa.get_nwis(val_huc, 'gw_huc')
-        g = wa.get_nwis(val_list, 'dv_site', '2012-06-01', '2012-07-01')
-        f = wa.avg_wl('16030006',numObs= 50, grptype = 'monthly', avgtype = 'avgDiffWL')
+
+
+x = [-111.21,41.4]
+val_list = '01585200'
+val_huc = '16010204'
+stat, levs = wa.get_nwis(val_huc, 'gw_huc')
+g = wa.get_nwis(val_list, 'dv_site', '2012-06-01', '2012-07-01')
+f = wa.avg_wl('16030006',numObs= 50, grptype = 'monthly', avgtype = 'avgDiffWL')
         
-    def test_getelev(self):
-        g = wa.getelev(self, x)
-        assert g > 100.0
+def test_getelev():
+    g = wa.getelev(x)
+    assert g > 100.0
 
-    def test_gethuc(self, x):
-        huc_data = wa.get_huc(x)
-        assert len(g[0])>0
+def test_gethuc(x):
+    huc_data = wa.get_huc(x)
+    assert len(g[0])>0
 
-    def test_USGSID(self, x):
-        usgs_id = wa.USGSID([-111.21,41.4])
-        assert g == '412400111123601'
+def test_USGSID(x):
+    usgs_id = wa.USGSID([-111.21,41.4])
+    assert g == '412400111123601'
 
-    def test_get_station_info(self):
-        assert len(wa.get_station_info(['01585200','10136500'])) == 2
+def test_get_station_info():
+    assert len(wa.get_station_info(['01585200','10136500'])) == 2
     
-    def test_cleanGWL(self, levs):
-        levs2 = wa.cleanGWL(levs)
-        assert type(levs2.qualifiers[0]) == str
-
-
+def test_cleanGWL(levs):
+    levs2 = wa.cleanGWL(levs)
+    assert type(levs2.qualifiers[0]) == str
 
 def test_mktest():
     x = range(0,100)
