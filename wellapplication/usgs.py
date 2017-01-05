@@ -153,8 +153,10 @@ def get_nwis(val_list, selectType='dv_site', start_date='1800-01-01', end_date='
 
     if selectType == 'dv_site' or selectType == 'dv_huc':
         service = 'dv'
-    elif selectType == 'gw_site' or selectType == 'gw_huc':
+    elif selectType == 'gw_site' or selectType == 'gw_huc' or selectType == 'gw_bbox':
         service = 'gwlevels'
+    else:
+        service = 'iv' 
     url = url + service + '/?'
     response_ob = requests.get(url, params=valdict[selectType], headers=header)
 
