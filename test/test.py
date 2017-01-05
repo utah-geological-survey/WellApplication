@@ -42,45 +42,6 @@ def test_mktest():
     trend = wa.MannKendall.mk_test(x,0.05)
     assert trend.trend == 'increasing'
 
-def test_mkts():
-    import pandas as pd
-    # import data via rest query
-    infile= r'http://nwis.waterdata.usgs.gov/usa/nwis/qwdata/?site_no=11530500&agency_cd=USGS&inventory_output=0&rdb_inventory_output=file&TZoutput=0&pm_cd_compare=Greater%20than&radio_parm_cds=parm_cd_list&radio_multiple_parm_cds=00665&qw_attributes=0&format=rdb&qw_sample_wide=wide&rdb_qw_attributes=0&date_format=YYYY-MM-DD&rdb_compression=value&submitted_form=brief_list'
-    #response = urllib2.urlopen(infile)
-
-    # designate header
-    cols = ['datetime','agency','site','end_dt','end_tm','dtm','dtm_cd','coll_ent_cd','medium_cd','tu_id','body_part_id','PO4']
-
-    # read data into a Pandas dataframe
-    usgsP = pd.read_table(infile, skiprows=65, skipfooter=5, na_values=('-','','No Data','No data'),
-                          parse_dates={'datetime':[2,3]}, engine='python')
-    usgsP.columns = cols
-
-    # set row names as datetime
-    usgsP.set_index('datetime',inplace=True)
-
-    # drop unused columns
-    usgsP.drop(['agency','site','end_dt','end_tm','dtm','dtm_cd','coll_ent_cd','medium_cd','tu_id','body_part_id'],axis=1,inplace=True)
-
-    # add year and month columns
-    usgsP['month'] = usgsP.index.to_datetime().month.astype(int)
-    usgsP['year'] = usgsP.index.to_datetime().year.astype(int)
-
-    # filter data to relevant dates
-    usgsP = usgsP[(usgsP['year']>=1972) & (usgsP.index.to_datetime() <= pd.datetime(1979,10,31))]
-
-    # sort data by month then year for analysis
-    usgsP.sort_values(by=['month','year'],axis=0, inplace=True)
-
-    # remove strings from data column and convert to numbers
-    usgsP['PO4'] = usgsP['PO4'].map(lambda x: x.strip('><E '))
-    #usgsP['PO4'] = usgsP['PO4'].astype(float)
-
-    usgsP['PO4'] = pd.to_numeric(usgsP['PO4'])
-    usgsP.dropna(inplace=True)
-    g = wa.MannKendall.mk_ts(usgsP, 'PO4', 'month', 'year',0.05)
-    assert g.S == -87
-    
 def test_pipe():
     pipr = wa.piper()
     Chem =  {'Type':[1,2,2,3], 'Cl':[1.72,0.90,4.09,1.52], 'HCO3':[4.02,1.28,4.29,3.04], 
