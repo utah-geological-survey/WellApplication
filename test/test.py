@@ -46,3 +46,8 @@ def test_new_xle_imp():
     xle = 'docs/20160919_LittleHobble.xle'
     xle_df = wa.new_xle_imp(xle)
     assert len(xle_df) > 0 
+
+def test_xle_head_table():
+    xle_dir = 'docs/'
+    dir_df = wa.xle_head_table(xle_dir)
+    assert len(xle_dir) > 0
