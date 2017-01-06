@@ -128,8 +128,7 @@ class nwis(object):
         return self._checkresponse(response_ob)
 
     def get_nwis(self, **kwargs):
-        resp = self.get_response(**kwargs)
-        nwis_dict = resp.json()
+        nwis_dict = self.get_response(**kwargs)
 
         # dictionary from json object; each value in this dictionary is a station timeseries
         dt = nwis_dict['value']['timeSeries']
