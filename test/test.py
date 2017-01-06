@@ -51,3 +51,22 @@ def test_xle_head_table():
     xle_dir = 'docs/'
     dir_df = wa.xle_head_table(xle_dir)
     assert len(xle_dir) > 0
+
+def test_dataendclean():
+    xle = 'docs/20160919_LittleHobble.xle'
+    df = wa.new_xle_imp(xle)
+    x = Value
+    xle1 = wa.dataendclean(df, x)
+    assert xle != xle1
+    
+def test_smoother():
+    xle = 'docs/20160919_LittleHobble.xle'
+    df = wa.new_xle_imp(xle)
+    x = Value
+    xle1 = wa.smoother(df, x, std=1)
+    assert xle != xle1
+    
+def test_hourly_resample():
+    xle = 'docs/20160919_LittleHobble.xle'
+    df = wa.new_xle_imp(xle)
+    xle1 = wa.smoother(df, minutes=30)
