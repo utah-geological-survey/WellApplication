@@ -41,7 +41,7 @@ def xle_head_table(folder):
                 obj = xmltodict.parse(fd.read(), encoding="ISO-8859-1")
             # navigate through xml to the data
             filenm.append(filename)
-            downld_inst.append(obj['File_info']['Created_by'])
+            downld_inst.append(obj['Body_xle']['File_info']['Created_by'])
             instType.append(obj['Body_xle']['Instrument_info']['Instrument_type'])
             modelNum.append(obj['Body_xle']['Instrument_info']['Model_number'])
             serialNum.append(obj['Body_xle']['Instrument_info']['Serial_number'])
