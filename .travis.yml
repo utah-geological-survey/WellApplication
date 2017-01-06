@@ -11,7 +11,9 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3 # give xvfb some time to start
 
-env: DEPS="numpy scipy matplotlib pandas statsmodels"
+env: 
+  - DEPS="numpy scipy matplotlib pandas statsmodels"
+  - TEST_DIR="/tests"
 
 install: 
   - pip install codecov
