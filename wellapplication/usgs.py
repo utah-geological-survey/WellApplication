@@ -120,12 +120,14 @@ class nwis(object):
             kwargs['endDT'] = self.end_date
 
         total_url = self.url + self.service + '/?'
-        response_ob = requests.get(total_url, params=kwargs, headers=self.header)
+        
         try:
+            response_ob = requests.get(total_url, params=kwargs, headers=self.header)
             response_ob.json()
+            return self._checkresponse(response_ob)
         except AttributeError or NameError:
             raise nwisError(http_error)
-        return self._checkresponse(response_ob)
+        
 
     def get_nwis(self, **kwargs):
         nwis_dict = self.get_response(**kwargs)
