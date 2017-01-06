@@ -86,7 +86,7 @@ class nwis(object):
         else:
             raise nwisError('Something went wrong.')
 
-    def get_response(self, values, **kwargs):
+    def get_response(self, **kwargs):
         """ Returns a dictionary of data requested by each function.
 
         Arguments:
