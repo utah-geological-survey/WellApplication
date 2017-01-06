@@ -26,7 +26,13 @@ def test_USGSID():
 
 def test_nwis():
     nw = wa.nwis('dv', '01585200', 'sites')
-
+    assert len(nw.sites) == 1
+    
+def test_nwis_gw():
+    nw = wa.nwis('gwlevels','16010204','huc',siteStatus='all')
+    df = nw.cleanGWL(nw.data)
+    assert df != nw.data
+    
 def test_mktest():
     x = range(0,100)
     trend = wa.MannKendall.mk_test(x,0.05)
@@ -55,18 +61,18 @@ def test_xle_head_table():
 def test_dataendclean():
     xle = 'docs/20160919_LittleHobble.xle'
     df = wa.new_xle_imp(xle)
-    x = Value
+    x = 'Value'
     xle1 = wa.dataendclean(df, x)
     assert xle != xle1
     
 def test_smoother():
     xle = 'docs/20160919_LittleHobble.xle'
     df = wa.new_xle_imp(xle)
-    x = Value
+    x = 'Value'
     xle1 = wa.smoother(df, x, std=1)
     assert xle != xle1
     
 def test_hourly_resample():
     xle = 'docs/20160919_LittleHobble.xle'
     df = wa.new_xle_imp(xle)
-    xle1 = wa.smoother(df, minutes=30)
+    xle1 = wa.hourly_resample(df, minutes=30)
