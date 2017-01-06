@@ -2,6 +2,7 @@ language: python
 
 python:
   - "2.7"
+  - "3.3"
   
 sudo: required
 
@@ -13,7 +14,6 @@ before_install:
 
 env: 
   - DEPS="numpy scipy matplotlib pandas statsmodels"
-  - TEST_DIR="/tests"
 
 install: 
   - pip install codecov
@@ -22,7 +22,7 @@ install:
 
     
 script:
-  - pytest --cov=./
+  - pytest /tests --cov=./
 
 after_success:
   - codecov
