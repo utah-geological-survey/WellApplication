@@ -8,9 +8,9 @@ Created on Sat Jan 23 13:03:00 2016
 import wellapplication as wa
 import pandas as pd
 import matplotlib
-from MesoPy import Meso, MesoPyError
 
-m = Meso(token='demotoken')
+
+m = wa.Meso(token='demotoken')
 
 def test_getelev():
     x = [-111.21, 41.4]
@@ -147,7 +147,7 @@ def testbadurlstring():
 
 @raises(MesoPyError)
 def testauth():
-    badtoken = Meso(token='3030')
+    badtoken = wa.Meso(token='3030')
     badtoken.latest(stid=['kfnl', 'kden', 'ksdf'], within='30')
 
 
