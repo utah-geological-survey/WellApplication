@@ -6,36 +6,26 @@ Created on Sat Jan 23 13:03:00 2016
 """
 
 import wellapplication as wa
-import matplotlib
 import pandas as pd
+import matplotlib
 
-
-
-x = [-111.21,41.4]
-val_list = '01585200'
-val_huc = '16010204'
-stat, levs = wa.get_nwis(val_huc, 'gw_huc')
-g = wa.get_nwis(val_list, 'dv_site', '2012-06-01', '2012-07-01')
-f = wa.avg_wl('16030006',numObs= 50, grptype = 'monthly', avgtype = 'avgDiffWL')
-        
-def test_getelev(x):
+def test_getelev():
+    x = [-111.21, 41.4]
     m = wa.getelev(x)
     assert m > 100.0
 
-def test_gethuc(x):
+def test_gethuc():
+    x = [-111.21, 41.4]
     huc_data = wa.get_huc(x)
     assert len(huc_data[0])>0
 
-def test_USGSID(x):
+def test_USGSID():
+    x = [-111.21, 41.4]
     usgs_id = wa.USGSID(x)
     assert usgs_id == '412400111123601'
 
-def test_get_station_info():
-    assert len(wa.get_station_info(['01585200','10136500'])) == 2
-    
-def test_cleanGWL(levs):
-    levs2 = wa.cleanGWL(levs)
-    assert type(levs2.qualifiers[0]) == str
+def test_nwis():
+    nw = wa.nwis('dv', '01585200', 'sites')
 
 def test_mktest():
     x = range(0,100)
@@ -52,11 +42,4 @@ def test_pipe():
     pipr.piperplot(chem)
     assert type(pipr.plot) == matplotlib.figure.Figure
     
-def test_fdc():
-    sites,levs = wa.get_nwis('01585200')
-    assert len(wa.fdc(levs,'value')[0]) > 100
 
-def test_reccur():
-    cession = wa.graphs.recess()
-    df = wa.get_nwis('01585200',selectType='dv_site', start_date='1968-01-01', end_date='1968-06-01')[1]
-    type(cession.recession(df,'value',[1968,1,15],[1968,1,20])[1]) == pd.indexes.numeric.Float64Index
