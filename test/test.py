@@ -80,8 +80,6 @@ def test_hourly_resample():
     df = wa.new_xle_imp(xle)
     xle1 = wa.hourly_resample(df, minutes=30)
 
-
-
 # Basic Function Tests
 def testvars():
     var_list = m.variables()
@@ -89,32 +87,5 @@ def testvars():
 def testmetadata():
     stations = m.metadata(radius=['wbb', 5])
     
-
-def testtimeseries():
-    timeseries = m.timeseries(stid='kfnl', start='201504261800', end='201504262300')
-
-def testclimatology():
-    climatology = m.climatology(stid='kden', startclim='04260000', endclim='04270000', units='precip|in')
-
-def testprecip():
-    precip = m.precip(stid=['kfnl', 'ksdf'], start='201504261800', end='201504271200', units='precip|in')
-
-
-def testclimatestats():
-    climate_stats = m.climate_stats(stid='mtmet', startclim='03240000', endclim='03280000', type='all')
-
-def testtimestats():
-    stats = m.time_stats(stid='mtmet', start='201403240000', end='201403280000', type='all')
-
 def testlatency():
     latency = m.latency(stid='mtmet', start='201403240000', end='201403280000')
-
-def testnettypes():
-    nettypes = m.networktypes()
-
-def testnetworks():
-    networks = m.networks()
-
-def testattime():
-    attime = m.attime(stid='kfnl', attime='201504261800', within='30')
-
