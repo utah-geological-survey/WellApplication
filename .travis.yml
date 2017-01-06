@@ -22,7 +22,7 @@ install:
 
     
 script:
-  - pytest /test --cov=./
+  - pytest /test/test.py --cov=./
 
 after_success:
   - codecov
