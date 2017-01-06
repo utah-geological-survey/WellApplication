@@ -131,26 +131,3 @@ def testattime():
     attime = m.attime(stid='kfnl', attime='201504261800', within='30')
     ok_(attime)
 
-# Miscellaneous Tests
-
-def testlateststrlist():
-    latest = m.latest(stid=['kfnl', 'kden', 'ksdf'], within='90')
-    print(latest)
-    eq_(len(latest['STATION']), 3)
-
-# Error Handling
-@raises(MesoPyError)
-def testbadurlstring():
-    latest = m.latest(stid='')
-    print(latest)
-
-
-@raises(MesoPyError)
-def testauth():
-    badtoken = wa.Meso(token='3030')
-    badtoken.latest(stid=['kfnl', 'kden', 'ksdf'], within='30')
-
-
-@raises(MesoPyError)
-def testgeoparms():
-    m.precip(start='201504261800', end='201504271200', units='precip|in')
