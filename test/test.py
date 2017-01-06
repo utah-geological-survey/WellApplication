@@ -85,13 +85,10 @@ def test_hourly_resample():
 # Basic Function Tests
 def testvars():
     var_list = m.variables()
-    ok_(var_list)
-
 
 def testmetadata():
     stations = m.metadata(radius=['wbb', 5])
-    ok_(stations)
-
+    
 
 def testtimeseries():
     timeseries = m.timeseries(stid='kfnl', start='201504261800', end='201504262300')
