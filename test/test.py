@@ -42,4 +42,7 @@ def test_pipe():
     pipr.piperplot(chem)
     assert type(pipr.plot) == matplotlib.figure.Figure
     
-
+def test_new_xle_imp():
+    xle = 'docs/20160919_LittleHobble.xle'
+    xle_df = wa.new_xle_imp(xle)
+    assert len(xle_df) > 0 
