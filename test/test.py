@@ -87,5 +87,3 @@ def testvars():
 def testmetadata():
     stations = m.metadata(radius=['wbb', 5])
     
-def testlatency():
-    latency = m.latency(stid='mtmet', start='201403240000', end='201403280000')
