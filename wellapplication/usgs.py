@@ -12,383 +12,189 @@ import numpy as np
 import requests
 
 
-def getelev(x, units='Meters'):
-    """Uses USGS elevation service to retrieve elevation
-    Args:
-        x (array of floats):
-            longitude and latitude of point where elevation is desired
-        units (str):
-            units for returned value; defaults to Meters; options are 'Meters' or 'Feet'
-    Returns:
-        ned float elevation of location in meters
+class nwis(object):
+    def __init__(self, service):
+        r""" Instantiates an instance of nwis
 
-    Example::
-        >>> getelev([-111.21,41.4])
-        1951.99
-    """
-    values = {
-        'x': x[0],
-        'y': x[1],
-        'units': units,
-        'output': 'json'
-    }
+        Arguments:
+        ----------
+        token: string, mandatory
+            Your API token that authenticates you for requests against MesoWest.mes
 
-    elev_url = 'http://ned.usgs.gov/epqs/pqs.php?'
+        Returns:
+        --------
+            None.
 
-    attempts = 0
-    while attempts < 4:
-        try:
-            response = requests.get(elev_url, params=values).json()
-            g = float(response['USGS_Elevation_Point_Query_Service']['Elevation_Query']['Elevation'])
-            break
-        except(BadStatusLine):
-            print "Connection attempt {:} of 3 failed.".format(attempts)
-            attempts += 1
-            g = 0
-    return g
+        Raises:
+        -------
+            None.
+        """
+        self.service = service
+        self.header = {'Accept-encoding': 'gzip'}
+        self.url = 'https://waterservices.usgs.gov/nwis/'
+        self.geo_criteria = ['sites', 'stateCd', 'huc', 'countyCd', 'bBox']
+        self.out_format = 'json'
+        self.start_date = '1800-01-01'
+        self.end_date = str(datetime.today().year) + '-' + str(datetime.today().month).zfill(2) + '-' + str(
+            datetime.today().day).zfill(2)
 
+    # ================================================================================================================ #
+    # Functions:                                                                                                       #
+    # ================================================================================================================ #
 
-def get_huc(x):
-    """Receive the content of ``url``, parse it as JSON and return the object.
+    @staticmethod
+    def _checkresponse(response):
+        r""" Returns the data requested by the other methods assuming the response from the API is ok. If not, provides
+        error handling for all possible API errors. HTTP errors are handled in the get_response() function.
 
-    Args:
-        x = [longitude, latitude]
+        Arguments:
+        ----------
+            None.
 
-    Returns:
-        HUC12, HUC12_Name = 12 digit hydrologic unit code of location and the name associated with that code
-    """
-    values = {
-        'geometry': '{:},{:}'.format(x[0], x[1]),
-        'geometryType': 'esriGeometryPoint',
-        'inSR': '4326',
-        'spatialRel': 'esriSpatialRelIntersects',
-        'returnGeometry': 'false',
-        'outFields': 'HUC12,Name',
-        'returnDistinctValues': 'true',
-        'f': 'pjson'
-    }
+        Returns:
+        --------
+            The response from the API as a dictionary if the API code is 2.
 
-    huc_url = 'https://services.nationalmap.gov/arcgis/rest/services/USGSHydroNHDLarge/MapServer/10/query?'
-    # huc_url2 = 'https://services.nationalmap.gov/arcgis/rest/services/nhd/mapserver/8/query?'
-    response = requests.get(huc_url, params=values).json()
-    return response['features'][0]['attributes']['HUC12'], response['features'][0]['attributes']['NAME']
+        Raises:
+        -------
+            MesoPyError: Gives different response messages depending on returned code from API. If the response is 2,
+            resultsError is displayed. For a response of 200, an authError message is shown. A ruleError is displayed
+            if the code is 400, a formatError for -1, and catchError for any other invalid response.
 
+        https://waterservices.usgs.gov/docs/portable_code.html
+        """
 
-def USGSID(x):
-    """Parses decimal latitude and longitude values into DDMMSSDDDMMSS01 USGS site id.
-    See https://help.waterdata.usgs.gov/faq/sites/do-station-numbers-have-any-particular-meaning for documentation.
+        results_error = 'No results were found matching your query'
+        auth_error = 'The token or API key is not valid, please contact Josh Clark at joshua.m.clark@utah.edu to ' \
+                     'resolve this'
+        rule_error = 'This request violates a rule of the API. Please check the guidelines for formatting a data ' \
+                     'request and try again'
+        catch_error = 'Something went wrong. Check all your calls and try again'
 
-    Args:
-        x (list):
-            [longitude,latitude]
-
-    Returns:
-        USGS-style site id (groundwater) DDMMSSDDDMMSS01
-    """
-
-    def dms(dec):
-        DD = str(int(abs(dec)))
-        MM = str(int((abs(dec) - int(DD)) * 60)).zfill(2)
-        SS = str(int(round((((abs(dec) - int(DD)) * 60) - int(MM)) * 60, 0))).zfill(2)
-        if SS == '60':
-            MM = str(int(MM) + 1)
-            SS = '00'
-        if MM == '60':
-            DD = str(int(DD) + 1)
-            MM = '00'
-        return DD + MM + SS
-
-    return dms(x[1]) + dms(x[0]) + '01'
-
-
-def get_nwis(val_list, selectType='dv_site', start_date='1800-01-01', end_date=''):
-    """Request stream gauge data from the USGS NWIS.
-    Args:
-        val_list (str or int or list of either):
-            can be a list or 8-digit hucs or stations or single
-            a valid site is 01585200; a valid huc is 16010204; valid bbox [-83.000000,36.500000,-81.000000,38.500000]
-        selectType (str):
-            options: 'dv_site','dv_huc','gw_site','gw_bbox',or 'gw_huc'
-        start_date (str):
-           should take on the form yyyy-mm-dd; default is '1800-01-01'
-        end_date (str):
-            should take on the form yyyy-mm-dd; default is today
-    Returns:
-        a station and a data Pandas dataframe.
-    Raises:
-        ConnectionError  due to connection problems like refused connection
-        or DNS Error.
-
-    Example::
-        >>> import wellapplication as wa
-        >>> site, data = wa.get_nwis('01585200', 'dv_site', '2012-06-01', '2012-07-01')
-
-    The specification for this service is located here:
-    http://waterservices.usgs.gov/rest/IV-Service.html
-
-    This function was adapted from: https://github.com/mroberge/hydrofunctions
-    """
-    val_list = parsesitelist(val_list)
-
-    if end_date == '':
-        dy = datetime.today()
-        end_date = str(dy.year) + '-' + str(dy.month) + '-' + str(dy.day)
-
-    header = {'Accept-encoding': 'gzip'}
-
-    valdict = {
-        'dv_site': {'format': 'json', 'sites': val_list, 'parameterCd': '00060',
-                    'startDT': start_date, 'endDT': end_date},
-        'dv_huc': {'format': 'json', 'huc': val_list, 'parameterCd': '00060',
-                   'startDT': start_date, 'endDT': end_date},
-        'gw_site': {'format': 'json', 'sites': val_list, 'siteType': 'GW', 'siteStatus': 'all',
-                    'startDT': start_date, 'endDT': end_date},
-        'gw_huc': {'format': 'json', 'huc': val_list, 'siteType': 'GW', 'siteStatus': 'all',
-                   'startDT': start_date, 'endDT': end_date},
-        'gw_bbox':{'format': 'json', 'bbox': val_list, 'siteType': 'GW', 'siteStatus': 'all',
-                   'startDT': start_date, 'endDT': end_date}
-    }
-
-    url = 'http://waterservices.usgs.gov/nwis/'
-
-    if selectType == 'dv_site' or selectType == 'dv_huc':
-        service = 'dv'
-    elif selectType == 'gw_site' or selectType == 'gw_huc' or selectType == 'gw_bbox':
-        service = 'gwlevels'
-    else:
-        service = 'iv' 
-    url = url + service + '/?'
-    response_ob = requests.get(url, params=valdict[selectType], headers=header)
-
-    nwis_dict = response_ob.json()
-
-    # dictionary from json object; each value in this dictionary is a station timeseries
-    dt = nwis_dict['value']['timeSeries']
-
-    station_id, lat, lon, srs, station_type, station_nm = [], [], [], [], [], []
-    f = {}
-    for i in range(len(dt)):
-        station_id.append(dt[i]['sourceInfo']['siteCode'][0]['value'])
-        lat.append(dt[i]['sourceInfo']['geoLocation'][u'geogLocation']['latitude'])
-        lon.append(dt[i]['sourceInfo']['geoLocation'][u'geogLocation']['longitude'])
-        srs.append(dt[i]['sourceInfo']['geoLocation'][u'geogLocation']['srs'])
-        station_type.append(dt[i]['sourceInfo']['siteProperty'][0]['value'])
-        station_nm.append(dt[i]['sourceInfo'][u'siteName'])
-
-        df = pd.DataFrame(dt[i]['values'][0]['value'])
-        df.index = pd.to_datetime(df.pop('dateTime'))
-        df.value = df.value.astype(float)
-        df.index.name = 'datetime'
-        df.replace(to_replace='-999999', value=np.nan)
-        f[dt[i]['sourceInfo']['siteCode'][0]['value']] = df
-    stat_dict = {'site_no': station_id, 'dec_lat_va': lat, 'dec_long_va': lon, 'dec_coord_datum_cd': srs,
-                 'station_nm': station_nm, 'data_type_cd': station_type}
-    stations = pd.DataFrame(stat_dict)
-    if len(dt) > 1:
-        data = pd.concat(f)
-        data.index.set_names('site_no', level=0, inplace=True)
-    else:
-        data = f[dt[0]['sourceInfo']['siteCode'][0]['value']]
-        data['site_no'] = dt[0]['sourceInfo']['siteCode'][0]['value']
-    return stations, data
-
-
-def get_info(resp):
-    """Downloads data from usgs service as text file; converted to Pandas DataFrame.
-    Args:
-        resp (str):
-            response of request
-
-    Returns:
-        df:
-            Pandas DataFrame containing data downloaded from USGS
-    """
-    linefile = resp.iter_lines()
-    numlist = []
-    num = 0
-    for line in linefile:
-        if line.startswith("#"):
-            numlist.append(num)
-        num += 1
-    numlist.append(numlist[-1] + 2)
-    df = pd.read_table(resp.url, sep="\t", skiprows=numlist)
-    return df
-
-
-def parsesitelist(ListOfSites):
-    """Takes a list and turns it into a string format that can be used in the html REST format
-
-    Args:
-        ListOfSites (list or array):
-            list or array of ints or strings
-
-    Returns:
-        sitno (str):
-            string with commas separating values
-
-    Example::
-        >>>parsesitelist([123,576,241])
-        '123,576,241'
-    """
-    siteno = str(ListOfSites).replace(" ", "")
-    siteno = siteno.replace("]", "")
-    siteno = siteno.replace("[", "")
-    siteno = siteno.replace("','", ",")
-    siteno = siteno.replace("'", "")
-    siteno = siteno.replace('"', "")
-    return siteno
-
-
-def get_station_info(val_list, sitetype='sites', datatype=['all']):
-    """Retrieve station info from a huc
-
-    Arg:
-        val_list (list):
-            list of values to find sites
-        sitetype(str):
-            type of values to conduct query
-            Options: sites, huc
-        datatype (list or str):
-            list of data types (default all); options include
-            iv = instantaneous ,dv = daily values, sv = site visit, gw = groundwater level,
-            qw = water quality, id =historical instantaneous
-
-    Returns:
-        Pandas DataFrame of sites
-    """
-
-    val_list = parsesitelist(val_list)
-    sitetype = parsesitelist(sitetype)
-    datatype = parsesitelist(datatype)
-
-    valdict = {
-        'sites': {'format': 'rdb,1.0', 'sites': val_list, 'hasDataTypeCd': datatype, 'siteOutput': 'expanded'},
-        'huc': {'format': 'rdb,1.0', 'huc': val_list, 'hasDataTypeCd': datatype, 'siteOutput': 'expanded'},
-    }
-
-    url = "https://waterservices.usgs.gov/nwis/site/?"
-    resp = requests.get(url, params=valdict[sitetype])
-    siteinfo = get_info(resp)
-
-    return siteinfo
-
-
-def xcheck(x):
-    """Converts empty list to empty string and filled list into string of first value"""
-    if type(x) == list:
-        if len(x) == 0:
-            return ''
+        if response.status_code == 200:
+            print('connection successful')
+            return response
+        elif response.status_code == 403:
+            print('the USGS has blocked your Internet Protocol (IP) address')
+        elif response.status_code == 400:
+            print('URL arguments are inconsistent')
+        elif response.status_code == 404:
+            print('the query expresses a combination of elements where data do not exist.')
+        elif response.status_code == 500:
+            print('there is a problem with the web service')
+        elif response.status_code == 503:
+            print('this application is down at the moment')
         else:
-            return str(x[0])
-    else:
-        return x
+            raise MesoPyError(catch_error)
 
+    def get_response(self, values, loc_type, **kwargs):
+        """ Returns a dictionary of data requested by each function.
 
-def cleanGWL(df, colm='qualifiers'):
-    """Drops water level data of suspect quality based on lev_status_cd
-    returns Pandas DataFrame
-    Args:
-        df (pandas dataframe):
-            groundwater dataframe
-        colm (str):
-            column to parse; defaults to 'qualifiers'
-    Returns:
-        sitno (str):
-            subset of input dataframe as new dataframe
+        Arguments:
+        ----------
+        endpoint: string, mandatory
+            Set in all other methods, this is the API endpoint specific to each function.
+        request_dict: string, mandatory
+            A dictionary of parameters that are formatted into the API call.
 
-    """
-    data = df.copy(deep=True)
-    data[colm] = data[colm].apply(lambda x: xcheck(x), 1)
-    CleanData = data[~data[colm].isin(['Z', 'R', 'V', 'P', 'O', 'F', 'W', 'G', 'S', 'C', 'E', 'N'])]
-    return CleanData
+        Returns:
+        --------
+            response: A dictionary that has been dumped from JSON.
+            '01585200'
+        Raises:
+        -------
+            MesoPyError: Overrides the exceptions given in the requests library to give more custom error messages.
+            Connection_error occurs if no internet connection exists. Timeout_error occurs if the request takes too
+            long and redirect_error is shown if the url is formatted incorrectly.
 
-def avg_wl(val_list, selectType='gw_huc',numObs = 50, avgtype = 'stdWL', grptype = 'bytime', grper = '12M'):
-    """calculates standardized statistics for a list of stations or a huc from the USGS
-    """
-    siteinfo, data = get_nwis(val_list, selectType)
-    data = cleanGWL(data)
-    #stationWL = pd.merge(siteinfo, data, on = 'site_no')
-    data.reset_index(inplace=True)
-    data.set_index(['datetime'], inplace=True)
-    # get averages by year, month, and site number
-    site_size = data.groupby('site_no').size()
-    wl_long = data[data['site_no'].isin(list(site_size[site_size >= numObs].index.values))]
-    siteList = list(wl_long.site_no.unique())
-    for site in siteList:
-        mean = wl_long.ix[wl_long.site_no==site, 'value'].mean()
-        std = wl_long.ix[wl_long.site_no==site, 'value'].std()
-        wl_long.ix[wl_long.site_no==site, 'avgDiffWL'] = wl_long.ix[wl_long.site_no==site, 'value'] - mean
-        wl_long.ix[wl_long.site_no==site, 'stdWL'] = wl_long.ix[wl_long.site_no==site, 'avgDiffWL']/std
+        """
+        http_error = 'Could not connect to the API. This could be because you have no internet connection, a parameter' \
+                     ' was input incorrectly, or the API is currently down. Please try again.'
+        # For python 3.4
+        # try:
+        kwargs[loc_type] = values
 
-    if grptype == 'bytime':
-        grp = pd.TimeGrouper(grper)
-    elif grptype == 'monthly':
-        grp = wl_long.index.month
-    else:
-        grp = grptype
-    wl_stats = wl_long.groupby([grp])[avgtype].agg({'mean': np.mean, 'median': np.median,
-                                                                    'standard': np.std,
-                                                                    'cnt': (lambda x: np.count_nonzero(~np.isnan(x))),
-                                                                    'err_pls': (lambda x: np.mean(x)+(np.std(x)*1.96)),
-                                                                    'err_min': (lambda x: np.mean(x)-(np.std(x)*1.96))})
+        kwargs['format'] = self.out_format
 
-    return wl_stats
+        if 'startDT' not in kwargs:
+            kwargs['startDT'] = self.start_date
+        if 'endDT' not in kwargs:
+            kwargs['endDT'] = self.end_date
 
+        total_url = self.url + self.service + '/?'
+        response_ob = requests.get(total_url, params=kwargs, headers=self.header)
 
-def plt_avg_wl(grpd, beg='', end=''):
-    x2 = grpd.index
-    y2 = grpd['mean']
-    y3 = grpd['median']
-    snakegrp = grpd.median().to_frame()
-    atitle = 'Deviation from mean water level (ft)'
+        # nwis_dict = response_ob.json()
+        """
+        # For python 2.7
+        except AttributeError or NameError:
+            try:
+                qsp = urllib.urlencode(request_dict, doseq=True)
+                resp = urllib2.urlopen(self.base_url + endpoint + '?' + qsp).read()
+            except urllib2.URLError:
+                raise MesoPyError(http_error)
+        except urllib.error.URLError:
+            raise MesoPyError(http_error)
+        """
+        return self._checkresponse(response_ob)  # nwis_dict#_checkresponse(json.loads(resp.decode('utf-8')))
 
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
+    def _check_geo_param(self, arg_list):
+        r""" Checks each function call to make sure that the user has provided at least one of the following geographic
+        parameters: 'stid', 'state', 'country', 'county', 'radius', 'bbox', 'cwa', 'nwsfirezone', 'gacc', or 'subgacc'.
 
-    plt.plot(x2, y3, '.-', color='green', label='Median')
-    ax.plot(x2, y2, '.-', color='red', label='Average')
-    ax.fill_between(x2, grpd['err_min'], grpd['err_pls'], alpha=0.2, label='2 Standard Deviations', linewidth=0)
+        Arguments:
+        ----------
+        arg_list: list, mandatory
+            A list of kwargs from other functions.
 
-    # ax1.set_ylim(3.5,-3.5)
-    ax.set_ylabel(atitle, color='red')
-    ax.invert_yaxis()
-    ax.grid()
+        Returns:
+        --------
+            None.
 
-    if len(grpd) == 12 and type(grpd.index[0]) == np.int64:
-        plt.xlim(0, 13)
-        plt.xticks(range(1, 13, 1))
-        plt.grid()
-        ax.set_xlabel('Month')
-        medlist = grpd['median'].values
-        for i in range(len(grpd.index)):
-            plt.text(grpd.index[i], medlist[i] - 3.2, 'n = ' + str(int(list(grpd['cnt'].values)[i])),
-                     horizontalalignment='center')
-        plt.legend()
-    else:
-        if beg == '':
-            beg = grpd.index.min
+        Raises:
+        -------
+            MesoPyError if no geographic search criteria is provided.
+
+        """
+
+        geo_func = lambda a, b: any(i in b for i in a)
+        check = geo_func(self.geo_criteria, arg_list)
+        if check is False:
+            raise MesoPyError('No stations or geographic search criteria specified. Please provide one of the '
+                              'following: stid, state, county, country, radius, bbox, cwa, nwsfirezone, gacc, subgacc')
+
+    def get_nwis(self, values, loc_type, **kwargs):
+        resp = self.get_response(values, loc_type, **kwargs)
+        nwis_dict = resp.json()
+
+        # dictionary from json object; each value in this dictionary is a station timeseries
+        dt = nwis_dict['value']['timeSeries']
+
+        station_id, lat, lon, srs, station_type, station_nm = [], [], [], [], [], []
+        f = {}
+        for i in range(len(dt)):
+            station_id.append(dt[i]['sourceInfo']['siteCode'][0]['value'])
+            lat.append(dt[i]['sourceInfo']['geoLocation'][u'geogLocation']['latitude'])
+            lon.append(dt[i]['sourceInfo']['geoLocation'][u'geogLocation']['longitude'])
+            srs.append(dt[i]['sourceInfo']['geoLocation'][u'geogLocation']['srs'])
+            station_type.append(dt[i]['sourceInfo']['siteProperty'][0]['value'])
+            station_nm.append(dt[i]['sourceInfo'][u'siteName'])
+
+            df = pd.DataFrame(dt[i]['values'][0]['value'])
+            df.index = pd.to_datetime(df.pop('dateTime'))
+            df.value = df.value.astype(float)
+            df.index.name = 'datetime'
+            df.replace(to_replace='-999999', value=np.nan)
+            f[dt[i]['sourceInfo']['siteCode'][0]['value']] = df
+        stat_dict = {'site_no': station_id, 'dec_lat_va': lat, 'dec_long_va': lon, 'dec_coord_datum_cd': srs,
+                     'station_nm': station_nm, 'data_type_cd': station_type}
+        stations = pd.DataFrame(stat_dict)
+        if len(dt) > 1:
+            data = pd.concat(f)
+            data.index.set_names('site_no', level=0, inplace=True)
+        elif len(dt) == 1:
+            data = f[dt[0]['sourceInfo']['siteCode'][0]['value']]
+            data['site_no'] = dt[0]['sourceInfo']['siteCode'][0]['value']
         else:
-            beg = pd.datetime(*beg)
-        if end == '':
-            end = pd.datetime.today()
-        else:
-            end = pd.datetime(*end)
-
-        ax2 = ax.twinx()
-        ax2.plot(x2, grpd['cnt'], '.-', label='Observations count')
-        top = int(round(grpd['cnt'].max(), -1))
-        ax2.set_ylim(0, top * 3)
-        ax2.set_yticks(range(0, top + top / 10, top / 10))
-        ax2.set_ylabel('Number of Observations', color='blue')
-        ax2.yaxis.set_label_coords(1.04, 0.2)
-        ax.set_xlim(beg, end)
-        date_range = pd.date_range(beg, end, freq='36M')
-        date_rang = date_range.map(lambda t: t.strftime('%Y-%m-%d'))
-        ax.set_xticks(date_rang)
-        ax.set_xlabel('date')
-        # ask matplotlib for the plotted objects and their labels
-        lines, labels = ax.get_legend_handles_labels()
-        lines2, labels2 = ax2.get_legend_handles_labels()
-        ax2.legend(lines + lines2, labels + labels2, loc=0)
-    plt.tight_layout()
-    return fig
+            print('No Data!')
+        return stations, data
