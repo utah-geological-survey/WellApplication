@@ -63,14 +63,14 @@ def test_dataendclean():
     df = wa.new_xle_imp(xle)
     x = 'Level'
     xle1 = wa.dataendclean(df, x)
-    assert xle != xle1
+    assert len(xle1) > 1
     
 def test_smoother():
     xle = 'docs/20160919_LittleHobble.xle'
     df = wa.new_xle_imp(xle)
     x = 'Level'
     xle1 = wa.smoother(df, x, sd=1)
-    assert xle != xle1
+    assert len(xle1) > 1
     
 def test_hourly_resample():
     xle = 'docs/20160919_LittleHobble.xle'
