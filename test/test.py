@@ -91,5 +91,5 @@ def test_WQP():
     wqq = WQP('16010204','huc')
     wqq.massage_results()
     pivchem = wqq.piv_chem()
-    assert 'ParAbb' isin pivchem.columns
+    assert 'ParAbb' in pivchem.columns
     
