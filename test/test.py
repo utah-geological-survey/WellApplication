@@ -88,7 +88,7 @@ def testmetadata():
     stations = m.metadata(radius=['wbb', 5])
     
 def test_WQP():
-    wqq = WQP('16010204','huc')
+    wqq = wa.WQP('16010204','huc')
     wqq.massage_results()
     pivchem = wqq.piv_chem()
     assert 'ParAbb' in pivchem.columns
