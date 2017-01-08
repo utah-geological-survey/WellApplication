@@ -35,7 +35,13 @@ def test_nwis_gw():
     nw = wa.nwis('gwlevels','16010204','huc',siteStatus='all')
     df = nw.cleanGWL(nw.data)
     assert len(df) > 5
-    
+
+def test_fdc():
+    d16 = wa.nwis('dv','01659500','sites')
+    ci = wa.fdc(d16.data,'value',1900,2016)
+    assert type(ci[0]) == list
+   
+
 def test_mktest():
     x = range(0,100)
     trend = wa.MannKendall.mk_test(x,0.05)
