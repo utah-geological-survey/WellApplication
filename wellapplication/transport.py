@@ -7,6 +7,39 @@ import re
 import xmltodict
 
 
+def well_baro_merge(wellfile, barofile, sampint=60):
+    """Remove barometric pressure from nonvented transducers.
+    Args:
+        wellfile (pandas.core.frame.DataFrame):
+            Pandas DataFrame of water level data labeled 'Level'; index must be datetime
+        barofile (pandas.core.frame.DataFrame):
+            Pandas DataFrame barometric data labeled 'Level'; index must be datetime
+        sampint (int):
+            sampling interval in minutes; default 60
+
+    Returns:
+        wellbaro (Pandas DataFrame):
+           corrected water levels with bp removed
+    """
+
+    # resample data to make sample interval consistent
+    baro = hourly_resample(barofile, 0, sampint)
+    well = hourly_resample(wellfile, 0, sampint)
+
+    # reassign `Level` to reduce ambiguity
+    if 'Level' in list(baro.columns):
+        baro = baro.rename(columns={'Level': 'barometer'})
+    # combine baro and well data for easy calculations, graphing, and manipulation
+    wellbaro = pd.merge(well, baro, left_index=True, right_index=True, how='inner')
+
+    wellbaro['dbp'] = wellbaro.barometer.diff()
+    wellbaro['dwl'] = wellbaro.Level.diff()
+    first_well = wellbaro.Level[0]
+
+    wellbaro['corrwl'] = wellbaro[['dbp', 'dwl']].apply(lambda x: x[1] - x[0], 1).cumsum() + first_well
+
+    return wellbaro
+
 def xle_head_table(folder):
     """Creates a Pandas DataFrame containing header information from all xle files in a folder
 
@@ -58,6 +91,71 @@ def xle_head_table(folder):
 
     return properties
 
+
+def fix_drift(well, manualfile, meas='Level', manmeas='MeasuredDTW', outcolname='DriftCorrection'):
+    """Remove transducer drift from nonvented transducer data.
+    Args:
+        well (pandas.core.frame.DataFrame):
+            Pandas DataFrame of merged water level and barometric data; index must be datetime
+        manualfile (pandas.core.frame.DataFrame):
+            Pandas DataFrame of manual measurements
+        meas (str):
+            name of column in well DataFrame containing transducer data to be corrected
+        manmeas (str):
+            name of column in manualfile Dataframe containing manual measurement data
+        outcolname (str):
+            name of column resulting from correction
+    Returns:
+        wellbarofixed (pandas.core.frame.DataFrame):
+            corrected water levels with bp removed
+        driftinfo (pandas.core.frame.DataFrame):
+            dataframe of correction parameters
+    """
+    # breakpoints = self.get_breakpoints(wellbaro, manualfile)
+    breakpoints = []
+
+    for i in range(len(manualfile)):
+        breakpoints.append(fcl(well, pd.to_datetime(manualfile.index)[i]).name)
+    breakpoints = sorted(list(set(breakpoints)))
+
+    bracketedwls, drift_features = {}, {}
+    dtnm = well.index.name
+    manualfile['julian'] = manualfile.index.to_julian_date()
+
+    for i in range(len(breakpoints) - 1):
+        # Break up pandas dataframe time series into pieces based on timing of manual measurements
+        bracketedwls[i] = well.loc[
+            (well.index.to_datetime() > breakpoints[i]) & (well.index.to_datetime() < breakpoints[i + 1])]
+
+        if len(bracketedwls[i]) > 0:
+            bracketedwls[i].loc[:, 'julian'] = bracketedwls[i].index.to_julian_date()
+
+            last_trans = bracketedwls[i].ix[-1, meas]  # last transducer measurment
+            first_trans = bracketedwls[i].ix[0, meas]  # first transducer measurement
+
+            last_man = fcl(manualfile, breakpoints[i + 1])  # first manual measurment
+            first_man = fcl(manualfile, breakpoints[i])  # last manual mesurement
+
+            # intercept of line = value of first manual measurement
+            b = first_man[manmeas] - first_trans
+            # slope of line = change in difference between manual and transducer over time
+            m = ((last_man[manmeas] - last_trans) - (first_man[manmeas] - first_trans)) / (
+            last_man['julian'] - first_man['julian'])
+            # datechange = amount of time between manual measurements
+            bracketedwls[i].loc[:, 'datechange'] = bracketedwls[i].ix[:, 'julian'] - bracketedwls[i].ix[0, 'julian']
+
+            # bracketedwls[i].loc[:, 'wldiff'] = bracketedwls[i].loc[:, meas] - first_trans
+            bracketedwls[i].loc[:, outcolname] = bracketedwls[i][['datechange', meas]].apply(
+                lambda x: x[1] + (m * x[0] + b), 1)
+            drift_features[i] = {'begining': first_man, 'end': last_man, 'intercept': b, 'slope': m,
+                                 'first_meas': first_man[manmeas], 'last_meas': last_man[manmeas]}
+        else:
+            pass
+    wellbarofixed = pd.concat(bracketedwls)
+    wellbarofixed.reset_index(inplace=True)
+    wellbarofixed.set_index(dtnm, inplace=True)
+    drift_info = pd.DataFrame(drift_features)
+    return wellbarofixed, drift_info
 
 def baro_drift_correct(wellfile, barofile, manualfile, sampint=60, wellelev=4800, stickup=0):
     """Remove barometric pressure and corrects drift.
