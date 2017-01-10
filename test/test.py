@@ -118,7 +118,7 @@ def test_well_baro_merge():
     barofile = "docs/baro.csv"
     baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
     wellinfo = pd.read_csv("docs/wellinfo4.csv")
-    assert len(wa.well_baro_merge(xle_df, barofile, sampint=60)) > 10
+    assert len(wa.well_baro_merge(xle_df, baro, sampint=60)) > 10
 
 def test_fix_drift():
     xle = 'docs/20160919_LittleHobble.xle'
