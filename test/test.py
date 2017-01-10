@@ -139,3 +139,10 @@ def test_getwellid():
     wellinfo = pd.read_csv("docs/wellinfo4.csv")
     wid = wa.getwellid(inputfile, wellinfo)
     assert wid[1] == 35
+
+def jumpfix():
+    xle = "docs/ag13c 2016-08-02.xle"
+    df = wa.new_xle_imp(xle)
+    
+    jf = wa.jumpfix(df, 'Level', threashold=0.005)
+    assert jf['newVal'][-1] > 10
