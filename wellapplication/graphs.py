@@ -108,7 +108,7 @@ class piper(object):
         self.fieldnames = [u'Na', u'K', u'NaK', u'Ca', u'Mg', u'Cl', u'HCO3', u'CO3', u'SO4']
         self.anions = ['Cl', 'HCO3', 'CO3', 'SO4']
         self.cations = ['Na', 'K', 'Ca', 'Mg', 'NaK']
-        self.piperplot(self, df,  type_col = '', var_col='')
+        self.piperplot(df,  type_col = '', var_col='')
         print('ok')
 
     def fillMissing(self, df):
