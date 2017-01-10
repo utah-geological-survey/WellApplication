@@ -56,7 +56,7 @@ class WQP(object):
         # try:
         kwargs[self.loc_type] = self.values
         kwargs['mimeType'] = 'csv'
-        kwargs['zip'] = 'yes'
+        kwargs['zip'] = 'no'
         kwargs['sorted'] = 'no'
 
         if 'siteType' not in kwargs:
@@ -76,7 +76,7 @@ class WQP(object):
     def get_wqp_stations(self, service, **kwargs):
         nwis_dict = self.get_response(service, **kwargs).url
 
-        stations = pd.read_csv(nwis_dict, compression='zip')
+        stations = pd.read_csv(nwis_dict)
         return stations
 
     def get_wqp_results(self, service, **kwargs):
@@ -137,7 +137,7 @@ class WQP(object):
         csv = self.get_response(service, **kwargs).url
         print(csv)
         # read csv into DataFrame
-        df = pd.read_csv(csv, compression='zip', dtype=Rdtypes, parse_dates=dt)
+        df = pd.read_csv(csv, dtype=Rdtypes, parse_dates=dt)
         return df
 
     def massage_results(self):
