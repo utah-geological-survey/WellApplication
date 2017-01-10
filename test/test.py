@@ -98,4 +98,13 @@ def test_WQP():
     wqq.massage_results()
     pivchem = wqq.piv_chem()
     assert 'Alk' in pivchem.columns
-    
+
+def test_imp_new_well():
+    inputfile = "docs/ag13c 2016-08-02.xle"
+    manualwls = "docs/All tape measurements.csv"
+    manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
+    barofile = "docs/baro.csv"
+    baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
+    wellinfo = pd.read_csv("docs/wellinfo4.csv")
+    g, drift, wellname = wa.imp_new_well(inputfile, wellinfo, manual, baro)
+    assert wellname == 'ag13c'

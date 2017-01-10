@@ -447,55 +447,6 @@ def imp_new_well(infile, wellinfo, manual, baro):
     # Use `g[wellinfo[wellinfo['Well']==wellname]['closest_baro']]` to match the closest barometer to the data
 
 
-def manualset(wellbaro, meas, manualfile, manmeas, outcolname='corr_wl'):
-    """Adjust transducer data to manual data
-    Args:
-        wellbaro (pandas.core.frame.DataFrame):
-            Pandas DataFrame containing aligned Barometric and Level data
-        meas (str):
-            name of column in wellbaro dataframe that contains transducer water level data
-        manualfile (pandas.core.frame.DataFrame):
-            Pandas DataFrame containing manual measurements
-        manmeas (str):
-            name of column in manualfile dataframe that contains manual measurements
-        outcolname (str):
-            name of output column for corrected data
-
-        manual and transducer water level measurements should be in the same units
-
-    Returns:
-        Pandas DataFrame with outcolname field
-    """
-    breakpoints = []
-    bracketedwls = {}
-    dtnm = wellbaro.index.name
-    manualfile['julian'] = manualfile.index.to_julian_date()
-
-    for i in range(len(manualfile)):
-        breakpoints.append(fcl(wellbaro, manualfile.index.to_datetime()[i]).name)
-    breakpoints = sorted(list(set(breakpoints)))
-
-    for i in range(len(breakpoints) - 1):
-        # Break up pandas dataframe time series into pieces based on timing of manual measurements
-        bracketedwls[i] = wellbaro.loc[(wellbaro.index.to_datetime() > breakpoints[i]) & (wellbaro.index.to_datetime() < breakpoints[i + 1])]
-        if len(bracketedwls[i]) > 0:
-            bracketedwls[i].loc[:, 'julian'] = bracketedwls[i].index.to_julian_date()
-            last_man = fcl(manualfile, breakpoints[i + 1])
-            first_man = fcl(manualfile, breakpoints[i])
-            b = first_man[manmeas] - bracketedwls[i].ix[0, meas]
-            m = (last_man[manmeas] - first_man[manmeas]) / (last_man['julian'] - first_man['julian'])
-            bracketedwls[i].loc[:, 'datechange'] = bracketedwls[i].ix[:, 'julian'] - bracketedwls[i].ix[0, 'julian']
-            bracketedwls[i].loc[:, 'wldiff'] = bracketedwls[i].loc[:, meas] - bracketedwls[i].ix[0, meas]
-            bracketedwls[i].loc[:, outcolname] = bracketedwls[i][['datechange', meas]].apply(lambda x: x[1] + (m * x[0] + b), 1)
-        else:
-            pass
-    wellbarofixed = pd.concat(bracketedwls)
-    wellbarofixed.reset_index(inplace=True)
-    wellbarofixed.set_index(dtnm, inplace=True)
-
-    return wellbarofixed
-
-
 def barodistance(wellinfo):
     """Determines Closest Barometer to Each Well using wellinfo DataFrame"""
     barometers = {'barom': ['pw03', 'pw10', 'pw19'], 'X': [240327.49, 271127.67, 305088.9],
