@@ -112,7 +112,7 @@ def test_imp_new_well():
 def test_well_baro_merge():
     inputfile = "docs/ag13c 2016-08-02.xle"
     manualwls = "docs/All tape measurements.csv"
-    xle = 'docs/20160919_LittleHobble.xle'
+    xle = "docs/ag13c 2016-08-02.xle"
     xle_df = wa.new_xle_imp(xle)
     manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
     barofile = "docs/baro.csv"
@@ -121,7 +121,7 @@ def test_well_baro_merge():
     assert len(wa.well_baro_merge(xle_df, baro, sampint=60)) > 10
 
 def test_fix_drift():
-    xle = 'docs/20160919_LittleHobble.xle'
+    xle = "docs/ag13c 2016-08-02.xle"
     xle_df = wa.new_xle_imp(xle)
     
     manualwls = "docs/All tape measurements.csv"
