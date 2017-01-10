@@ -233,7 +233,7 @@ class piper(object):
                      '.', 'o', '*', 'v', '^', '+', 's', ',', '.', 'o', '*']
 
         # count variable for legend (n)
-        unique, counts = np.unique(typ, return_counts=True)//waterservices.usgs.gov/nwis/site/?format=rdb&sites=01646500&siteStatus=all
+        unique, counts = np.unique(typ, return_counts=True)
         nstatTypesDict = dict(zip(unique, counts))
  
         typdict = {}
