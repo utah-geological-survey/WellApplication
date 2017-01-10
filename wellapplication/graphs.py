@@ -132,6 +132,12 @@ class piper(object):
 
         return df
 
+    def check_nak(self, x):
+        if x[0] == 0 and x[2] > 0:
+            return x[2]
+        else:
+            return x[0] + x[1]
+
     def convertIons(self, df):
         """Convert from mg/L to meq"""
         # Conversion factors from mg/L to meq/L
@@ -144,10 +150,8 @@ class piper(object):
             if name in df.columns:
                 df1[name + '_meq'] = df1[name].apply(lambda x: float(d.get(name, 0)) * x, 1)
 
-        if df1['NaK_meq'].sum > 0:
-            pass
-        else:
-            df1['NaK_meq'] = df1[['Na_meq', 'K_meq']].apply(lambda x: x[0] + x[1], 1)
+
+        df1['NaK_meq'] = df1[['Na_meq', 'K_meq','NaK_meq']].apply(lambda x: self.check_nak(x), 1)
 
         df1['anions'] = 0
         df1['cations'] = 0
