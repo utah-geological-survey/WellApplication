@@ -13,16 +13,19 @@ import matplotlib
 m = wa.Meso(token='demotoken')
 
 def test_getelev():
+    print('Testing getelev')
     x = [-111.21, 41.4]
     m = wa.getelev(x)
     assert m > 100.0
 
 def test_gethuc():
+    print('Testing gethuc')
     x = [-111.21, 41.4]
     huc_data = wa.get_huc(x)
     assert len(huc_data[0])>0
 
 def test_USGSID():
+    print('Testing USGSID')
     x = [-111.21, 41.4]
     usgs_id = wa.USGSID(x)
     assert usgs_id == '412400111123601'
