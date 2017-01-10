@@ -140,9 +140,24 @@ def test_getwellid():
     wid = wa.getwellid(inputfile, wellinfo)
     assert wid[1] == 35
 
-def jumpfix():
+def test_jumpfix():
     xle = "docs/ag13c 2016-08-02.xle"
     df = wa.new_xle_imp(xle)
     
     jf = wa.jumpfix(df, 'Level', threashold=0.005)
     assert jf['newVal'][-1] > 10
+
+def test_baro_drift_correct():
+    inputfile = "docs/ag13c 2016-08-02.xle"
+    wellfile = wa.new_xle_imp(inputfile)
+    manualwls = "docs/All tape measurements.csv"
+    manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
+    barofile = "docs/baro.csv"
+    baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
+    wellinfo = pd.read_csv("docs/wellinfo4.csv")
+    assert len(wa.baro_drift_correct(wellfile, baro, manual))>10
+
+def test_compilation():
+    inputfile = "docs/"
+    df = wa.compilation(inputfile)
+    assert type(df) == pd.core.frame.DataFrame
