@@ -159,11 +159,6 @@ def test_baro_drift_correct():
     df = wa.baro_drift_correct(wellfile, baro, manual)
     assert type(df) == pd.core.frame.DataFrame
 
-def test_compilation():
-    inputfile = "docs"
-    df = wa.compilation(inputfile)
-    assert type(df) == pd.core.frame.DataFrame
-    
 def test_imp_new_well():
     inputfile = "docs/ag14a 2016-08-02.csv"
     manualwls = "docs/All tape measurements.csv"
