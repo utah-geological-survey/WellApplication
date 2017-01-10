@@ -29,7 +29,6 @@ class WQP(object):
         self.url = 'https://www.waterqualitydata.us/'
         self.geo_criteria = ['sites', 'stateCd', 'huc', 'countyCd', 'bBox']
         self.cTgroups = ['Inorganics, Major, Metals', 'Inorganics, Major, Non-metals', 'Nutrient', 'Physical']
-        self.out_format = 'csv'  # &zip=yes
         self.results = self.get_wqp_results('Result', **kwargs)
         self.stations = self.get_wqp_stations('Station', **kwargs)
 
@@ -56,8 +55,9 @@ class WQP(object):
         # For python 3.4
         # try:
         kwargs[self.loc_type] = self.values
-        kwargs['mimeType'] = self.out_format
-        kwargs['zip'] = 'no'
+        kwargs['mimeType'] = 'csv'
+        kwargs['zip'] = 'yes'
+        kwargs['sorted'] = 'no'
 
         if 'siteType' not in kwargs:
             kwargs['sampleMedia'] = 'Water'
@@ -76,7 +76,7 @@ class WQP(object):
     def get_wqp_stations(self, service, **kwargs):
         nwis_dict = self.get_response(service, **kwargs).url
 
-        stations = pd.read_csv(nwis_dict)
+        stations = pd.read_csv(nwis_dict, compression='zip')
         return stations
 
     def get_wqp_results(self, service, **kwargs):
@@ -136,7 +136,7 @@ class WQP(object):
         dt = [6, 56, 61]
         csv = self.get_response(service, **kwargs).url
         # read csv into DataFrame
-        df = pd.read_csv(csv, dtype=Rdtypes, parse_dates=dt)
+        df = pd.read_csv(csv, compression='zip', dtype=Rdtypes, parse_dates=dt)
         return df
 
     def massage_results(self):
