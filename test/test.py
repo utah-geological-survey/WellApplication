@@ -144,8 +144,8 @@ def test_jumpfix():
     xle = "docs/ag13c 2016-08-02.xle"
     df = wa.new_xle_imp(xle)
     
-    jf = wa.jumpfix(df, 'Level', threashold=0.005)
-    assert jf['newVal'][-1] > 10
+    jf = wa.jumpfix(df, 'Level', threashold=0.5)
+    assert type(jf) == pd.core.frame.DataFrame
 
 def test_baro_drift_correct():
     inputfile = "docs/ag13c 2016-08-02.xle"
