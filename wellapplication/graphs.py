@@ -165,28 +165,11 @@ class piper(object):
 
         df1['EC'] = df1['anions'] - df1['cations']
         df1['CBE'] = df1['EC'] / (df1['anions'] + df1['cations'])
-
+        df1['maj_cation'] = df1[['Ca_meq','Mg_meq','Na_meq','K_meq','NaK_meq']].idxmax(axis=1)
+        df1['maj_anion'] = df1[['Cl_meq','SO4_meq','HCO3_meq','CO3_meq']].idxmax(axis=1)
+        df1['water_type'] = df1[['maj_cation','maj_anion']].apply(lambda x: str(x[0])[:-4]+'-'+str(x[1])[:-4],1)
         return df1
 
-    def water_type(self, x):
-        """x[0] = CaEC, x[1]=MgEC"""
-        if x[0] >= 50:
-            catstr = 'Ca-'
-        elif x[0] < 50 and x[1] < 50:
-            catstr = 'Na-'
-        elif x[0] < 50 and x[1] >= 50:
-            catstr = 'Mg-'
-        else:
-            anstr = 'CaMg-'
-        if x[2] >= 50:
-            anstr = 'Cl'
-        elif x[2] < 50 and x[3] < 50:
-            anstr = 'HCO3'
-        elif x[2] < 50 and x[3] >= 50:
-            anstr = 'SO4'
-        else:
-            anstr = 'SO4Cl'
-        return catstr + anstr
 
     def ionPercentage(self, df):
         """Determines percentage of charge for each ion"""
@@ -194,8 +177,6 @@ class piper(object):
             df[ion + 'EC'] = df[[ion + '_meq', 'anions']].apply(lambda x: 100 * x[0] / x[1], 1)
         for ion in self.cations:
             df[ion + 'EC'] = df[[ion + '_meq', 'cations']].apply(lambda x: 100 * x[0] / x[1], 1)
-        df['chem_type'] = df[['CaEC','MgEC','ClEC','SO4EC']].apply(lambda x: self.water_type(x), 1)
-
         return df
 
     def piperplot(self, df,  type_col, var_col):
