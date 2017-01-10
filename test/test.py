@@ -39,8 +39,7 @@ def test_nwis_gw():
 def test_fdc():
     d16 = wa.nwis('dv','01659500','sites')
     ci = wa.fdc(d16.data,'value',1900,2016)
-    assert type(ci[0]) == list
-   
+    assert type(ci[0]) == list 
 
 def test_mktest():
     x = range(0,100)
@@ -146,11 +145,15 @@ def test_baro_drift_correct():
     wellfile = wa.new_xle_imp(inputfile)
     manualwls = "docs/All tape measurements.csv"
     manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
+    manual35 = manual[manual['WellID']==35]
+    manual35['dt'] = pd.to_datetime(manual35.index)
+    manual_35 = manual35.reset_index()
+    manual_35.set_index('dt',inplace=True)
     barofile = "docs/baro.csv"
     baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
     baro['Level'] = baro['pw03']
     wellinfo = pd.read_csv("docs/wellinfo4.csv")
-    df = wa.baro_drift_correct(wellfile, baro, manual)
+    df = wa.baro_drift_correct(wellfile, baro, manual35)
     assert type(df) == pd.core.frame.DataFrame
 
 
