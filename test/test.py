@@ -139,23 +139,10 @@ def test_getwellid():
     wid = wa.getwellid(inputfile, wellinfo)
     assert wid[1] == 35
 
-
-def test_baro_drift_correct():
-    inputfile = "docs/ag13c 2016-08-02.xle"
-    wellfile = wa.new_xle_imp(inputfile)
-    manualwls = "docs/All tape measurements.csv"
-    manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
-    manual35 = manual[manual['WellID']==35]
-    manual35['dt'] = pd.to_datetime(manual35.index)
-    manual_35 = manual35.reset_index()
-    manual_35.set_index('dt',inplace=True)
-    barofile = "docs/baro.csv"
-    baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
-    baro['Level'] = baro['pw03']
+def test_barodistance():
     wellinfo = pd.read_csv("docs/wellinfo4.csv")
-    df = wa.baro_drift_correct(wellfile, baro, manual_35)
-    assert type(df) == pd.core.frame.DataFrame
-
+    bd = barodistance(wellinfo)
+    assert 'closest_baro' in list(bd.columns)
 
 def test_imp_new_well():
     inputfile = "docs/ag14a 2016-08-02.csv"
@@ -166,3 +153,10 @@ def test_imp_new_well():
     wellinfo = pd.read_csv("docs/wellinfo4.csv")
     g, drift, wellname = wa.imp_new_well(inputfile, wellinfo, manual, baro)
     assert wellname == 'ag14a'
+    
+def test_jumpfix():
+    xle = "docs/ag13c 2016-08-02.xle"
+    df = wa.new_xle_imp(xle)
+    
+    jf = wa.jumpfix(df, 'Level', threashold=0.005)
+    assert jf['newVal'][-1] > 10
