@@ -164,7 +164,7 @@ def test_compilation():
     df = wa.compilation(inputfile)
     assert type(df) == pd.core.frame.DataFrame
     
- def test_imp_new_well():
+def test_imp_new_well():
     inputfile = "docs/ag14a 2016-08-02.csv"
     manualwls = "docs/All tape measurements.csv"
     manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
