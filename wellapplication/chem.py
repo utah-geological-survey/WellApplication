@@ -135,6 +135,7 @@ class WQP(object):
         # define date field indices
         dt = [6, 56, 61]
         csv = self.get_response(service, **kwargs).url
+        print(csv)
         # read csv into DataFrame
         df = pd.read_csv(csv, compression='zip', dtype=Rdtypes, parse_dates=dt)
         return df
