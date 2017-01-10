@@ -91,7 +91,7 @@ class recess:
         return popt1, x1, x2, y1, y2
 
 
-class piper:
+class piper(object):
     """
     Created on Thu May 29 10:57:49 2014
     Hydrochemistry - Construct Rectangular Piper plot
@@ -103,11 +103,12 @@ class piper:
       
     """
 
-    def __init__(self):
+    def __init__(self, df, type_col = '', var_col=''):
 
         self.fieldnames = [u'Na', u'K', u'NaK', u'Ca', u'Mg', u'Cl', u'HCO3', u'CO3', u'SO4']
         self.anions = ['Cl', 'HCO3', 'CO3', 'SO4']
         self.cations = ['Na', 'K', 'Ca', 'Mg', 'NaK']
+        self.piperplot(self, df,  type_col = '', var_col='')
         print('ok')
 
     def fillMissing(self, df):
