@@ -112,8 +112,10 @@ def test_imp_new_well():
 def test_well_baro_merge():
     inputfile = "docs/ag13c 2016-08-02.xle"
     manualwls = "docs/All tape measurements.csv"
+    xle = 'docs/20160919_LittleHobble.xle'
+    xle_df = wa.new_xle_imp(xle)
     manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
     barofile = "docs/baro.csv"
     baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
     wellinfo = pd.read_csv("docs/wellinfo4.csv")
-    assert len(wa.well_baro_merge(wellfile, barofile, sampint=60)) > 10
+    assert len(wa.well_baro_merge(xle_df, barofile, sampint=60)) > 10
