@@ -168,12 +168,33 @@ class piper(object):
 
         return df1
 
+    def water_type(self, x):
+        """x[0] = CaEC, x[1]=MgEC"""
+        if x[0] >= 50:
+            catstr = 'Ca-'
+        elif x[0] < 50 and x[1] < 50:
+            catstr = 'Na-'
+        elif x[0] < 50 and x[1] >= 50:
+            catstr = 'Mg-'
+        else:
+            anstr = 'CaMg-'
+        if x[2] >= 50:
+            anstr = 'Cl'
+        elif x[2] < 50 and x[3] < 50:
+            anstr = 'HCO3'
+        elif x[2] < 50 and x[3] >= 50:
+            anstr = 'SO4'
+        else:
+            anstr = 'SO4Cl'
+        return catstr + anstr
+
     def ionPercentage(self, df):
         """Determines percentage of charge for each ion"""
         for ion in self.anions:
             df[ion + 'EC'] = df[[ion + '_meq', 'anions']].apply(lambda x: 100 * x[0] / x[1], 1)
         for ion in self.cations:
             df[ion + 'EC'] = df[[ion + '_meq', 'cations']].apply(lambda x: 100 * x[0] / x[1], 1)
+        df['chem_type'] = df[['CaEC','MgEC','ClEC','SO4EC']].apply(lambda x: self.water_type(x), 1)
 
         return df
 
