@@ -98,6 +98,12 @@ def test_WQP():
     pivchem = wqq.piv_chem()
     assert 'Alk' in pivchem.columns
 
+def test_WQ2():
+    wqq = wa.WQP('16010204','huc')
+    wqq.massage_stations()
+    df = wqq.stations
+    assert "OrgId" in list(df.columns)
+    
 def test_imp_new_well():
     inputfile = "docs/ag13c 2016-08-02.xle"
     manualwls = "docs/All tape measurements.csv"
