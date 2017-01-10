@@ -198,6 +198,7 @@ class nwis(object):
             df:
                 Pandas DataFrame containing data downloaded from USGS
         """
+        self.service = 'site'
         resp = self.get_response(**kwargs)
         linefile = resp.iter_lines()
         numlist = []
