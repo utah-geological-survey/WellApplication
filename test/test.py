@@ -47,13 +47,12 @@ def test_mktest():
     assert trend.trend == 'increasing'
 
 def test_pipe():
-    pipr = wa.piper()
     Chem =  {'Type':[1,2,2,3], 'Cl':[1.72,0.90,4.09,1.52], 'HCO3':[4.02,1.28,4.29,3.04], 
              'SO4':[0.58,0.54,0.38,0.46], 'NaK':[1.40,0.90,3.38,2.86], 'Ca':[4.53,None,4.74,1.90], 
              'Mg':[0.79,0.74,0.72,0.66], 'EC':[672.0,308.0,884.0,542.0], 'NO3':[0.4,0.36,0.08,0.40], 
              'Sicc':[0.21,0.56,None,-0.41]}  
     chem = pd.DataFrame(Chem)
-    pipr.piperplot(chem)
+    pipr = wa.piper(chem)
     assert type(pipr.plot) == matplotlib.figure.Figure
     
 def test_new_xle_imp():
