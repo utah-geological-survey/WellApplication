@@ -126,5 +126,9 @@ def test_fix_drift():
     
     manualwls = "docs/All tape measurements.csv"
     manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
-    fd = wa.fix_drift(xle_df, manual, meas='Level', manmeas='MeasuredDTW', outcolname='DriftCorrection')
+    manual35 = manual[manual['WellID']==35]
+    manual35['dt'] = pd.to_datetime(manual35.index)
+    manual_35 = manual35.reset_index()
+    manual_35.set_index('dt',inplace=True)
+    fd = wa.fix_drift(xle_df, manual_35, meas='Level', manmeas='MeasuredDTW', outcolname='DriftCorrection')
     assert 'DriftCorrection' in list(fd[0].columns)
