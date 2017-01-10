@@ -41,7 +41,7 @@ class nwis(object):
         self.service = service
         self.loc_type = loc_type
         self.values = self.parsesitelist(values)
-        self.header = {'Accept-encoding': 'gzip'}
+        #self.header = {'Accept-encoding': 'gzip'}
         self.url = 'https://waterservices.usgs.gov/nwis/'
         self.geo_criteria = ['sites', 'stateCd', 'huc', 'countyCd', 'bBox']
         self.out_format = 'json'
@@ -120,7 +120,7 @@ class nwis(object):
             kwargs['endDT'] = self.end_date
 
         total_url = self.url + self.service + '/?'
-        response_ob = requests.get(total_url, params=kwargs, headers=self.header)
+        response_ob = requests.get(total_url, params=kwargs)# , headers=self.header)
         try:
             
             response_ob.json()
@@ -199,7 +199,7 @@ class nwis(object):
                 Pandas DataFrame containing data downloaded from USGS
         """
         self.service = 'site'
-        self.out_format = 'rdb,1.0'
+        self.out_format = 'rdb'
         resp = self.get_response(**kwargs)
         linefile = resp.iter_lines()
         numlist = []
