@@ -147,7 +147,7 @@ def test_getwellid():
 
 def test_barodistance():
     wellinfo = pd.read_csv("docs/wellinfo4.csv")
-    bd = barodistance(wellinfo)
+    bd = wa.barodistance(wellinfo)
     assert 'closest_baro' in list(bd.columns)
 
 def test_imp_new_well():
@@ -163,6 +163,5 @@ def test_imp_new_well():
 def test_jumpfix():
     xle = "docs/ag13c 2016-08-02.xle"
     df = wa.new_xle_imp(xle)
-    
     jf = wa.jumpfix(df, 'Level', threashold=0.005)
     assert jf['newVal'][-1] > 10
