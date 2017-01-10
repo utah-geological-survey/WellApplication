@@ -103,13 +103,13 @@ class piper(object):
       
     """
 
-    def __init__(self, df, type_col = '', var_col=''):
+    def __init__(self, df, type_col='', var_col=''):
 
         self.fieldnames = [u'Na', u'K', u'NaK', u'Ca', u'Mg', u'Cl', u'HCO3', u'CO3', u'SO4']
         self.anions = ['Cl', 'HCO3', 'CO3', 'SO4']
         self.cations = ['Na', 'K', 'Ca', 'Mg', 'NaK']
-        self.piperplot(df,  type_col = '', var_col='')
-        print('ok')
+        self.piperplot(df,  type_col, var_col)
+
 
     def fillMissing(self, df):
 
@@ -198,7 +198,7 @@ class piper(object):
 
         return df
 
-    def piperplot(self, df,  type_col = '', var_col=''):
+    def piperplot(self, df,  type_col, var_col):
 
         self.fillMissing(df)
         self.convertIons(df)
