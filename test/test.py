@@ -167,3 +167,5 @@ def test_jumpfix():
     df = wa.new_xle_imp(xle)
     jf = wa.jumpfix(df, 'Level', threashold=0.005)
     assert jf['newVal'][-1] > 10
+
+    
