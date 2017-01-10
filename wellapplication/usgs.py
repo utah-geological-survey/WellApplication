@@ -114,10 +114,21 @@ class nwis(object):
         kwargs[self.loc_type] = self.values
         kwargs['format'] = self.out_format
 
-        if 'startDT' not in kwargs:
-            kwargs['startDT'] = self.start_date
-        if 'endDT' not in kwargs:
-            kwargs['endDT'] = self.end_date
+        if self.service == 'site' and 'startDT' in kwargs and 'endDT' in kwargs:
+            del kwargs['startDT']
+            del kwargs['endDt']
+        elif self.service == 'site' and 'startDT' in kwargs:
+            del kwargs['startDT']
+        elif self.service == 'site' and 'endDT' in kwargs:
+            del kwargs['endDt']
+        elif self.service == 'site' and 'startDT' not in kwargs and 'endDT' not in kwargs:
+            pass
+        else:
+            if 'startDT' not in kwargs:
+                kwargs['startDT'] = self.start_date
+            if 'endDT' not in kwargs:
+                kwargs['endDT'] = self.end_date
+
 
         total_url = self.url + self.service + '/?'
         response_ob = requests.get(total_url, params=kwargs)# , headers=self.header)
@@ -200,6 +211,7 @@ class nwis(object):
         """
         self.service = 'site'
         self.out_format = 'rdb'
+
         resp = self.get_response(**kwargs)
         linefile = resp.iter_lines()
         numlist = []
