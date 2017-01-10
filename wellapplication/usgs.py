@@ -46,6 +46,7 @@ class nwis(object):
         self.geo_criteria = ['sites', 'stateCd', 'huc', 'countyCd', 'bBox']
         self.out_format = 'json'
         self.start_date = '1800-01-01'
+        self.input = kwargs
         self.end_date = str(datetime.today().year) + '-' + str(datetime.today().month).zfill(2) + '-' + str(
             datetime.today().day).zfill(2)
         self.sites, self.data = self.get_nwis(**kwargs)
@@ -128,7 +129,6 @@ class nwis(object):
                 kwargs['startDT'] = self.start_date
             if 'endDT' not in kwargs:
                 kwargs['endDT'] = self.end_date
-
 
         total_url = self.url + self.service + '/?'
         response_ob = requests.get(total_url, params=kwargs)# , headers=self.header)
@@ -221,7 +221,7 @@ class nwis(object):
                 numlist.append(num)
             num += 1
         numlist.append(numlist[-1] + 2)
-        df = pd.read_table(resp.url, sep="\t", skiprows=numlist)
+        df = pd.read_table(resp.url[:-3], sep="\t", skiprows=numlist)
         return df
 
 
