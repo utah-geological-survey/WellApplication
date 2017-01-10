@@ -119,3 +119,12 @@ def test_well_baro_merge():
     baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
     wellinfo = pd.read_csv("docs/wellinfo4.csv")
     assert len(wa.well_baro_merge(xle_df, barofile, sampint=60)) > 10
+
+def test_fix_drift():
+    xle = 'docs/20160919_LittleHobble.xle'
+    xle_df = wa.new_xle_imp(xle)
+    
+    manualwls = "docs/All tape measurements.csv"
+    manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
+    fd = wa.fix_drift(well, manual, meas='Level', manmeas='MeasuredDTW', outcolname='DriftCorrection')
+    assert len(fd) > 10  
