@@ -153,7 +153,7 @@ def test_baro_drift_correct():
     baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
     baro['Level'] = baro['pw03']
     wellinfo = pd.read_csv("docs/wellinfo4.csv")
-    df = wa.baro_drift_correct(wellfile, baro, manual35)
+    df = wa.baro_drift_correct(wellfile, baro, manual_35)
     assert type(df) == pd.core.frame.DataFrame
 
 
