@@ -72,7 +72,7 @@ class nwis(object):
 
         if response.status_code == 200:
             print('connection successful')
-            return response.json()
+            return response
         elif response.status_code == 403:
             raise nwisError('The USGS has blocked your Internet Protocol (IP) address')
         elif response.status_code == 400:
@@ -130,8 +130,8 @@ class nwis(object):
         return self._checkresponse(response_ob)
 
     def get_nwis(self, **kwargs):
-        nwis_dict = self.get_response(**kwargs)
-
+        jsn_dict = self.get_response(**kwargs)
+        nwis_dict = jsn_dict.json()
         # dictionary from json object; each value in this dictionary is a station timeseries
         dt = nwis_dict['value']['timeSeries']
 
