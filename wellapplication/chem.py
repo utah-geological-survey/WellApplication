@@ -57,7 +57,7 @@ class WQP(object):
         # try:
         kwargs[self.loc_type] = self.values
         kwargs['mimeType'] = self.out_format
-        kwargs['zip'] = 'yes'
+        kwargs['zip'] = 'no'
 
         if 'siteType' not in kwargs:
             kwargs['sampleMedia'] = 'Water'
