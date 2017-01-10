@@ -33,7 +33,7 @@ def test_nwis():
     
 def test_nwis_gw():
     nw = wa.nwis('gwlevels','16010204','huc',siteStatus='all')
-    df = nw.cleanGWL(nw.data)
+    df = nw.avg_wl()
     assert len(df) > 5
 
 def test_fdc():
