@@ -115,14 +115,14 @@ class nwis(object):
         kwargs[self.loc_type] = self.values
         kwargs['format'] = self.out_format
 
-        if self.service == 'site' and 'startDT' in kwargs and 'endDT' in kwargs:
+        if self.service == 'sites' and 'startDT' in kwargs and 'endDT' in kwargs:
             del kwargs['startDT']
             del kwargs['endDt']
-        elif self.service == 'site' and 'startDT' in kwargs:
+        elif self.service == 'sites' and 'startDT' in kwargs:
             del kwargs['startDT']
-        elif self.service == 'site' and 'endDT' in kwargs:
+        elif self.service == 'sites' and 'endDT' in kwargs:
             del kwargs['endDt']
-        elif self.service == 'site' and 'startDT' not in kwargs and 'endDT' not in kwargs:
+        elif self.service == 'sites' and 'startDT' not in kwargs and 'endDT' not in kwargs:
             pass
         else:
             if 'startDT' not in kwargs:
@@ -209,10 +209,11 @@ class nwis(object):
             df:
                 Pandas DataFrame containing data downloaded from USGS
         """
-        self.service = 'site'
+        self.service = 'sites'
         self.out_format = 'rdb'
 
         resp = self.get_response(**kwargs)
+        print(resp.url)
         linefile = resp.iter_lines()
         numlist = []
         num = 0
@@ -221,7 +222,7 @@ class nwis(object):
                 numlist.append(num)
             num += 1
         numlist.append(numlist[-1] + 2)
-        df = pd.read_table(resp.url[:-3], sep="\t", skiprows=numlist)
+        df = pd.read_table(resp.url, sep="\t", skiprows=numlist)
         return df
 
 
