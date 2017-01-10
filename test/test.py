@@ -154,10 +154,12 @@ def test_baro_drift_correct():
     manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
     barofile = "docs/baro.csv"
     baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
+    baro['Level'] = baro['pw03']
     wellinfo = pd.read_csv("docs/wellinfo4.csv")
-    assert len(wa.baro_drift_correct(wellfile, baro, manual))>10
+    df = wa.baro_drift_correct(wellfile, baro, manual)
+    assert type(df) == pd.core.frame.DataFrame
 
 def test_compilation():
-    inputfile = "docs/"
+    inputfile = "docs"
     df = wa.compilation(inputfile)
     assert type(df) == pd.core.frame.DataFrame
