@@ -126,5 +126,5 @@ def test_fix_drift():
     
     manualwls = "docs/All tape measurements.csv"
     manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
-    fd = wa.fix_drift(well, manual, meas='Level', manmeas='MeasuredDTW', outcolname='DriftCorrection')
+    fd = wa.fix_drift(xle_df, manual, meas='Level', manmeas='MeasuredDTW', outcolname='DriftCorrection')
     assert len(fd) > 10  
