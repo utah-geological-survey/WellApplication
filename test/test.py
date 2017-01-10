@@ -163,3 +163,13 @@ def test_compilation():
     inputfile = "docs"
     df = wa.compilation(inputfile)
     assert type(df) == pd.core.frame.DataFrame
+    
+ def test_imp_new_well():
+    inputfile = "docs/ag14a 2016-08-02.csv"
+    manualwls = "docs/All tape measurements.csv"
+    manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
+    barofile = "docs/baro.csv"
+    baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
+    wellinfo = pd.read_csv("docs/wellinfo4.csv")
+    g, drift, wellname = wa.imp_new_well(inputfile, wellinfo, manual, baro)
+    assert wellname == 'ag14a'
