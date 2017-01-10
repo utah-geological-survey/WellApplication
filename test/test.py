@@ -149,7 +149,7 @@ def test_barodistance():
     bd = wa.barodistance(wellinfo)
     assert 'closest_baro' in list(bd.columns)
 
-def test_imp_new_well():
+def test_imp_new_well_csv():
     inputfile = "docs/ag14a 2016-08-02.csv"
     manualwls = "docs/All tape measurements.csv"
     manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
