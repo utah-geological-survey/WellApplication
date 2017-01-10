@@ -117,6 +117,7 @@ def test_well_baro_merge():
     manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
     barofile = "docs/baro.csv"
     baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
+    baro['Level'] = baro['pw03']
     wellinfo = pd.read_csv("docs/wellinfo4.csv")
     assert len(wa.well_baro_merge(xle_df, baro, sampint=60)) > 10
 
