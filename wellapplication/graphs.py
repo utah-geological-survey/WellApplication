@@ -449,9 +449,9 @@ class gantt():
             records = df.ix[first:last, station]
             dateranges[station].append(pd.to_datetime(first))
             for i in range(len(records) - 1):
-                if np.isnan(records[i + 1]) and np.isfinite(records[i]):
+                if pd.isnull(records[i + 1]) and pd.notnull(records[i]):
                     dateranges[station].append(pd.to_datetime(records.index)[i])
-                elif np.isnan(records[i]) and np.isfinite(records[i + 1]):
+                elif pd.isnull(records[i]) and pd.notnull(records[i + 1]):
                     dateranges[station].append(pd.to_datetime(records.index)[i])
             dateranges[station].append(pd.to_datetime(last))
         return dateranges
