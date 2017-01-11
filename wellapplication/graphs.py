@@ -450,15 +450,16 @@ class gantt(object):
         -------
         dateranges = dictionary with station names as keys and lists of begin and end dates as values
         """
-        dateranges = {}
         df = self.data
         stations = self.stations
+
+        dateranges = {}
         for station in stations:
             dateranges[station] = []
             first = df.ix[:, station].first_valid_index()
             last = df.ix[:, station].last_valid_index()
             records = df.ix[first:last, station]
-            dateranges[station].append(pd.to_datetime(first))
+            #dateranges[station].append(pd.to_datetime(first))
             for i in range(len(records) - 1):
                 if pd.isnull(records[i + 1]) and pd.notnull(records[i]):
                     dateranges[station].append(pd.to_datetime(records.index)[i])
