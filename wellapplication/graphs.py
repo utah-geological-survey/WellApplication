@@ -430,12 +430,12 @@ class gantt(object):
             labels = stations
         self.stations = stations
         self.labels = labels
-        self.dateranges = self.markGaps(df, stations)
-        self.sitestats = self.site_info(df, stations)
+        self.dateranges = self.markGaps(df)
+        self.sitestats = self.site_info(df)
         print(
         'Data Loaded \nType .ganttPlotter() after your defined object to make plot\nType .sitestats after your defined object to get summary stats')
 
-    def markGaps(self, df, stations):
+    def markGaps(self, df):
         """Produces dictionary of list of gaps in time series data based on the presence of nan values;
         used for gantt plotting
 
@@ -448,6 +448,8 @@ class gantt(object):
         dateranges = dictionary with station names as keys and lists of begin and end dates as values
         """
         dateranges = {}
+
+        stations = self.stations
         for station in stations:
             dateranges[station] = []
             first = df.ix[:, station].first_valid_index()
@@ -462,9 +464,9 @@ class gantt(object):
             dateranges[station].append(pd.to_datetime(last))
         return dateranges
 
-    def site_info(self, df, stations=None):
-        if stations is None:
-            stations = self.stations
+    def site_info(self, df):
+
+        stations = self.stations
 
         stat, first, last, minum, maxum, stdev, medin, avg, q25, q75, count = [], [], [], [], [], [], [], [], [], [], []
         for station in stations:
@@ -485,7 +487,7 @@ class gantt(object):
         Site_Info = pd.DataFrame(colm)
         return Site_Info
 
-    def ganttPlotter(self, dateranges=None, stations=None, labels=None):
+    def ganttPlotter(self):
         """Plots gantt plot using dictionary of stations and associated start and end dates;
         uses output from markGaps function
 
@@ -501,12 +503,9 @@ class gantt(object):
         """
         labs, tickloc, col = [], [], []
 
-        if dateranges is None:
-            dateranges = self.dateranges
-        if stations is None:
-            stations = self.stations
-        if labels is None:
-            labels = self.labels
+        dateranges = self.dateranges
+        stations = self.stations
+        labels = self.labels
 
         # create color iterator for multi-color lines in gantt chart
         color = iter(plt.cm.Dark2(np.linspace(0, 1, len(stations))))
@@ -545,7 +544,7 @@ class gantt(object):
         plt.tight_layout()
         return fig
 
-    def gantt(self, df, stations=None, labels=None):
+    def gantt(self, df):
         """
         INPUT
         -----
@@ -561,10 +560,8 @@ class gantt(object):
         gantt chart and site info table
 
         """
-        if stations is None:
-            stations = self.stations
-        if labels is None:
-            labels = self.labels
+        stations = self.stations
+        labels = self.labels
 
         df1 = df.ix[:, stations]
         df1.sort_index(inplace=True)

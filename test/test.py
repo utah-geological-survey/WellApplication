@@ -183,5 +183,5 @@ def test_scatterColor():
     x = np.arange(1, 100, 1)
     y = np.arange(0.1, 10.0, 0.1)
     w = np.arange(5, 500, 5)
-    out = wa.graphs.scatterColor(x, y, w)
+    out = wa.scatterColor(x, y, w)
     assert round(out[0], 1) == 0.1

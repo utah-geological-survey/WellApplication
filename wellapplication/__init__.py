@@ -8,5 +8,5 @@ from transport import *
 from usgs import *
 from chem import *
 from mesopy import *
-from graphs import piper, fdc, gantt
+from graphs import *
 import MannKendall
