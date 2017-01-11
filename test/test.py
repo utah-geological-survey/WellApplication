@@ -168,15 +168,10 @@ def test_jumpfix():
     jf = wa.jumpfix(df, 'Level', threashold=0.005)
     assert jf['newVal'][-1] > 10
 
-def test_gantt_plt():
-    logan = wa.nwis('dv', '10109000', 'sites')
-    gn = wa.gantt(logan.data, stations=['value'])
-    assert type(gn.ganttPlotter()) == matplotlib.figure.Figure
-
 def test_gantt():
-    logan = wa.nwis('dv', '10109000', 'sites')
-    gn = wa.gantt(logan.data, stations=['value'])
-    assert len(gn.sitestats) == 1
+    ashley = wa.nwis('dv', '09265500', 'sites')
+    gn = wa.gantt(ashley.data, stations=['value'])
+    assert type(gn.gantt()[2]) == matplotlib.figure.Figure
 
 def test_scatterColor():
     x = np.arange(1, 100, 1)
