@@ -409,7 +409,7 @@ def fdc(df, site, begyear=1900, endyear=2015, normalizer=1, plot=True):
     return prob, data
 
 
-class gantt():
+class gantt(object):
     """Class to create gantt plots and to summarize pandas timeseries dataframes.
     Finds gaps and measuring duration of data
     The pandas dataframe with datetime as index and columns as site time-series data;
@@ -430,12 +430,12 @@ class gantt():
             labels = stations
         self.stations = stations
         self.labels = labels
-        self.dateranges = self.markGaps(df)
+        self.dateranges = self.markGaps(df, stations)
         self.sitestats = self.site_info(df, stations)
         print(
         'Data Loaded \nType .ganttPlotter() after your defined object to make plot\nType .sitestats after your defined object to get summary stats')
 
-    def markGaps(self, df):
+    def markGaps(self, df, stations):
         """Produces dictionary of list of gaps in time series data based on the presence of nan values;
         used for gantt plotting
 
@@ -448,7 +448,6 @@ class gantt():
         dateranges = dictionary with station names as keys and lists of begin and end dates as values
         """
         dateranges = {}
-        stations = df.columns
         for station in stations:
             dateranges[station] = []
             first = df.ix[:, station].first_valid_index()
