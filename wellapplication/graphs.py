@@ -424,19 +424,21 @@ class gantt(object):
 
     """
 
-    def __init__(self, df, stations=[], labels=[]):
+    def __init__(self, df, stations=[], labels=[], samp_int = 'D'):
         if len(stations) == 0:
             stations = df.columns
         if len(labels) == 0:
             labels = stations
+
+        self.data = df.resample(samp_int).mean()
         self.stations = stations
         self.labels = labels
-        self.dateranges = self.markGaps(df)
+        self.dateranges = self.markGaps()
         self.sitestats = self.site_info(df)
         print(
         'Data Loaded \nType .ganttPlotter() after your defined object to make plot\nType .sitestats after your defined object to get summary stats')
 
-    def markGaps(self, df):
+    def markGaps(self):
         """Produces dictionary of list of gaps in time series data based on the presence of nan values;
         used for gantt plotting
 
@@ -449,7 +451,7 @@ class gantt(object):
         dateranges = dictionary with station names as keys and lists of begin and end dates as values
         """
         dateranges = {}
-
+        df = self.data
         stations = self.stations
         for station in stations:
             dateranges[station] = []
@@ -465,9 +467,10 @@ class gantt(object):
             dateranges[station].append(pd.to_datetime(last))
         return dateranges
 
-    def site_info(self, df):
+    def site_info(self):
 
         stations = self.stations
+        df = self.data
 
         stat, first, last, minum, maxum, stdev, medin, avg, q25, q75, count = [], [], [], [], [], [], [], [], [], [], []
         for station in stations:
@@ -545,7 +548,7 @@ class gantt(object):
         plt.tight_layout()
         return fig
 
-    def gantt(self, df):
+    def gantt(self):
         """
         INPUT
         -----
@@ -563,6 +566,7 @@ class gantt(object):
         """
         stations = self.stations
         labels = self.labels
+        df = self.data
 
         df1 = df.ix[:, stations]
         df1.sort_index(inplace=True)
