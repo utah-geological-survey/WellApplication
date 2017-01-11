@@ -103,7 +103,7 @@ class recess(object):
 
         y1 = df2[Q]
         x1 = (df2.index.to_julian_date() - df2.index.to_julian_date()[0])  # convert to numeric days for opt. function
-        popt1, pcov1 = self.fitit(x1, y1, y1[0])  # fit curve
+        popt1, pcov1 = self.fitit(x1, y1)  # fit curve
         x2 = [df2.index[0] + timedelta(i) for i in x1]  # convert back to dates for labels
         y2 = [y1[0] * np.exp(-1 * popt1[0] * i) for i in x1]  # run function with optimized variables
         plt.plot(x2, y2, label='Recession (alpha = %.3f)' % popt1[0])  # report alpha value
