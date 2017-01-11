@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from collections import OrderedDict
 from datetime import datetime, timedelta
-
+from scipy.optimize import curve_fit
 
 class recess(object):
     """Creates recession curve and modeled output to describe spring and streamflow recession.
@@ -42,8 +42,6 @@ class recess(object):
         if end == '':
             end = self.ymd
 
-
-        # let user define units
         if lab == '':
             self.Qlab = 'Discharge'
         else:
@@ -51,13 +49,12 @@ class recess(object):
 
         self.rec_results = self.recession(df, Q, st, end, excs, excf)
 
+    def func(self, x, c):
+        return Q * np.exp(-1 * c * x)
+
     def fitit(self, x, y, Q):
-        from scipy.optimize import curve_fit
 
-        def func(x, c):
-            return Q * np.exp(-1 * c * x)
-
-        popt, pcov = curve_fit(func, x, y, p0=(1e-1))
+        popt, pcov = curve_fit(self.func, x, y, p0=(1e-1))
         return popt, pcov
 
     def recession(self, df, Q, st, end, excs, excf):
