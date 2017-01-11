@@ -186,6 +186,6 @@ def test_get_info():
     assert 'site_no' in list(df.columns)
 
 def test_recess():
-    ashley = wa.nwis('dv', '09265500','sites',startDT='2015-06-01' ,endDT='2015-06-14')
-    rec = wa.recess(ashley.data, 'value', st=[2015,6,2])
-    assert round(rec.rec_results[0],2) ==  0.04
+    ashley = wa.nwis('dv', '09265500','sites', startDT='2015-06-02' ,endDT='2015-06-14')
+    rec = wa.graphs.recess(ashley.data, 'value', st=[2015,6,2])
+    assert round(rec.rec_results[0],2) == 0.04

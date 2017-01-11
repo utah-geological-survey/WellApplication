@@ -35,6 +35,7 @@ class recess(object):
      Plot of recession curve
 
     """
+
     def __init__(self, df, Q, st, end='', lab='', excs=[0, 0, 0], excf=[0, 0, 0]):
         self.ymd = [datetime.now().year, datetime.now().month, datetime.now().day]
         if end == '':
