@@ -8,7 +8,7 @@ Created on Sat Jan 23 13:03:00 2016
 import wellapplication as wa
 import pandas as pd
 import matplotlib
-
+import numpy as np
 
 m = wa.Meso(token='demotoken')
 
@@ -178,3 +178,10 @@ def test_gantt():
     logan = wa.nwis('dv', '10109000', 'sites')
     gn = wa.gantt(logan.data, stations=['value'])
     assert len(gn.sitestats) == 1
+
+def test_scatterColor():
+    x = np.arange(1, 100, 1)
+    y = np.arange(0.1, 10.0, 0.1)
+    w = np.arange(5, 500, 5)
+    out = wa.graphs.scatterColor(x, y, w)
+    assert round(out[0], 1) == 0.1
