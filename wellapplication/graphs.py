@@ -434,7 +434,7 @@ class gantt(object):
         self.stations = stations
         self.labels = labels
         self.dateranges = self.markGaps()
-        self.sitestats = self.site_info(df)
+        self.sitestats = self.site_info()
         print(
         'Data Loaded \nType .ganttPlotter() after your defined object to make plot\nType .sitestats after your defined object to get summary stats')
 
@@ -570,9 +570,9 @@ class gantt(object):
 
         df1 = df.ix[:, stations]
         df1.sort_index(inplace=True)
-        Site_Info = self.site_info(df1, stations)
-        dateranges = self.markGaps(df1)
-        fig = self.ganttPlotter(dateranges, stations, labels)
+        Site_Info = self.site_info()
+        dateranges = self.markGaps()
+        fig = self.ganttPlotter()
         return Site_Info, dateranges, fig
 
 
