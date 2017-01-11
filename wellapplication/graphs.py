@@ -47,15 +47,17 @@ class recess(object):
         else:
             self.Qlab = lab
 
+        self.Qz = df[Q][0]
+
         self.rec_results = self.recession(df, Q, st, end, excs, excf)
 
-    @staticmethod
-    def func(x, c):
-        return 1/np.exp(-1 * c * x)
+
+    def func(self, x, c):
+        return self.Qz*np.exp(-1 * c * x)
 
     def fitit(self, x, y):
 
-        popt, pcov = curve_fit(recess.func, x, y, p0=(1e-1))
+        popt, pcov = curve_fit(self.func, x, y, p0=(1e-1))
         return popt, pcov
 
     def recession(self, df, Q, st, end, excs, excf):
