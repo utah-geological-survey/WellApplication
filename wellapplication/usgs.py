@@ -122,7 +122,7 @@ class nwis(object):
 
         total_url = self.url + self.service + '/?'
         response_ob = requests.get(total_url, params=kwargs)# , headers=self.header)
-        if self.loc_type != 'sites':
+        if self.service != 'site':
             try:
                 response_ob.json()
             except:
