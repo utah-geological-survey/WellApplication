@@ -13,6 +13,28 @@ from datetime import datetime, timedelta
 
 
 class recess(object):
+    """Creates recession curve and modeled output to describe spring and streamflow recession.
+
+     INPUT
+     -----
+     df = dataframe with spring discharge data
+     Q = string indicating discharge field in df in units of gpm
+     st = start date to examine data in [YYYY, MM, DD] format, where values are integers in an array
+     end = end date to examine data
+     unit = preferred units to use in analysis; defaults to gpm; can convert to lpm
+     excs = begin date of exclusion period
+     excf = end date of exclusion period
+
+     OUTPUT
+     ------
+     popt = alpha value for recession curve
+     x1 = days from start of recession
+     x2 = dates of recession curve analysis
+     y1 = points used for recession curve analysis
+     y2 = recession curve values
+     Plot of recession curve
+
+    """
     def __init__(self, df, Q, st, end='', lab='', excs=[0, 0, 0], excf=[0, 0, 0]):
         self.ymd = [datetime.now().year, datetime.now().month, datetime.now().day]
         if end == '':
