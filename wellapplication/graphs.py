@@ -50,11 +50,10 @@ class recess(object):
         self.rec_results = self.recession(df, Q, st, end, excs, excf)
 
     @staticmethod
-    def func(Q, x, c):
-        y = Q * np.exp(-1 * c * x)
-        return y
+    def func(x, c):
+        return 1/np.exp(-1 * c * x)
 
-    def fitit(self, x, y, Q):
+    def fitit(self, x, y):
 
         popt, pcov = curve_fit(recess.func, x, y, p0=(1e-1))
         return popt, pcov
