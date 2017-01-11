@@ -37,6 +37,7 @@ class recess(object):
     """
 
     def __init__(self, df, Q, st, end='', lab='', excs=[0, 0, 0], excf=[0, 0, 0]):
+
         self.ymd = [datetime.now().year, datetime.now().month, datetime.now().day]
         if end == '':
             end = self.ymd
