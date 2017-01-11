@@ -25,7 +25,7 @@ class recess(object):
         else:
             self.Qlab = lab
 
-        self.recession(df, Q, st, end, excs, excf)
+        self.rec_results = self.recession(df, Q, st, end, excs, excf)
 
     def fitit(self, x, y, Q):
         from scipy.optimize import curve_fit
