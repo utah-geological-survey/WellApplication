@@ -179,3 +179,8 @@ def test_scatterColor():
     w = np.arange(5, 500, 5)
     out = wa.scatterColor(x, y, w)
     assert round(out[0], 1) == 0.1
+
+def test_get_info():
+    nw = wa.nwis('gwlevels', '16010204', 'huc', siteStatus='all')
+    df = nw.get_info(siteStatus='all')
+    assert 'site_no' in list(df.columns)

@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d5a82257-6a90-41c3-87e5-13b1695dbcbb" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/test.py" afterPath="$PROJECT_DIR$/test/test.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -32,7 +33,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="usgs.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="usgs.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="301">
@@ -52,11 +53,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="test.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="488">
-              <caret line="179" column="34" lean-forward="true" selection-start-line="179" selection-start-column="34" selection-end-line="179" selection-end-column="34" />
+            <state relative-caret-position="505">
+              <caret line="185" column="13" lean-forward="true" selection-start-line="185" selection-start-column="13" selection-end-line="185" selection-end-column="13" />
               <folding>
                 <element signature="e#81#109#0" expanded="true" />
               </folding>
@@ -129,8 +130,8 @@
         <option value="$PROJECT_DIR$/wellapplication/chem.py" />
         <option value="$PROJECT_DIR$/wellapplication/__init__.py" />
         <option value="$PROJECT_DIR$/wellapplication/graphs.py" />
-        <option value="$PROJECT_DIR$/test/test.py" />
         <option value="$PROJECT_DIR$/wellapplication/usgs.py" />
+        <option value="$PROJECT_DIR$/test/test.py" />
       </list>
     </option>
   </component>
@@ -665,7 +666,14 @@
       <option name="project" value="LOCAL" />
       <updated>1484148977039</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="fixing usgs">
+      <created>1484148983216</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1484148983216</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1103,21 +1111,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="488">
-          <caret line="179" column="34" lean-forward="true" selection-start-line="179" selection-start-column="34" selection-end-line="179" selection-end-column="34" />
-          <folding>
-            <element signature="e#81#109#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="301">
           <caret line="124" column="32" lean-forward="false" selection-start-line="124" selection-start-column="32" selection-end-line="124" selection-end-column="32" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="505">
+          <caret line="185" column="13" lean-forward="true" selection-start-line="185" selection-start-column="13" selection-end-line="185" selection-end-column="13" />
+          <folding>
+            <element signature="e#81#109#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
