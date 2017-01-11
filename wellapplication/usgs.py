@@ -127,7 +127,7 @@ class nwis(object):
                 response_ob.json()
             except:
                 raise nwisError("Could not decode response from {:} ".format(response_ob.url))
-            
+
         return self._checkresponse(response_ob)
 
     def get_nwis(self, **kwargs):
@@ -199,7 +199,7 @@ class nwis(object):
             df:
                 Pandas DataFrame containing data downloaded from USGS
         """
-        self.service = 'sites'
+        self.service = 'site'
         self.out_format = 'rdb'
 
         resp = self.get_response(**kwargs)
