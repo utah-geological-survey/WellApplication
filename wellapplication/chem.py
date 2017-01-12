@@ -11,18 +11,23 @@ import numpy as np
 import requests
 
 class WQP(object):
+    """Downloads Water Quality Data from thw Water Quality Portal based on parameters entered
+    :param values: query parameter designating location to select site; this is the Argument for the REST parameter in
+    table 1 of https://www.waterqualitydata.us/webservices_documentation/
+    :param loc_type: type of query to perform; valid inputs include 'huc', 'bBox', 'countycode', 'siteid';
+    this is the REST parameter of table 1 of https://www.waterqualitydata.us/webservices_documentation/
+    :type loc_type: str
+    :type values: str
+    :param **kwargs: additional Rest Parameters
+
+    :Example:
+    >>> wq = WQP('-111.54,40.28,-111.29,40.48','bBox')
+    https://www.waterqualitydata.us/Result/search?mimeType=csv&zip=no&siteType=Spring&siteType=Well&characteristicType=Inorganics%2C+Major%2C+Metals&characteristicType=Inorganics%2C+Major%2C+Non-metals&characteristicType=Nutrient&characteristicType=Physical&bBox=-111.54%2C40.28%2C-111.29%2C40.48&sorted=no&sampleMedia=Water
+
+    """
+
     def __init__(self, values, loc_type, **kwargs):
-        r""" Instantiates an instance of nwis
-        Arguments:
-        ----------
-        token: string, mandatory
-            Your API token that authenticates you for requests against MesoWest.mes
-        Returns:
-        --------
-            None.
-        Raises:
-        -------
-            None.
+        r"""Downloads Water Quality Data from thw Water Quality Portal based on parameters entered
         """
         self.loc_type = loc_type
         self.values = values
@@ -34,21 +39,9 @@ class WQP(object):
 
     def get_response(self, service, **kwargs):
         """ Returns a dictionary of data requested by each function.
-        Arguments:
-        ----------
-        endpoint: string, mandatory
-            Set in all other methods, this is the API endpoint specific to each function.
-        request_dict: string, mandatory
-            A dictionary of parameters that are formatted into the API call.
-        Returns:
-        --------
-            response: A dictionary that has been dumped from JSON.
-            '01585200'
-        Raises:
-        -------
-            MesoPyError: Overrides the exceptions given in the requests library to give more custom error messages.
-            Connection_error occurs if no internet connection exists. Timeout_error occurs if the request takes too
-            long and redirect_error is shown if the url is formatted incorrectly.
+        :param service: options include 'Station' or 'Results'
+        table 1 of https://www.waterqualitydata.us/webservices_documentation/
+        :param **kwargs: additional Rest Parameters
         """
         http_error = 'Could not connect to the API. This could be because you have no internet connection, a parameter' \
                      ' was input incorrectly, or the API is currently down. Please try again.'
@@ -80,16 +73,7 @@ class WQP(object):
         return stations
 
     def get_wqp_results(self, service, **kwargs):
-        """Bring data from WQP site into a Pandas DataFrame for analysis
-
-        INPUT
-        -----
-        csv = path to csv file containing WQP data download
-
-        RETURNS
-        -------
-        df = dataframe containing WQP data
-        """
+        """Bring data from WQP site into a Pandas DataFrame for analysis"""
 
         # set data types
         Rdtypes = {"OrganizationIdentifier": np.str_, "OrganizationFormalName": np.str_, "ActivityIdentifier": np.str_,
@@ -141,16 +125,15 @@ class WQP(object):
         return df
 
     def massage_results(self):
-        """
-        Massage WQP result data for analysis
+        """Massage WQP result data for analysis
 
-        INPUT
-        -----
-        df = dataframe containing raw WQP data
+        When called, this function:
+        - renames all of the results fields, abbreviating the fields and eliminating slashes and spaces.
+        - parses the datetime fields, fixing errors when possible (see :func:`datetimefix`)
+        - standardizes units to mg/L
+        - normalizes nutrient species(See :func:`parnorm`)
 
-        RETURNS
-        -------
-        df = dataframe containing cleaned up WQP data
+
         """
         # Map new names for columns
         ResFieldDict = {"AnalysisStartDate": "AnalysisDate", "ResultAnalyticalMethod/MethodIdentifier": "AnalytMeth",
@@ -225,15 +208,12 @@ class WQP(object):
         return df1
 
     def datetimefix(self, x, form):
-        """
-        This script cleans date-time errors
+        """This script cleans date-time errors
 
-        input
-        x = date-time string
-        format = format of date-time string
+        :param x: date-time string
+        :param form: format of date-time string
 
-        output
-        formatted datetime type
+        :returns: formatted datetime type
         """
         d = str(x[0]).lstrip().rstrip()[0:10]
         t = str(x[1]).lstrip().rstrip()[0:5].zfill(5)
@@ -256,6 +236,12 @@ class WQP(object):
         return datetime.strptime(d + " " + t, form)
 
     def parnorm(self, x):
+        """Standardizes nutrient species
+
+        - Nitrate as N to Nitrate
+        - Nitrite as N to Nitrite
+        - Sulfate as s to Sulfate
+        """
         p = str(x[0]).rstrip().lstrip().lower()
         u = str(x[2]).rstrip().lstrip().lower()
         if p == 'nitrate' and u == 'mg/l as n':
@@ -278,6 +264,14 @@ class WQP(object):
             return x[0], x[1], str(x[2]).rstrip()
 
     def unitfix(self, x):
+        """Standardizes unit labels from ug/l to mg/l
+
+        :param x: unit label to convert
+        :type x: str
+
+        :returns: unit string as mg/l
+        .. warning:: must be used with a value conversion tool
+        """
         z = str(x).lower()
         if z == "ug/l":
             return "mg/l"
@@ -286,51 +280,8 @@ class WQP(object):
         else:
             return x
 
-    def piv_chem(self, chems='piper'):
-        results = self.results
-
-        ParAbb = {"Alkalinity": "Alk", "Alkalinity, Carbonate as CaCO3": "Alk", "Alkalinity, total": "Alk",
-                  "Arsenic": "As", "Calcium": "Ca", "Chloride": "Cl", "Carbon dioxide": "CO2", "Carbonate": "CO3",
-                  "Carbonate (CO3)": "CO3", "Specific conductance": "Cond", "Conductivity": "Cond", "Copper": "Cu",
-                  "Depth": "Depth", "Dissolved oxygen (DO)": "DO", "Iron": "Fe",
-                  "Hardness, Ca, Mg": "Hard", "Total hardness -- SDWA NPDWR": "Hard",
-                  "Bicarbonate": "HCO3", "Potassium": "K", "Magnesium": "Mg", "Kjeldahl nitrogen": "N",
-                  "Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)": "N", "Nitrogen": "N", "Sodium": "Na",
-                  "Sodium plus potassium": "NaK", "Ammonia-nitrogen": "NH3_N", "Ammonia-nitrogen as N": "N",
-                  "Nitrite": "NO2",
-                  "Nitrate": "NO3", "Nitrate as N": "N", "pH, lab": "pH", "pH": "pH", "Phosphate-phosphorus": "PO4",
-                  "Orthophosphate": "PO4", "Phosphate": "PO4", "Stream flow, instantaneous": "Q", "Flow": "Q",
-                  "Flow rate, instantaneous": "Q", "Silica": "Si", "Sulfate": "SO4", "Sulfate as SO4": "SO4",
-                  "Boron": "B", "Barium": "Ba", "Bromine": "Br", "Lithium": "Li", "Manganese": "Mn", "Strontium": "Sr",
-                  "Total dissolved solids": "TDS", "Temperature, water": "Temp",
-                  "Total Organic Carbon": "TOC", "delta Dueterium": "d2H", "delta Oxygen 18": "d18O",
-                  "delta Carbon 13 from Bicarbonate": "d13CHCO3", "delta Oxygen 18 from Bicarbonate": "d18OHCO3",
-                  "Total suspended solids": "TSS", "Turbidity": "Turb"}
-
-        results['ParAbb'] = results['Param'].apply(lambda x: ParAbb.get(x, ''), 1)
-        results.dropna(subset=['SampleId'], how='any', inplace=True)
-        results = results[pd.isnull(results['DetectCond'])]
-        results.drop_duplicates(subset=['SampleId', 'ParAbb'], inplace=True)
-        datap = results.pivot(index='SampleId', columns='ParAbb', values='ResultValue')
-        if chems == '':
-            pass
-        elif chems == 'piper':
-            datap.dropna(subset=['SO4', 'Cl', 'Ca', 'HCO3', 'pH'], how='any', inplace=True)
-        else:
-            data.dropna(subset=chems, how='any', inplace=True)
-        return datap
-
     def massage_stations(self):
-        """
-        Massage WQP station data for analysis
-
-        INPUT
-        -----
-        df = dataframe containing raw WQP data
-
-        RETURNS
-        -------
-        df = dataframe containing cleaned up WQP data
+        """Massage WQP station data for analysis
         """
         StatFieldDict = {"MonitoringLocationIdentifier": "StationId", "AquiferName": "Aquifer",
                          "AquiferTypeName": "AquiferType",
@@ -377,3 +328,47 @@ class WQP(object):
         df.drop_duplicates(subset=['StationId'], inplace=True)
         self.stations = df
         return df
+
+    def piv_chem(self, results='', chems='piper'):
+        """pivots results DataFrame for input into piper class
+
+        :param results: DataFrame of results data from WQP; default is return from call of :class:`WQP`
+        :param chems: set of chemistry that must be present to retain row; default are the major ions for a piper plot
+        :return: pivoted table of result values
+
+        .. warnings:: this method drops < and > signs from values; do not use it for statistics
+        """
+
+        if results == '':
+            results = self.results
+
+        ParAbb = {"Alkalinity": "Alk", "Alkalinity, Carbonate as CaCO3": "Alk", "Alkalinity, total": "Alk",
+                  "Arsenic": "As", "Calcium": "Ca", "Chloride": "Cl", "Carbon dioxide": "CO2", "Carbonate": "CO3",
+                  "Carbonate (CO3)": "CO3", "Specific conductance": "Cond", "Conductivity": "Cond", "Copper": "Cu",
+                  "Depth": "Depth", "Dissolved oxygen (DO)": "DO", "Iron": "Fe",
+                  "Hardness, Ca, Mg": "Hard", "Total hardness -- SDWA NPDWR": "Hard",
+                  "Bicarbonate": "HCO3", "Potassium": "K", "Magnesium": "Mg", "Kjeldahl nitrogen": "N",
+                  "Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)": "N", "Nitrogen": "N", "Sodium": "Na",
+                  "Sodium plus potassium": "NaK", "Ammonia-nitrogen": "NH3_N", "Ammonia-nitrogen as N": "N",
+                  "Nitrite": "NO2",
+                  "Nitrate": "NO3", "Nitrate as N": "N", "pH, lab": "pH", "pH": "pH", "Phosphate-phosphorus": "PO4",
+                  "Orthophosphate": "PO4", "Phosphate": "PO4", "Stream flow, instantaneous": "Q", "Flow": "Q",
+                  "Flow rate, instantaneous": "Q", "Silica": "Si", "Sulfate": "SO4", "Sulfate as SO4": "SO4",
+                  "Boron": "B", "Barium": "Ba", "Bromine": "Br", "Lithium": "Li", "Manganese": "Mn", "Strontium": "Sr",
+                  "Total dissolved solids": "TDS", "Temperature, water": "Temp",
+                  "Total Organic Carbon": "TOC", "delta Dueterium": "d2H", "delta Oxygen 18": "d18O",
+                  "delta Carbon 13 from Bicarbonate": "d13CHCO3", "delta Oxygen 18 from Bicarbonate": "d18OHCO3",
+                  "Total suspended solids": "TSS", "Turbidity": "Turb"}
+
+        results['ParAbb'] = results['Param'].apply(lambda x: ParAbb.get(x, ''), 1)
+        results.dropna(subset=['SampleId'], how='any', inplace=True)
+        results = results[pd.isnull(results['DetectCond'])]
+        results.drop_duplicates(subset=['SampleId', 'ParAbb'], inplace=True)
+        datap = results.pivot(index='SampleId', columns='ParAbb', values='ResultValue')
+        if chems == '':
+            pass
+        elif chems == 'piper':
+            datap.dropna(subset=['SO4', 'Cl', 'Ca', 'HCO3', 'pH'], how='any', inplace=True)
+        else:
+            datap.dropna(subset=chems, how='any', inplace=True)
+        return datap

@@ -63,25 +63,28 @@ class recess(object):
     def recession(self, df, Q, st, end, excs, excf):
         """Creates recession curve and modeled output to describe spring and streamflow recession.
 
-        INPUT
-        -----
-        df = dataframe with spring discharge data
-        Q = string indicating discharge field in df in units of gpm
-        st = start date to examine data in [YYYY, MM, DD] format, where values are integers in an array
-        end = end date to examine data
-        unit = preferred units to use in analysis; defaults to gpm; can convert to lpm
-        excs = begin date of exclusion period
-        excf = end date of exclusion period
+        The user puts in a dataframe with discharge data and defines the date range of recession.  The Class will return
+        recession values of the date range given.
 
-        OUTPUT
-        ------
-        popt = alpha value for recession curve
-        x1 = days from start of recession
-        x2 = dates of recession curve analysis
-        y1 = points used for recession curve analysis
-        y2 = recession curve values
-        Plot of recession curve
+        :param df: DataFrame with spring discharge data
+        :type df: pandas.core.frame.DataFrame
+        :param Q: discharge field in df in units of gpm
+        :type Q: str
+        :param st: start date to examine data in [YYYY, MM, DD] format, where values are integers in an array
+        :type st: list
+        :param end: end date to examine data
+        :type end: list
+        :param excs: begin date of exclusion period
+        :param excf: end date of exclusion period
+        :type excs: list
+        :type excs: list
 
+        :returns: popt1, x1, x2, y1, y2
+        :return popt1: alpha value for recession curve
+        :return x1: days from start of recession
+        :return x2: = dates of recession curve analysis
+        :return y1: = points used for recession curve analysis
+        :return y2: = recession curve values
         """
         # account for hours in time input
         if len(st) == 3 and len(end) == 3:
@@ -117,11 +120,20 @@ class recess(object):
 
 
 class piper(object):
-    """
-    Created on Thu May 29 10:57:49 2014
+    """Class that generates rectangular piper diagrams.
+
+    :param df: DataFrame containing chemistry data; must have fields labeled as abbreviations of the major ions; Na, K,
+    NaK, Ca, Mg, Cl, HCO3, CO3, and SO4
+    :type df: pandas.core.frame.DataFrame
+    :param type_col: Name of field that designates the sample type (optional); defaults to ''
+    :type type_col: str
+    :param var_col: Name of field that contains a scalar variable to be designated by color (optional); defaults to ''
+    :type var_col: str
+
+
+    .. note::
     Hydrochemistry - Construct Rectangular Piper plot
-    Adopted from: Ray and Mukherjee (2008) Groundwater 46(6): 893-896 
-    and from code found at:
+    Adopted from: Ray and Mukherjee, 2008, Groundwater 46(6): 893-896 and from code found at:
     http://python.hydrology-amsterdam.nl/scripts/piper_rectangular.py
     Based on code by:
     B.M. van Breukelen <b.m.vanbreukelen@vu.nl>  
@@ -164,7 +176,17 @@ class piper(object):
             return x[0] + x[1]
 
     def convertIons(self, df):
-        """Convert from mg/L to meq"""
+        """Convert major ion concentrations from mg/L to meq
+
+        This function uses conversion factors to convert the concentrations of major ions from mg/L to meq.  It also
+        appends a field to the input database listing the Cation-Anion pair that have the highest meq concentrations.
+
+        :param df: DataFrame containing chemistry data; must have fields labeled as abbreviations of the major ions; Na, K,
+        NaK, Ca, Mg, Cl, HCO3, CO3, and SO4
+        :returns: appends convert fields onto DataFrame with the suffix `_meq` and adds the fields 'water type', 'CBE'
+        (charge balance), 'EC' (Sum(anions+cations))
+
+        """
         # Conversion factors from mg/L to meq/L
         d = {'Ca': 0.04990269, 'Mg': 0.082287595, 'Na': 0.043497608, 'K': 0.02557656, 'Cl': 0.028206596, 'NaK': 0.043497608,
              'HCO3': 0.016388838, 'CO3': 0.033328223, 'SO4': 0.020833333, 'NO2': 0.021736513, 'NO3': 0.016129032}
@@ -197,7 +219,7 @@ class piper(object):
 
 
     def ionPercentage(self, df):
-        """Determines percentage of charge for each ion"""
+        """Determines percentage of charge for each ion for display on the piper plot"""
         for ion in self.anions:
             df[ion + 'EC'] = df[[ion + '_meq', 'anions']].apply(lambda x: 100 * x[0] / x[1], 1)
         for ion in self.cations:
@@ -205,7 +227,7 @@ class piper(object):
         return df
 
     def piperplot(self, df,  type_col, var_col):
-
+        """Generates a rectangular piper diagram"""
         self.fillMissing(df)
         self.convertIons(df)
         self.ionPercentage(df)
@@ -370,8 +392,6 @@ class piper(object):
             cb1 = plt.colorbar(s, cax=cax, cmap=cmap, norm=cNorm, orientation='horizontal')  # use_gridspec=True
             cb1.set_label(var_col, size=8)
 
-
-
         self.plot = fig
         self.df = df
 
@@ -379,21 +399,25 @@ class piper(object):
 def fdc(df, site, begyear=1900, endyear=2015, normalizer=1, plot=True):
     """Generate flow duration curve for hydrologic time series data
 
-    PARAMETERS:
-        df = pandas dataframe of interest; must have a date or date-time as the index
-        site = pandas column containing discharge data; must be within df
-        begyear = beginning year of analysis; defaults to 1900
-        endyear = end year of analysis; defaults to 2015
-        normalizer = value to use to normalize discharge; defaults to 1 (no normalization)
+    :param df: DataFrame with discharge data of interest; must have a date or date-time as the index
+    :type df: pandas.core.frame.DataFrame
+    :param site: Name of DataFrame column in df containing discharge data
+    :type site: str
+    :param begyear: beginning year of analysis; defaults to 1900
+    :type begyear: int
+    :param endyear: end year of analysis; defaults to 2015
+    :type endyear: int
+    :param normalizer: value to use to normalize discharge; defaults to 1 (no normalization)
+    :type normalizer: int
+    :param plot: Whether to generate the plot or just return the variables for a plot; defaults to true
+    :type plot: bool
 
-    RETURNS:
-        matplotlib plot displaying the flow duration curve of the data
+    :returns: matplotlib plot displaying the flow duration curve of the data
+    :return prob: x field stating the probability of a discharge in data
+    :rtype prob: list
+    :return data: y field stating the discharge for probability prob
+    :rtype data: list
 
-    REQUIRES:
-        numpy as np
-        pandas as pd
-        matplotlib.pyplot as plt
-        scipy.stats as sp
     """
     # limit dataframe to only the site
     df = df[[site]]
@@ -436,11 +460,21 @@ def fdc(df, site, begyear=1900, endyear=2015, normalizer=1, plot=True):
 
 class gantt(object):
     """Class to create gantt plots and to summarize pandas timeseries dataframes.
-    Finds gaps and measuring duration of data
-    The pandas dataframe with datetime as index and columns as site time-series data;
-             each column name should be the site name or the site labels should be input for chart
-    The datetime index should be a regular measurement interval.  The resulting gantt plot will be based on the index.
 
+    Finds gaps and measuring duration of data.
+    :param df: The DataFrame with a datetime index and columns as site time-series data; each column name
+    should be the site name or the site labels should be input for chart
+    :param stations: List of columns to include in the chart; defaults to all columns
+    :param labels: Labels to use in the resulting plot for each station; must be equal to the length of stations list;
+    defaults to stations
+    :param samp_int: regular interval that the datetime index will be resampled. Defaults to daily ('D');
+    see http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases for all of the options
+    :type samp_int: str
+    :type df: pandas.core.frame.DataFrame
+    :type stations: list
+    :type labels: list
+
+    .. note::
     `.stations` produces a list describing the stations put into the class
     `.labels` produces a list describing the labels put into the class
     `.dateranges` is a dictionary describing gaps in the dataframe based on the presence of nan values in the frame
@@ -466,13 +500,10 @@ class gantt(object):
         """Produces dictionary of list of gaps in time series data based on the presence of nan values;
         used for gantt plotting
 
-        INPUT
-        -----
-        df = date-indexed dataframe containing columns that are station names containing station values
+        :param df: date-indexed DataFrame containing columns that are station names containing station values
+        :type df: pandas.core.frame.DataFrame
 
-        RETURNS
-        -------
-        dateranges = dictionary with station names as keys and lists of begin and end dates as values
+        :returns: dateranges; a dictionary with station names as keys and lists of begin and end dates as values
         """
         df = self.data
         stations = self.stations
@@ -493,7 +524,12 @@ class gantt(object):
         return dateranges
 
     def site_info(self):
+        """Creates a table of summary statistics for all of the stations in the stations field defined in the class
 
+        :returns: site_info; a table of summary statistics; first, last, min, max, std, median, avg, 25%tile, 75%tile,
+        and count
+
+        """
         stations = self.stations
         df = self.data
 
@@ -518,18 +554,8 @@ class gantt(object):
 
     def ganttPlotter(self):
         """Plots gantt plot using dictionary of stations and associated start and end dates;
-        uses output from markGaps function
+        uses output from markGaps function"""
 
-        INPUT
-        -----
-        dateranges = dictionary of stationids as keys and date ranges of data as values
-        stations = list of stations to show on plot
-        labels = labels to use on plot
-
-        OUTPUT
-        ------
-        graph of data
-        """
         labs, tickloc, col = [], [], []
 
         dateranges = self.dateranges
@@ -574,21 +600,7 @@ class gantt(object):
         return fig
 
     def gantt(self):
-        """
-        INPUT
-        -----
-        df = pandas dataframe with datetime as index and columns as site time-series data;
-             each column name should be the site name
-        stations = list of columns (stationids) you want to subset from your dataframe
-        labels = list of labels that will appear on the outputted chart
-
-        RETURNS
-        -------
-        Site_Info = summary statistics
-        dateranges = dictionary of stationids as keys and list of begin-end dates for each measurement interval
-        gantt chart and site info table
-
-        """
+        """This function runs the other functions in this class."""
         stations = self.stations
         labels = self.labels
         df = self.data
@@ -605,17 +617,16 @@ def scatterColor(x0, y, w):
     """Creates scatter plot with points colored by variable.
     All input arrays must have matching lengths
 
-    Arg:
-        x0 (array):
-            array of x values
-        y (array):
-            array of y values
-        w (array):
-            array of scalar values
+    :param x0: x values to plot
+    :type x0: list
+    :param y: y values to plot
+    :type y: list
+    :param w: z values to plot
 
-    Returns:
-        slope and intercept of best fit line
-
+    :returns: plot; slope and intercept of the RLM best fit line shown on the plot
+    .. warning:: all input arrays must have matching lengths and scalar values
+    .. note:: See documentation at http://statsmodels.sourceforge.net/0.6.0/generated/statsmodels.robust.robust_linear_model.RLM.html
+    for the RLM line
     """
     import matplotlib as mpl
     import matplotlib.cm as cm
