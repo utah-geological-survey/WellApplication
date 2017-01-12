@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d5a82257-6a90-41c3-87e5-13b1695dbcbb" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wellapplication/chem.py" afterPath="$PROJECT_DIR$/wellapplication/chem.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wellapplication/graphs.py" afterPath="$PROJECT_DIR$/wellapplication/graphs.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wellapplication/usgs.py" afterPath="$PROJECT_DIR$/wellapplication/usgs.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -32,17 +31,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="usgs.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="usgs.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="124" column="32" lean-forward="false" selection-start-line="124" selection-start-column="32" selection-end-line="124" selection-end-column="32" />
-              <folding />
+            <state relative-caret-position="272">
+              <caret line="31" column="55" lean-forward="false" selection-start-line="31" selection-start-column="54" selection-end-line="31" selection-end-column="55" />
+              <folding>
+                <element signature="e#80#99#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="chem.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="chem.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wellapplication/chem.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-1025">
@@ -129,11 +130,11 @@
         <option value="$PROJECT_DIR$/wellapplication/nwis.py" />
         <option value="$PROJECT_DIR$/wellapplication/transport.py" />
         <option value="$PROJECT_DIR$/wellapplication/__init__.py" />
-        <option value="$PROJECT_DIR$/wellapplication/usgs.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/test/test.py" />
         <option value="$PROJECT_DIR$/wellapplication/graphs.py" />
         <option value="$PROJECT_DIR$/wellapplication/chem.py" />
+        <option value="$PROJECT_DIR$/wellapplication/usgs.py" />
       </list>
     </option>
   </component>
@@ -226,6 +227,11 @@
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="preferences.editor" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\PAULINKENBRANDT\Documents\GitHub\WellApplication\wellapplication" />
+    </key>
   </component>
   <component name="RunManager" selected="Python.usgs">
     <configuration default="false" name="usgs" type="PythonConfigurationType" factoryName="Python" temporary="true">
@@ -401,13 +407,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1483036980477</updated>
-    </task>
-    <task id="LOCAL-00007" summary="usgs">
-      <created>1484059290699</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1484059290699</updated>
     </task>
     <task id="LOCAL-00008" summary="piper fixes">
       <created>1484059750682</created>
@@ -745,7 +744,14 @@
       <option name="project" value="LOCAL" />
       <updated>1484171823609</updated>
     </task>
-    <option name="localTasksCounter" value="56" />
+    <task id="LOCAL-00056" summary="adding doc strings">
+      <created>1484260631585</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1484260631586</updated>
+    </task>
+    <option name="localTasksCounter" value="57" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -785,10 +791,13 @@
     <MESSAGE value="recess cleanup" />
     <MESSAGE value="fixing usgs" />
     <MESSAGE value="fixing recess" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixing recess" />
+    <MESSAGE value="adding doc strings" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding doc strings" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
@@ -1120,14 +1129,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="124" column="32" lean-forward="false" selection-start-line="124" selection-start-column="32" selection-end-line="124" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1186,6 +1187,16 @@
         <state relative-caret-position="-1025">
           <caret line="283" column="48" lean-forward="false" selection-start-line="283" selection-start-column="48" selection-end-line="283" selection-end-column="48" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="31" column="55" lean-forward="false" selection-start-line="31" selection-start-column="54" selection-end-line="31" selection-end-column="55" />
+          <folding>
+            <element signature="e#80#99#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

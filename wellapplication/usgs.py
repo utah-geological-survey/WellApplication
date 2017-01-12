@@ -22,22 +22,20 @@ class nwisError(Exception):
 
 
 class nwis(object):
+    """Class to quickly download NWIS data using NWIS_ services
+    .. _NWIS: https://waterservices.usgs.gov/
+
+    :param service: name of web service to use; options are daily values ('dv'), instantaneous values ('iv'),
+    site ('site'), and groundwater levels ('gwlevels')
+    :param values: values for REST query; valid site is '01646500'; valid huc is '02070010'; valid bBox is
+    '-83.000000,36.500000,-81.000000,38.500000'
+    :param loc_type: filter type; valid values are 'huc', 'bBox', 'sites', and 'countyCd';
+    see https://waterservices.usgs.gov/rest/IV-Service.html#MajorFilters for details
+    :param **kwargs: other query parameters; optional
+
+    """
     def __init__(self, service, values, loc_type, **kwargs):
-        r""" Instantiates an instance of nwis
-
-        Arguments:
-        ----------
-        token: string, mandatory
-            Your API token that authenticates you for requests against MesoWest.mes
-
-        Returns:
-        --------
-            None.
-
-        Raises:
-        -------
-            None.
-        """
+        r""" Instantiates an instance of nwis"""
         self.service = service
         self.loc_type = loc_type
         self.values = self.parsesitelist(values)
