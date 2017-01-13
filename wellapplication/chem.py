@@ -41,7 +41,6 @@ class WQP(object):
         """ Returns a dictionary of data requested by each function.
         :param service: options include 'Station' or 'Results'
         table 1 of https://www.waterqualitydata.us/webservices_documentation/
-        :param **kwargs: additional Rest Parameters
         """
         http_error = 'Could not connect to the API. This could be because you have no internet connection, a parameter' \
                      ' was input incorrectly, or the API is currently down. Please try again.'

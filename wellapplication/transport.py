@@ -747,23 +747,20 @@ def new_xle_imp(infile):
 def dataendclean(df, x, inplace=False):
     """Trims off ends and beginnings of datasets that exceed 2.0 standard deviations of the first and last 30 values
 
-    Args:
-        df (pandas.core.frame.DataFrame):
-            Pandas DataFrame
-        x (str):
-            Column name of data to be trimmed contained in df
+    :param df: Pandas DataFrame
+    :type df: pandas.core.frame.DataFrame
+    :param x: Column name of data to be trimmed contained in df
+    :type x: str
+    :param inplace: if DataFrame should be duplicated
+    :type inplace: bool
 
-    Returns:
-        df (pandas.core.frame.DataFrame):
-            trimmed data
+    :returns: df trimmed data
+    :rtype: pandas.core.frame.DataFrame
 
     This function prints a message if data are trimmed.
-    :param df: 
-    :param x: 
-    :return: 
     """
     # Examine Mean Values
-    if inplace==True:
+    if inplace:
         df = df
     else:
         df = df.copy()

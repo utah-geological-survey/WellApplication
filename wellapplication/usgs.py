@@ -54,19 +54,12 @@ class nwis(object):
         r""" Returns the data requested by the other methods assuming the response from the API is ok. If not, provides
         error handling for all possible API errors. HTTP errors are handled in the get_response() function.
 
-        Arguments:
-        ----------
-            response: The response from the API as a dictionary if the API code is 200.
+        :param response: The response from the API as a dictionary if the API code is 200.
 
-        Returns:
-        --------
-            The response from the API as a dictionary if the API code is 200.
+        :returns: The response from the API as a dictionary if the API code is 200.
 
-        Raises:
-        -------
-            nwisError: Gives different response messages depending on returned code from API.
-
-        https://waterservices.usgs.gov/docs/portable_code.html
+        .. raises:: nwisError; Gives different response messages depending on returned code from API.
+        .. notes:: https://waterservices.usgs.gov/docs/portable_code.html
         """
 
         if response.status_code == 200:
@@ -88,28 +81,15 @@ class nwis(object):
     def get_response(self, **kwargs):
         """ Returns a dictionary of data requested by each function.
 
-        Arguments:
-        ----------
-        endpoint: string, mandatory
-            Set in all other methods, this is the API endpoint specific to each function.
-        request_dict: string, mandatory
-            A dictionary of parameters that are formatted into the API call.
+        :returns: response - A dictionary that has been dumped from JSON. '01585200'
 
-        Returns:
-        --------
-            response: A dictionary that has been dumped from JSON.
-            '01585200'
-        Raises:
-        -------
-            MesoPyError: Overrides the exceptions given in the requests library to give more custom error messages.
+        .. raises:: nwisError - Overrides the exceptions given in the requests library to give more custom error messages.
             Connection_error occurs if no internet connection exists. Timeout_error occurs if the request takes too
             long and redirect_error is shown if the url is formatted incorrectly.
-
         """
         http_error = 'Could not connect to the API. This could be because you have no internet connection, a parameter' \
                      ' was input incorrectly, or the API is currently down. Please try again.'
-        # For python 3.4
-        # try:
+
         kwargs[self.loc_type] = self.values
         kwargs['format'] = self.out_format
 
@@ -167,15 +147,11 @@ class nwis(object):
     def parsesitelist(self, values):
         """Takes a list and turns it into a string format that can be used in the html REST format
 
-        Args:
-            values (list or array):
-                list or array of ints or strings
+        :param values:
+        :param type: list
+        :returns: sitno (str); string with commas separating values
 
-        Returns:
-            sitno (str):
-                string with commas separating values
-
-        Example::
+        :Example:
             >>>parsesitelist([123,576,241])
             '123,576,241'
         """
@@ -189,13 +165,11 @@ class nwis(object):
 
     def get_info(self, **kwargs):
         """Downloads data from usgs service as text file; converted to Pandas DataFrame.
-        Args:
-            **kwargs (str):
-                response of request
 
-        Returns:
-            df:
-                Pandas DataFrame containing data downloaded from USGS
+        :param kwargs: response of request
+        :type kwargs: str
+
+        .. returns:: df; Pandas DataFrame containing data downloaded from USGS
         """
         self.service = 'site'
         self.out_format = 'rdb'
@@ -216,16 +190,12 @@ class nwis(object):
 
     def cleanGWL(self, df, colm='qualifiers'):
         """Drops water level data of suspect quality based on lev_status_cd
-        returns Pandas DataFrame
-        Args:
-            df (pandas dataframe):
-                groundwater dataframe
-            colm (str):
-                column to parse; defaults to 'qualifiers'
-        Returns:
-            sitno (str):
-                subset of input dataframe as new dataframe
 
+        :param df: (pandas dataframe) groundwater dataframe
+        :param colm: column to parse; defaults to 'qualifiers'
+
+        :type colm: str
+        :returns: sitno (str) - subset of input dataframe as new dataframe
         """
         data = df.copy(deep=True)
         data[colm] = data[colm].apply(lambda x: self.xcheck(x), 1)
@@ -234,8 +204,7 @@ class nwis(object):
 
 
     def avg_wl(self, numObs=50, avgtype='stdWL', grptype='bytime', grper='12M'):
-        """calculates standardized statistics for a list of stations or a huc from the USGS
-        """
+        """calculates standardized statistics for a list of stations or a huc from the USGS"""
 
         data = self.cleanGWL(self.data)
         # stationWL = pd.merge(siteinfo, data, on = 'site_no')
@@ -277,15 +246,14 @@ class nwis(object):
 
 def getelev(x, units='Meters'):
     """Uses USGS elevation service to retrieve elevation
-    Args:
-        x (array of floats):
-            longitude and latitude of point where elevation is desired
-        units (str):
-            units for returned value; defaults to Meters; options are 'Meters' or 'Feet'
-    Returns:
-        ned float elevation of location in meters
+    :param x: longitude and latitude of point where elevation is desired
+    :type x: list
+    :param units: units for returned value; defaults to Meters; options are 'Meters' or 'Feet'
+    :type units: str
 
-    Example::
+    :returns: ned float elevation of location in meters
+
+    :Example:
         >>> getelev([-111.21,41.4])
         1951.99
     """
@@ -314,11 +282,9 @@ def getelev(x, units='Meters'):
 def get_huc(x):
     """Receive the content of ``url``, parse it as JSON and return the object.
 
-    Args:
-        x = [longitude, latitude]
+    :param x: [longitude, latitude]
 
-    Returns:
-        HUC12, HUC12_Name = 12 digit hydrologic unit code of location and the name associated with that code
+    :returns: HUC12, HUC12_Name - 12 digit hydrologic unit code of location and the name associated with that code
     """
     values = {
         'geometry': '{:},{:}'.format(x[0], x[1]),
@@ -339,16 +305,19 @@ def USGSID(x):
     """Parses decimal latitude and longitude values into DDMMSSDDDMMSS01 USGS site id.
     See https://help.waterdata.usgs.gov/faq/sites/do-station-numbers-have-any-particular-meaning for documentation.
 
-    Args:
-        x (list):
-            [longitude,latitude]
-
-    Returns:
-        USGS-style site id (groundwater) DDMMSSDDDMMSS01
+    :param x: [longitude,latitude]
+    :type x: str
+    :returns: USGS-style site id (groundwater) DDMMSSDDDMMSS01
     """
     return dms(x[1]) + dms(x[0]) + '01'
 
 def dms(dec):
+    """converts decimal degree coordinates to a usgs station id
+    :param dec: latitude or longitude value in decimal degrees
+    :return: usgs id value
+
+    .. note:: https://help.waterdata.usgs.gov/faq/sites/do-station-numbers-have-any-particular-meaning
+    """
     DD = str(int(abs(dec)))
     MM = str(int((abs(dec) - int(DD)) * 60)).zfill(2)
     SS = str(int(round((((abs(dec) - int(DD)) * 60) - int(MM)) * 60, 0))).zfill(2)
@@ -358,7 +327,7 @@ def dms(dec):
     if MM == '60':
         DD = str(int(DD) + 1)
         MM = '00'
-    return DD + MM + SS
+    return DD + MM + SS + '01'
 
 
 

@@ -57,7 +57,7 @@ class recess(object):
 
     def fitit(self, x, y):
 
-        popt, pcov = curve_fit(self.func, x, y, p0=(1e-1))
+        popt, pcov = curve_fit(self.func, x, y, p0=1e-1)
         return popt, pcov
 
     def recession(self, df, Q, st, end, excs, excf):
@@ -499,9 +499,6 @@ class gantt(object):
     def markGaps(self):
         """Produces dictionary of list of gaps in time series data based on the presence of nan values;
         used for gantt plotting
-
-        :param df: date-indexed DataFrame containing columns that are station names containing station values
-        :type df: pandas.core.frame.DataFrame
 
         :returns: dateranges; a dictionary with station names as keys and lists of begin and end dates as values
         """
