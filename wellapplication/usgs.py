@@ -327,7 +327,7 @@ def dms(dec):
     if MM == '60':
         DD = str(int(DD) + 1)
         MM = '00'
-    return DD + MM + SS + '01'
+    return DD + MM + SS
 
 
 
