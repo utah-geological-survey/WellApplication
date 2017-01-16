@@ -658,3 +658,4 @@ def scatterColor(x0, y, w):
     cbar.set_label('use cbar.set_label("label") to label this axis')
 
     return slope, const
+
