@@ -12,6 +12,36 @@ from collections import OrderedDict
 from datetime import datetime, timedelta
 from scipy.optimize import curve_fit
 
+
+def get_recess_int(df, Q, maxper=18, minper=6, thresh=30, inplace=False):
+    """Gets intervals of recession from a hydrograph
+
+    :param df: DataFrame with hydrograph data
+    :param Q: Field in DataFrame with discharge data
+    :param maxper: Period of record to scan discharge data for maxima; created for daily values; defaults to 18
+    :param minper: Period of record to scan discharge data for minima; should be less than maxper; defaulst to 6
+    :param thresh: Threshold of discharge below which maxima are not considered; defaults to 30
+    :param inplace: Append to input database or create new one; defaults to False
+    :return: DataFrame of original data and Max and Min, Indexes of maxima, Indexes of minima
+    """
+    if inplace:
+        data = df
+    else:
+        data = df.copy()
+    data['max'] = data[Q].rolling(maxper,center=True).max()
+    data['max'] = data.ix[data['max'] == data['value'],'max']
+    data['max'] = data.ix[data['max'] > thresh, 'max']
+    data['min'] = data[Q].rolling(minper,center=True).min()
+    data['min'] = data.ix[data['min'] == data['value'],'min']
+
+    maxlist = data.index[data['max'].notnull()]
+    firstmin = []
+    for ind in maxlist:
+        firstmin.append(data.ix[ind:,'min'].first_valid_index())
+    data['min'] = data.ix[data.index.isin(firstmin),'min']
+    return data, maxlist, firstmin
+
+
 class recess(object):
     """Creates recession curve and modeled output to describe spring and streamflow recession.
 
@@ -48,14 +78,14 @@ class recess(object):
 
         self.rec_results = self.recession(df, Q, st, end, excs, excf)
 
+    def fitit(self, x, y, Q):
+        from scipy.optimize import curve_fit
 
-    def func(self, x, c):
-        return self.Qz*np.exp(-1 * c * x)
+        func = lambda x, c: Q * np.exp(-1 * c * x)
 
-    def fitit(self, x, y):
-
-        popt, pcov = curve_fit(self.func, x, y, p0=1e-1)
+        popt, pcov = curve_fit(func, x, y, p0=(1e-1))
         return popt, pcov
+
 
     def recession(self, df, Q, st, end, excs, excf):
         """Creates recession curve and modeled output to describe spring and streamflow recession.
@@ -79,9 +109,9 @@ class recess(object):
         :returns: popt1, x1, x2, y1, y2
         :return popt1: alpha value for recession curve
         :return x1: days from start of recession
-        :return x2: = dates of recession curve analysis
-        :return y1: = points used for recession curve analysis
-        :return y2: = recession curve values
+        :return x2: dates of recession curve analysis
+        :return y1: points used for recession curve analysis
+        :return y2: recession curve values
         """
         # account for hours in time input
         if len(st) == 3 and len(end) == 3:
@@ -105,7 +135,7 @@ class recess(object):
 
         y1 = df2[Q]
         x1 = (df2.index.to_julian_date() - df2.index.to_julian_date()[0])  # convert to numeric days for opt. function
-        popt1, pcov1 = self.fitit(x1, y1)  # fit curve
+        popt1, pcov1 = self.fitit(x1, y1, y1[0])  # fit curve
         x2 = [df2.index[0] + timedelta(i) for i in x1]  # convert back to dates for labels
         y2 = [y1[0] * np.exp(-1 * popt1[0] * i) for i in x1]  # run function with optimized variables
         plt.plot(x2, y2, label='Recession (alpha = %.3f)' % popt1[0])  # report alpha value
@@ -213,7 +243,6 @@ class piper(object):
         df1['maj_anion'] = df1[['Cl_meq','SO4_meq','HCO3_meq','CO3_meq']].idxmax(axis=1)
         df1['water_type'] = df1[['maj_cation','maj_anion']].apply(lambda x: str(x[0])[:-4]+'-'+str(x[1])[:-4],1)
         return df1
-
 
     def ionPercentage(self, df):
         """Determines percentage of charge for each ion for display on the piper plot"""
@@ -324,7 +353,7 @@ class piper(object):
 
         if len(typ) > 0:
             for j in range(len(typ)):
-                labs =  "{:} n= {:}".format(typ[j],nstatTypesDict[typ[j]])
+                labs = "{:} n= {:}".format(typ[j],nstatTypesDict[typ[j]])
                 if float(nstatTypesDict[typ[j]]) > 1:
                     s = ax.scatter(ClEC[j], SO4EC[j], s=markSize, c=vart[j], cmap=cmap, norm=cNorm,
                                    marker=typdict[typ[j]], label=labs, linewidths=lineW)
