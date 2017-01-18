@@ -188,7 +188,7 @@ class nwis(object):
         return df
 
 
-    def cleanGWL(self, df, colm='qualifiers'):
+    def cleanGWL(self, df, colm='qualifiers',inplace=False):
         """Drops water level data of suspect quality based on lev_status_cd
 
         :param df: (pandas dataframe) groundwater dataframe
@@ -197,14 +197,24 @@ class nwis(object):
         :type colm: str
         :returns: sitno (str) - subset of input dataframe as new dataframe
         """
-        data = df.copy(deep=True)
+        if inplace:
+            data = df
+        else:
+            data = df.copy(deep=True)
         data[colm] = data[colm].apply(lambda x: self.xcheck(x), 1)
         CleanData = data[~data[colm].isin(['Z', 'R', 'V', 'P', 'O', 'F', 'W', 'G', 'S', 'C', 'E', 'N'])]
         return CleanData
 
 
     def avg_wl(self, numObs=50, avgtype='stdWL', grptype='bytime', grper='12M'):
-        """calculates standardized statistics for a list of stations or a huc from the USGS"""
+        """Calculates standardized statistics for a list of stations or a huc from the USGS
+
+        :param numObs: minimum observations per site required to include site in analysis; default is 50
+        :param avgtype: averaging technique for site data; options are 'avgDiffWL' and 'stdWL'; default is 'stWL'
+        :param grptype: way to group the averaged data; options are 'bytime' or 'monthly' or user input; default 'bytime'
+        :param grper: only used if 'bytime' called; defaults to '12M'; other times can be put in
+        :return:
+        """
 
         data = self.cleanGWL(self.data)
         # stationWL = pd.merge(siteinfo, data, on = 'site_no')
@@ -244,7 +254,7 @@ class nwis(object):
         else:
             return x
 
-def getelev(x, units='Meters'):
+def get_elev(x, units='Meters'):
     """Uses USGS elevation service to retrieve elevation
     :param x: longitude and latitude of point where elevation is desired
     :type x: list
@@ -254,7 +264,7 @@ def getelev(x, units='Meters'):
     :returns: ned float elevation of location in meters
 
     :Example:
-        >>> getelev([-111.21,41.4])
+        >>> get_elev([-111.21,41.4])
         1951.99
     """
 

@@ -194,4 +194,3 @@ def test_recess():
 def test_get_recess_int():
     ashley = wa.nwis('dv', '09265500','sites', startDT='2015-01-02' ,endDT='2015-10-14')
     assert type(wa.get_recess_int(ashley.data, 'value')[0]) == pd.DataFrame
-    

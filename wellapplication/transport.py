@@ -10,9 +10,9 @@ import xmltodict
 def well_baro_merge(wellfile, barofile, sampint=60):
     """Remove barometric pressure from nonvented transducers.
     Args:
-        wellfile (pandas.core.frame.DataFrame):
+        wellfile (pd.DataFrame):
             Pandas DataFrame of water level data labeled 'Level'; index must be datetime
-        barofile (pandas.core.frame.DataFrame):
+        barofile (pd.DataFrame):
             Pandas DataFrame barometric data labeled 'Level'; index must be datetime
         sampint (int):
             sampling interval in minutes; default 60
@@ -95,7 +95,7 @@ def xle_head_table(folder):
 def fix_drift(well, manualfile, meas='Level', manmeas='MeasuredDTW', outcolname='DriftCorrection'):
     """Remove transducer drift from nonvented transducer data.
     Args:
-        well (pandas.core.frame.DataFrame):
+        well (pd.DataFrame):
             Pandas DataFrame of merged water level and barometric data; index must be datetime
         manualfile (pandas.core.frame.DataFrame):
             Pandas DataFrame of manual measurements

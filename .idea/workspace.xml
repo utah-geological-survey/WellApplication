@@ -8,6 +8,8 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/USGS_Interpolate.ipynb" afterPath="$PROJECT_DIR$/docs/USGS_Interpolate.ipynb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/test.py" afterPath="$PROJECT_DIR$/test/test.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wellapplication/transport.py" afterPath="$PROJECT_DIR$/wellapplication/transport.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wellapplication/usgs.py" afterPath="$PROJECT_DIR$/wellapplication/usgs.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -22,90 +24,22 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/wellapplication/__init__.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="21" lean-forward="false" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
-              <folding>
-                <element signature="e#110#133#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="usgs.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="625">
-              <caret line="41" column="8" lean-forward="false" selection-start-line="41" selection-start-column="8" selection-end-line="41" selection-end-column="8" />
-              <folding>
-                <element signature="e#80#99#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="USGS_Interpolate.ipynb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/docs/USGS_Interpolate.ipynb">
           <provider selected="true" editor-type-id="ipnb-editor">
             <state>
-              <selected id="3" />
+              <selected id="24" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="chem.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/wellapplication/chem.py">
+      <file leaf-file-name="usgs.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4726">
-              <caret line="281" column="31" lean-forward="false" selection-start-line="281" selection-start-column="31" selection-end-line="281" selection-end-column="31" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="test.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/test/test.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="523">
-              <caret line="196" column="4" lean-forward="false" selection-start-line="196" selection-start-column="4" selection-end-line="196" selection-end-column="4" />
+            <state relative-caret-position="102">
+              <caret line="218" column="39" lean-forward="true" selection-start-line="218" selection-start-column="39" selection-end-line="218" selection-end-column="39" />
               <folding>
-                <element signature="e#81#109#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="graphs.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/wellapplication/graphs.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="36" column="47" lean-forward="false" selection-start-line="36" selection-start-column="47" selection-end-line="36" selection-end-column="47" />
-              <folding>
-                <element signature="e#94#123#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="requirements.txt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/requirements.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="8" column="13" lean-forward="false" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="transport.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7905">
-              <caret line="470" column="13" lean-forward="false" selection-start-line="470" selection-start-column="4" selection-end-line="470" selection-end-column="20" />
-              <folding>
-                <element signature="e#24#43#0" expanded="true" />
+                <element signature="e#80#99#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -140,13 +74,14 @@
       <list>
         <option value="$PROJECT_DIR$/wellapplication/mesopy.py" />
         <option value="$PROJECT_DIR$/wellapplication/nwis.py" />
-        <option value="$PROJECT_DIR$/wellapplication/transport.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/wellapplication/chem.py" />
         <option value="$PROJECT_DIR$/wellapplication/graphs.py" />
         <option value="$PROJECT_DIR$/wellapplication/__init__.py" />
-        <option value="$PROJECT_DIR$/wellapplication/usgs.py" />
         <option value="$PROJECT_DIR$/test/test.py" />
+        <option value="$PROJECT_DIR$/wellapplication/usgs.py" />
+        <option value="$PROJECT_DIR$/wellapplication/transport.py" />
+        <option value="$PROJECT_DIR$/docs/USGS_Interpolate.ipynb" />
       </list>
     </option>
   </component>
@@ -433,13 +368,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1483036980477</updated>
-    </task>
-    <task id="LOCAL-00013" summary="usgs changes to response">
-      <created>1484064576203</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1484064576203</updated>
     </task>
     <task id="LOCAL-00014" summary="usgs changes to response">
       <created>1484064583635</created>
@@ -777,7 +705,14 @@
       <option name="project" value="LOCAL" />
       <updated>1484746238366</updated>
     </task>
-    <option name="localTasksCounter" value="62" />
+    <task id="LOCAL-00062" summary="adding tests">
+      <created>1484747430375</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1484747430376</updated>
+    </task>
+    <option name="localTasksCounter" value="63" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -818,7 +753,8 @@
     <MESSAGE value="fixing usgs" />
     <MESSAGE value="fixing recess" />
     <MESSAGE value="adding doc strings" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding doc strings" />
+    <MESSAGE value="adding tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding tests" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -832,7 +768,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#110#133#0" expanded="true" />
+            <element signature="e#110#133#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -862,7 +798,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#110#133#0" expanded="true" />
+            <element signature="e#110#133#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -899,7 +835,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#110#133#0" expanded="true" />
+            <element signature="e#110#133#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -975,7 +911,7 @@
         <state relative-caret-position="34">
           <caret line="2" column="21" lean-forward="false" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
           <folding>
-            <element signature="e#110#133#0" expanded="true" />
+            <element signature="e#110#133#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1040,7 +976,7 @@
         <state relative-caret-position="34">
           <caret line="2" column="21" lean-forward="false" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
           <folding>
-            <element signature="e#110#133#0" expanded="true" />
+            <element signature="e#110#133#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1095,7 +1031,7 @@
         <state relative-caret-position="119">
           <caret line="12" column="0" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
           <folding>
-            <element signature="e#110#133#0" expanded="true" />
+            <element signature="e#110#133#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1140,13 +1076,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/nwis.py" />
-    <entry file="file://$PROJECT_DIR$/wellapplication/MannKendall.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1162,20 +1091,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
+    <entry file="file://$USER_HOME$/Desktop/zonal.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7905">
-          <caret line="470" column="13" lean-forward="false" selection-start-line="470" selection-start-column="4" selection-end-line="470" selection-end-column="20" />
-          <folding>
-            <element signature="e#24#43#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="136">
+          <caret line="8" column="21" lean-forward="true" selection-start-line="8" selection-start-column="21" selection-end-line="8" selection-end-column="21" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wellapplication/chem.py">
+    <entry file="file://$PROJECT_DIR$/wellapplication/MannKendall.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4726">
-          <caret line="281" column="31" lean-forward="false" selection-start-line="281" selection-start-column="31" selection-end-line="281" selection-end-column="31" />
+        <state relative-caret-position="697">
+          <caret line="89" column="20" lean-forward="true" selection-start-line="89" selection-start-column="20" selection-end-line="89" selection-end-column="20" />
           <folding />
         </state>
       </provider>
@@ -1185,31 +1111,17 @@
         <state relative-caret-position="34">
           <caret line="2" column="21" lean-forward="false" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
           <folding>
-            <element signature="e#110#133#0" expanded="true" />
+            <element signature="e#110#133#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Desktop/zonal.py">
+    <entry file="file://$PROJECT_DIR$/test/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="21" lean-forward="true" selection-start-line="8" selection-start-column="21" selection-end-line="8" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/docs/USGS_Interpolate.ipynb">
-      <provider selected="true" editor-type-id="ipnb-editor">
-        <state>
-          <selected id="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="625">
-          <caret line="41" column="8" lean-forward="false" selection-start-line="41" selection-start-column="8" selection-end-line="41" selection-end-column="8" />
+        <state relative-caret-position="506">
+          <caret line="196" column="0" lean-forward="false" selection-start-line="196" selection-start-column="0" selection-end-line="196" selection-end-column="0" />
           <folding>
-            <element signature="e#80#99#0" expanded="true" />
+            <element signature="e#81#109#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1224,12 +1136,37 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/test.py">
+    <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="523">
-          <caret line="196" column="4" lean-forward="false" selection-start-line="196" selection-start-column="4" selection-end-line="196" selection-end-column="4" />
+        <state relative-caret-position="34">
+          <caret line="833" column="80" lean-forward="true" selection-start-line="833" selection-start-column="80" selection-end-line="833" selection-end-column="80" />
           <folding>
-            <element signature="e#81#109#0" expanded="true" />
+            <element signature="e#24#43#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wellapplication/chem.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="438">
+          <caret line="281" column="31" lean-forward="false" selection-start-line="281" selection-start-column="31" selection-end-line="281" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/docs/USGS_Interpolate.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="218" column="39" lean-forward="true" selection-start-line="218" selection-start-column="39" selection-end-line="218" selection-end-column="39" />
+          <folding>
+            <element signature="e#80#99#0" expanded="true" />
           </folding>
         </state>
       </provider>
