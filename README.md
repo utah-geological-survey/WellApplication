@@ -30,8 +30,12 @@ A <a href=http://jupyter.org/> Jupyter Notebook</a> using some of the transport 
 
 ### usgs
 
-This class has functions used to apply the USGS's rest-based api to download USGS data by leveraging <a href = http://docs.python-requests.org/en/master/>`requests`</a> package and <a href=http://pandas.pydata.org/>Pandas</a>.
+This module has functions used to apply the USGS's rest-based api to download USGS data by leveraging <a href = http://docs.python-requests.org/en/master/>`requests`</a> package and <a href=http://pandas.pydata.org/>Pandas</a>.
 
+The most powerful class in this module is `nwis`.
 
+```Python
+>>> discharge = wa.nwis('dv','10109000','sites')
+```
 
 A <a href=http://jupyter.org/> Jupyter Notebook</a> using some of the usgs functions can be found <a href=https://github.com/inkenbrandt/WellApplication/blob/master/docs/USGS_Interpolate.ipynb> here</a>.
