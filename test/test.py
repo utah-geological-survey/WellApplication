@@ -184,3 +184,14 @@ def test_get_info():
     nw = wa.nwis('gwlevels', '16010204', 'huc', siteStatus='all')
     df = nw.get_info(siteStatus='all')
     assert 'site_no' in list(df.columns)
+
+
+def test_recess():
+    ashley = wa.nwis('dv', '09265500', 'sites', startDT='2015-06-02', endDT='2015-06-14')
+    rec = wa.graphs.recess(ashley.data, 'value', st=[2015, 6, 2])
+    assert round(rec.rec_results[0], 2) == 0.04
+
+def test_get_recess_int():
+    ashley = wa.nwis('dv', '09265500','sites', startDT='2015-01-02' ,endDT='2015-10-14')
+    assert type(wa.get_recess_int(ashley.data, 'value')[0]) == pd.DataFrame
+    
