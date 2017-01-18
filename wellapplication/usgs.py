@@ -39,7 +39,7 @@ class nwis(object):
         self.service = service
         self.loc_type = loc_type
         self.values = self.parsesitelist(values)
-        #self.header = {'Accept-encoding': 'gzip'}
+        self.header = {'Accept-encoding': 'gzip'}
         self.url = 'https://waterservices.usgs.gov/nwis/'
         self.geo_criteria = ['sites', 'stateCd', 'huc', 'countyCd', 'bBox']
         self.out_format = 'json'
@@ -99,7 +99,7 @@ class nwis(object):
             kwargs['endDT'] = self.end_date
 
         total_url = self.url + self.service + '/?'
-        response_ob = requests.get(total_url, params=kwargs)# , headers=self.header)
+        response_ob = requests.get(total_url, params=kwargs, headers=self.header)
         if self.service != 'site':
             try:
                 response_ob.json()

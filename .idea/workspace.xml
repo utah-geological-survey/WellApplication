@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d5a82257-6a90-41c3-87e5-13b1695dbcbb" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wellapplication/usgs.py" afterPath="$PROJECT_DIR$/wellapplication/usgs.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -35,8 +36,8 @@
       <file leaf-file-name="usgs.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="30" column="47" lean-forward="true" selection-start-line="30" selection-start-column="47" selection-end-line="30" selection-end-column="47" />
+            <state relative-caret-position="153">
+              <caret line="41" column="8" lean-forward="false" selection-start-line="41" selection-start-column="8" selection-end-line="41" selection-end-column="8" />
               <folding>
                 <element signature="e#80#99#0" expanded="true" />
               </folding>
@@ -49,33 +50,7 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="4726">
               <caret line="281" column="31" lean-forward="false" selection-start-line="281" selection-start-column="31" selection-end-line="281" selection-end-column="31" />
-              <folding>
-                <marker date="1484676819869" expanded="true" signature="199:20081" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="1841:2879" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="2085:2280" ph="'...'" />
-                <marker date="1484676819869" expanded="true" signature="2289:2320" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="2931:3059" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="3110:6725" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="3232:6475" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="6757:11678" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="6766:7149" ph="&quot;&quot;&quot;Massage WQP result data for analysis...&quot;&quot;&quot;" />
-                <marker date="1484676819869" expanded="true" signature="7210:9238" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="9561:10799" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="11715:12471" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="11724:11901" ph="&quot;&quot;&quot;This script cleans date-time errors...&quot;&quot;&quot;" />
-                <marker date="1484676819869" expanded="true" signature="12127:12175" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="12498:13707" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="12507:12654" ph="&quot;&quot;&quot;Standardizes nutrient species...&quot;&quot;&quot;" />
-                <marker date="1484676819869" expanded="true" signature="13734:14128" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="13743:13964" ph="&quot;&quot;&quot;Standardizes unit labels from ug/l to mg/l...&quot;&quot;&quot;" />
-                <marker date="1484676819869" expanded="true" signature="14161:17179" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="14248:15981" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="16091:16415" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="16491:16613" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="17231:20081" ph="..." />
-                <marker date="1484676819869" expanded="true" signature="17240:17675" ph="&quot;&quot;&quot;pivots results DataFrame for input into piper class...&quot;&quot;&quot;" />
-                <marker date="1484676819869" expanded="true" signature="17757:19439" ph="..." />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -83,7 +58,7 @@
       <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="336">
+            <state relative-caret-position="2941">
               <caret line="176" column="28" lean-forward="false" selection-start-line="176" selection-start-column="28" selection-end-line="176" selection-end-column="28" />
               <folding>
                 <element signature="e#81#109#0" expanded="true" />
@@ -95,8 +70,8 @@
       <file leaf-file-name="graphs.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wellapplication/graphs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="36" column="47" lean-forward="true" selection-start-line="36" selection-start-column="47" selection-end-line="36" selection-end-column="47" />
+            <state relative-caret-position="510">
+              <caret line="36" column="47" lean-forward="false" selection-start-line="36" selection-start-column="47" selection-end-line="36" selection-end-column="47" />
               <folding>
                 <element signature="e#94#123#0" expanded="true" />
               </folding>
@@ -159,9 +134,9 @@
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/test/test.py" />
         <option value="$PROJECT_DIR$/wellapplication/chem.py" />
-        <option value="$PROJECT_DIR$/wellapplication/usgs.py" />
         <option value="$PROJECT_DIR$/wellapplication/graphs.py" />
         <option value="$PROJECT_DIR$/wellapplication/__init__.py" />
+        <option value="$PROJECT_DIR$/wellapplication/usgs.py" />
       </list>
     </option>
   </component>
@@ -205,8 +180,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -249,6 +222,8 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -259,122 +234,6 @@
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\PAULINKENBRANDT\Documents\GitHub\WellApplication\wellapplication" />
     </key>
-  </component>
-  <component name="RestoreUpdateTree" date="Moments ago" ActionInfo="_Update">
-    <UpdatedFiles>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Updated from server" />
-        <option name="myStatusName" value="Changed on server" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="CHANGED_ON_SERVER" />
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Updated" />
-          <option name="myStatusName" value="Changed" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="UPDATED" />
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/.idea/WellApplication.iml</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/.idea/misc.xml</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/.idea/workspace.xml</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/wellapplication/chem.py</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/wellapplication/graphs.py</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/wellapplication/transport.py</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/wellapplication/usgs.py</PATH>
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Created" />
-          <option name="myStatusName" value="Created" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="CREATED" />
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Deleted" />
-          <option name="myStatusName" value="Deleted" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="true" />
-          <option name="myId" value="REMOVED_FROM_REPOSITORY" />
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Restored" />
-          <option name="myStatusName" value="Will be restored" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="RESTORED" />
-        </FILE-GROUP>
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Modified" />
-        <option name="myStatusName" value="Modified" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MODIFIED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Skipped" />
-        <option name="myStatusName" value="Skipped" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="SKIPPED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Merged with conflicts" />
-        <option name="myStatusName" value="Will be merged with conflicts" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MERGED_WITH_CONFLICTS" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Merged with tree conflicts" />
-        <option name="myStatusName" value="Merged with tree conflicts" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MERGED_WITH_TREE_CONFLICT" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Merged with property conflicts" />
-        <option name="myStatusName" value="Will be merged with property conflicts" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MERGED_WITH_PROPERTY_CONFLICT" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Merged" />
-        <option name="myStatusName" value="Will be merged" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MERGED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Not in repository" />
-        <option name="myStatusName" value="Not in repository" />
-        <option name="mySupportsDeletion" value="true" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="UNKNOWN" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Locally added" />
-        <option name="myStatusName" value="Locally added" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="LOCALLY_ADDED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Locally removed" />
-        <option name="myStatusName" value="Locally removed" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="LOCALLY_REMOVED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Switched" />
-        <option name="myStatusName" value="Switched" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="SWITCHED" />
-      </FILE-GROUP>
-    </UpdatedFiles>
   </component>
   <component name="RunManager" selected="Python.usgs">
     <configuration default="false" name="usgs" type="PythonConfigurationType" factoryName="Python" temporary="true">
@@ -550,13 +409,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1483036980477</updated>
-    </task>
-    <task id="LOCAL-00010" summary="piper fixes">
-      <created>1484062792469</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1484062792469</updated>
     </task>
     <task id="LOCAL-00011" summary="usgs changes to response">
       <created>1484063881108</created>
@@ -894,7 +746,14 @@
       <option name="project" value="LOCAL" />
       <updated>1484678892189</updated>
     </task>
-    <option name="localTasksCounter" value="59" />
+    <task id="LOCAL-00059" summary="adding doc strings">
+      <created>1484695674208</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1484695674209</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1303,40 +1162,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4726">
           <caret line="281" column="31" lean-forward="false" selection-start-line="281" selection-start-column="31" selection-end-line="281" selection-end-column="31" />
-          <folding>
-            <marker date="1484676819869" expanded="true" signature="199:20081" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="1841:2879" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="2085:2280" ph="'...'" />
-            <marker date="1484676819869" expanded="true" signature="2289:2320" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="2931:3059" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="3110:6725" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="3232:6475" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="6757:11678" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="6766:7149" ph="&quot;&quot;&quot;Massage WQP result data for analysis...&quot;&quot;&quot;" />
-            <marker date="1484676819869" expanded="true" signature="7210:9238" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="9561:10799" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="11715:12471" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="11724:11901" ph="&quot;&quot;&quot;This script cleans date-time errors...&quot;&quot;&quot;" />
-            <marker date="1484676819869" expanded="true" signature="12127:12175" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="12498:13707" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="12507:12654" ph="&quot;&quot;&quot;Standardizes nutrient species...&quot;&quot;&quot;" />
-            <marker date="1484676819869" expanded="true" signature="13734:14128" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="13743:13964" ph="&quot;&quot;&quot;Standardizes unit labels from ug/l to mg/l...&quot;&quot;&quot;" />
-            <marker date="1484676819869" expanded="true" signature="14161:17179" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="14248:15981" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="16091:16415" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="16491:16613" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="17231:20081" ph="..." />
-            <marker date="1484676819869" expanded="true" signature="17240:17675" ph="&quot;&quot;&quot;pivots results DataFrame for input into piper class...&quot;&quot;&quot;" />
-            <marker date="1484676819869" expanded="true" signature="17757:19439" ph="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/graphs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="36" column="47" lean-forward="true" selection-start-line="36" selection-start-column="47" selection-end-line="36" selection-end-column="47" />
+        <state relative-caret-position="510">
+          <caret line="36" column="47" lean-forward="false" selection-start-line="36" selection-start-column="47" selection-end-line="36" selection-end-column="47" />
           <folding>
             <element signature="e#94#123#0" expanded="true" />
           </folding>
@@ -1355,7 +1188,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
+        <state relative-caret-position="2941">
           <caret line="176" column="28" lean-forward="false" selection-start-line="176" selection-start-column="28" selection-end-line="176" selection-end-column="28" />
           <folding>
             <element signature="e#81#109#0" expanded="true" />
@@ -1367,14 +1200,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
           <caret line="8" column="21" lean-forward="true" selection-start-line="8" selection-start-column="21" selection-end-line="8" selection-end-column="21" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="30" column="47" lean-forward="true" selection-start-line="30" selection-start-column="47" selection-end-line="30" selection-end-column="47" />
+        <state relative-caret-position="153">
+          <caret line="41" column="8" lean-forward="false" selection-start-line="41" selection-start-column="8" selection-end-line="41" selection-end-column="8" />
           <folding>
             <element signature="e#80#99#0" expanded="true" />
           </folding>
