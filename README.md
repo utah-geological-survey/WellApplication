@@ -30,9 +30,9 @@ A <a href=http://jupyter.org/> Jupyter Notebook</a> using some of the transport 
 
 ### usgs
 
-This class has functions used to apply the USGS's rest-based api to download USGS data by leveraging  `urllib2 <https://docs.python.org/2/library/urllib2.html>`_
+This class has functions used to apply the USGS's rest-based api to download USGS data by leveraging  `requests <http://docs.python-requests.org/en/master/>`_
  package and <a href=http://pandas.pydata.org/>Pandas</a>.
 
 
 
-A <a href=http://jupyter.org/> Jupyter (formerly IPython) Notebook</a> using some of the usgs functions can be found <a href=https://github.com/inkenbrandt/WellApplication/blob/master/docs/USGS_Interpolate.ipynb> here</a>.
+A <a href=http://jupyter.org/> Jupyter Notebook</a> using some of the usgs functions can be found <a href=https://github.com/inkenbrandt/WellApplication/blob/master/docs/USGS_Interpolate.ipynb> here</a>.
