@@ -6,10 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d5a82257-6a90-41c3-87e5-13b1695dbcbb" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/USGS_Interpolate.ipynb" afterPath="$PROJECT_DIR$/docs/USGS_Interpolate.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/test.py" afterPath="$PROJECT_DIR$/test/test.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wellapplication/transport.py" afterPath="$PROJECT_DIR$/wellapplication/transport.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wellapplication/usgs.py" afterPath="$PROJECT_DIR$/wellapplication/usgs.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -36,7 +32,7 @@
       <file leaf-file-name="usgs.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
+            <state relative-caret-position="3417">
               <caret line="218" column="39" lean-forward="true" selection-start-line="218" selection-start-column="39" selection-end-line="218" selection-end-column="39" />
               <folding>
                 <element signature="e#80#99#0" expanded="true" />
@@ -368,13 +364,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1483036980477</updated>
-    </task>
-    <task id="LOCAL-00014" summary="usgs changes to response">
-      <created>1484064583635</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1484064583635</updated>
     </task>
     <task id="LOCAL-00015" summary="usgs changes to response">
       <created>1484065963033</created>
@@ -712,7 +701,14 @@
       <option name="project" value="LOCAL" />
       <updated>1484747430376</updated>
     </task>
-    <option name="localTasksCounter" value="63" />
+    <task id="LOCAL-00063" summary="updated usgs notebook">
+      <created>1484751605303</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1484751605303</updated>
+    </task>
+    <option name="localTasksCounter" value="64" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -754,7 +750,8 @@
     <MESSAGE value="fixing recess" />
     <MESSAGE value="adding doc strings" />
     <MESSAGE value="adding tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding tests" />
+    <MESSAGE value="updated usgs notebook" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated usgs notebook" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -778,7 +775,7 @@
         <state relative-caret-position="1853">
           <caret line="109" column="29" lean-forward="false" selection-start-line="109" selection-start-column="29" selection-end-line="109" selection-end-column="29" />
           <folding>
-            <element signature="e#81#109#0" expanded="true" />
+            <element signature="e#81#109#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -788,7 +785,7 @@
         <state relative-caret-position="7990">
           <caret line="470" column="13" lean-forward="true" selection-start-line="470" selection-start-column="4" selection-end-line="470" selection-end-column="20" />
           <folding>
-            <element signature="e#24#43#0" expanded="true" />
+            <element signature="e#24#43#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -808,7 +805,7 @@
         <state relative-caret-position="102">
           <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
           <folding>
-            <element signature="e#81#109#0" expanded="true" />
+            <element signature="e#81#109#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -818,7 +815,7 @@
         <state relative-caret-position="2312">
           <caret line="136" column="24" lean-forward="false" selection-start-line="136" selection-start-column="24" selection-end-line="136" selection-end-column="24" />
           <folding>
-            <element signature="e#24#43#0" expanded="true" />
+            <element signature="e#24#43#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -845,7 +842,7 @@
         <state relative-caret-position="102">
           <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
           <folding>
-            <element signature="e#81#109#0" expanded="true" />
+            <element signature="e#81#109#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -862,7 +859,7 @@
         <state relative-caret-position="11764">
           <caret line="692" column="38" lean-forward="false" selection-start-line="692" selection-start-column="38" selection-end-line="692" selection-end-column="38" />
           <folding>
-            <element signature="e#24#43#0" expanded="true" />
+            <element signature="e#24#43#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -901,7 +898,7 @@
         <state relative-caret-position="935">
           <caret line="57" column="0" lean-forward="false" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
           <folding>
-            <element signature="e#81#109#0" expanded="true" />
+            <element signature="e#81#109#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -928,7 +925,7 @@
         <state relative-caret-position="11662">
           <caret line="691" column="38" lean-forward="false" selection-start-line="691" selection-start-column="38" selection-end-line="691" selection-end-column="38" />
           <folding>
-            <element signature="e#24#43#0" expanded="true" />
+            <element signature="e#24#43#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -966,7 +963,7 @@
         <state relative-caret-position="1734">
           <caret line="104" column="43" lean-forward="false" selection-start-line="104" selection-start-column="43" selection-end-line="104" selection-end-column="43" />
           <folding>
-            <element signature="e#81#109#0" expanded="true" />
+            <element signature="e#81#109#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -993,7 +990,7 @@
         <state relative-caret-position="11662">
           <caret line="691" column="38" lean-forward="false" selection-start-line="691" selection-start-column="38" selection-end-line="691" selection-end-column="38" />
           <folding>
-            <element signature="e#24#43#0" expanded="true" />
+            <element signature="e#24#43#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1048,7 +1045,7 @@
         <state relative-caret-position="34">
           <caret line="2" column="18" lean-forward="true" selection-start-line="2" selection-start-column="18" selection-end-line="2" selection-end-column="18" />
           <folding>
-            <element signature="e#24#43#0" expanded="true" />
+            <element signature="e#24#43#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1121,7 +1118,7 @@
         <state relative-caret-position="506">
           <caret line="196" column="0" lean-forward="false" selection-start-line="196" selection-start-column="0" selection-end-line="196" selection-end-column="0" />
           <folding>
-            <element signature="e#81#109#0" expanded="true" />
+            <element signature="e#81#109#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1131,7 +1128,7 @@
         <state relative-caret-position="408">
           <caret line="36" column="47" lean-forward="false" selection-start-line="36" selection-start-column="47" selection-end-line="36" selection-end-column="47" />
           <folding>
-            <element signature="e#94#123#0" expanded="true" />
+            <element signature="e#94#123#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1141,7 +1138,7 @@
         <state relative-caret-position="34">
           <caret line="833" column="80" lean-forward="true" selection-start-line="833" selection-start-column="80" selection-end-line="833" selection-end-column="80" />
           <folding>
-            <element signature="e#24#43#0" expanded="true" />
+            <element signature="e#24#43#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1163,7 +1160,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
+        <state relative-caret-position="3417">
           <caret line="218" column="39" lean-forward="true" selection-start-line="218" selection-start-column="39" selection-end-line="218" selection-end-column="39" />
           <folding>
             <element signature="e#80#99#0" expanded="true" />
