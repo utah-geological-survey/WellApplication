@@ -32,9 +32,11 @@ A <a href=http://jupyter.org/> Jupyter Notebook</a> using some of the transport 
 
 This module has functions used to apply the USGS's rest-based api to download USGS data by leveraging <a href = http://docs.python-requests.org/en/master/>`requests`</a> package and <a href=http://pandas.pydata.org/>Pandas</a>.
 
-The most powerful class in this module is `nwis`.
+The most powerful class in this module is `nwis`. It is called by `nwis(service, location value, location type)`.
+The main <a href='https://waterservices.usgs.gov/rest/'>USGS services</a> are `dv` for daily values, `iv` for instantaneous values, `gwlevels` for groundwater levels, and `site` for site information.  
 
 ```Python
+>>> import wellapplication as wa
 >>> discharge = wa.nwis('dv','10109000','sites')
 ```
 
