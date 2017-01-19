@@ -5,21 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5a82257-6a90-41c3-87e5-13b1695dbcbb" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/docs/20160919_LittleHobble.xle" afterPath="$PROJECT_DIR$/test/20160919_LittleHobble.xle" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/docs/20161102_Barometer.xle" afterPath="$PROJECT_DIR$/test/20161102_Barometer.xle" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/docs/All tape measurements.csv" afterPath="$PROJECT_DIR$/test/All tape measurements.csv" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/docs/ManualMeasurements.csv" afterPath="$PROJECT_DIR$/test/ManualMeasurements.csv" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/docs/ag13a 2016-08-02.xle" afterPath="$PROJECT_DIR$/test/ag13a 2016-08-02.xle" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/docs/ag13c 2016-08-02.xle" afterPath="$PROJECT_DIR$/test/ag13c 2016-08-02.xle" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/docs/ag14a 2016-08-02.csv" afterPath="$PROJECT_DIR$/test/ag14a 2016-08-02.csv" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/docs/baro.csv" afterPath="$PROJECT_DIR$/test/baro.csv" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/docs/pw01b 2016-08-02.xle" afterPath="$PROJECT_DIR$/test/pw01b 2016-08-02.xle" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/docs/wellinfo4.csv" afterPath="$PROJECT_DIR$/test/wellinfo4.csv" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/WellApplication.iml" afterPath="$PROJECT_DIR$/.idea/WellApplication.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/test.py" afterPath="$PROJECT_DIR$/test/test.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wellapplication/MannKendall.py" afterPath="$PROJECT_DIR$/wellapplication/MannKendall.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -34,23 +21,35 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="usgs.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
+      <file leaf-file-name="MannKendall.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wellapplication/MannKendall.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3393">
-              <caret line="120" column="58" lean-forward="false" selection-start-line="120" selection-start-column="56" selection-end-line="120" selection-end-column="58" />
+            <state relative-caret-position="1683">
+              <caret line="102" column="60" lean-forward="false" selection-start-line="102" selection-start-column="60" selection-end-line="102" selection-end-column="60" />
               <folding>
-                <element signature="e#80#99#0" expanded="true" />
+                <element signature="e#81#99#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MannKendall.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/wellapplication/MannKendall.py">
+      <file leaf-file-name="transport.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="102" column="60" lean-forward="false" selection-start-line="102" selection-start-column="60" selection-end-line="102" selection-end-column="60" />
+            <state relative-caret-position="102">
+              <caret line="6" column="16" lean-forward="true" selection-start-line="6" selection-start-column="16" selection-end-line="6" selection-end-column="16" />
+              <folding>
+                <element signature="e#24#43#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="mesopy.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wellapplication/mesopy.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="578">
+              <caret line="38" column="27" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="39" selection-end-column="39" />
               <folding />
             </state>
           </provider>
@@ -59,9 +58,21 @@
       <file leaf-file-name="test.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="493">
-              <caret line="200" column="26" lean-forward="true" selection-start-line="200" selection-start-column="26" selection-end-line="200" selection-end-column="26" />
+            <state relative-caret-position="444">
+              <caret line="198" column="25" lean-forward="false" selection-start-line="198" selection-start-column="25" selection-end-line="198" selection-end-column="25" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="setup.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/setup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-255">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -114,10 +125,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-4" />
-    <option name="y" value="-4" />
+    <option name="x" value="1916" />
+    <option name="y" value="-88" />
     <option name="width" value="1928" />
-    <option name="height" value="1060" />
+    <option name="height" value="1088" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -153,6 +164,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -209,8 +222,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -459,13 +470,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1483036980477</updated>
-    </task>
-    <task id="LOCAL-00016" summary="usgs changes to response">
-      <created>1484066029618</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1484066029618</updated>
     </task>
     <task id="LOCAL-00017" summary="usgs changes to response">
       <created>1484067152941</created>
@@ -803,7 +807,14 @@
       <option name="project" value="LOCAL" />
       <updated>1484764689084</updated>
     </task>
-    <option name="localTasksCounter" value="65" />
+    <task id="LOCAL-00065" summary="Added test and moved test files">
+      <created>1484857299353</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1484857299353</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -824,17 +835,17 @@
     </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-4" y="-4" width="1928" height="1060" extended-state="6" />
-    <editor active="false" />
+    <frame x="1916" y="-88" width="1928" height="1088" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1484992" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32624868" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32731137" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34006375" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34006375" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24960506" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32943678" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31991744" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -863,7 +874,8 @@
     <MESSAGE value="adding doc strings" />
     <MESSAGE value="adding tests" />
     <MESSAGE value="updated usgs notebook" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated usgs notebook" />
+    <MESSAGE value="Added test and moved test files" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added test and moved test files" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -872,13 +884,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/test/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2312">
@@ -1098,13 +1103,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/avgMeths.py" />
-    <entry file="file://$PROJECT_DIR$/wellapplication/mesopy.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-935">
-          <caret line="38" column="27" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="39" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/nwis.py" />
     <entry file="file://$PROJECT_DIR$/test/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -1138,13 +1136,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="408">
           <caret line="36" column="47" lean-forward="false" selection-start-line="36" selection-start-column="47" selection-end-line="36" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="833" column="80" lean-forward="true" selection-start-line="833" selection-start-column="80" selection-end-line="833" selection-end-column="80" />
         </state>
       </provider>
     </entry>
@@ -1184,17 +1175,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wellapplication/MannKendall.py">
+    <entry file="file://$PROJECT_DIR$/setup.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="102" column="60" lean-forward="false" selection-start-line="102" selection-start-column="60" selection-end-line="102" selection-end-column="60" />
-          <folding />
+        <state relative-caret-position="-255">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3393">
+        <state relative-caret-position="2040">
           <caret line="120" column="58" lean-forward="false" selection-start-line="120" selection-start-column="56" selection-end-line="120" selection-end-column="58" />
           <folding>
             <element signature="e#80#99#0" expanded="true" />
@@ -1202,10 +1195,38 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/wellapplication/mesopy.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="38" column="27" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="39" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="16" lean-forward="true" selection-start-line="6" selection-start-column="16" selection-end-line="6" selection-end-column="16" />
+          <folding>
+            <element signature="e#24#43#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wellapplication/MannKendall.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1683">
+          <caret line="102" column="60" lean-forward="false" selection-start-line="102" selection-start-column="60" selection-end-line="102" selection-end-column="60" />
+          <folding>
+            <element signature="e#81#99#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/test/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="200" column="26" lean-forward="true" selection-start-line="200" selection-start-column="26" selection-end-line="200" selection-end-column="26" />
+        <state relative-caret-position="444">
+          <caret line="198" column="25" lean-forward="false" selection-start-line="198" selection-start-column="25" selection-end-line="198" selection-end-column="25" />
           <folding />
         </state>
       </provider>
