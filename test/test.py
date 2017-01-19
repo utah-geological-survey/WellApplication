@@ -15,7 +15,7 @@ m = wa.Meso(token='demotoken')
 def test_getelev():
     print('Testing getelev')
     x = [-111.21, 41.4]
-    m = wa.getelev(x)
+    m = wa.get_elev(x)
     assert m > 100.0
 
 def test_gethuc():
