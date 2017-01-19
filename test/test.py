@@ -199,3 +199,7 @@ def test_mk_ts():
     usgsP = pd.read_csv('test/usgsP.csv')
     var = wa.MannKendall.mk_ts(usgsP, 'PO4', 'month', 'year',0.05)
     assert var[0] == -87.0
+
+def test_get_recess():
+    ashley = wa.nwis('dv', '09265500', 'sites', startDT='2015-01-02', endDT='2015-10-14')
+    assert type(wa.get_recess(ashley.data, 'value', '1D')) == pd.DataFrame

@@ -340,8 +340,24 @@ def dms(dec):
     return DD + MM + SS
 
 
+def get_recess(df, Q, freq='1D', inplace=False):
+    """ Select the data when values are decreasing compared to previous time step
 
+    :param df: DataFrame of hydro data
+    :param Q: DataFrame field with discharge or water level data
+    :param freq: Frequency of measurement of data; default is 1D
+    :param inplace: If True, replace input DataFrame; default is false
+    :return: DataFrame of all of the decreasing segments of the input DataFrame
 
+    .. note:: from https://github.com/stijnvanhoey/hydropy
+    """
+    recess = df[Q].diff() < 0.0
+    if inplace:
+        df = df
+    else:
+        df = df[recess].copy()
+    df = df.resample(freq).mean()
+    return df
 
 
 
