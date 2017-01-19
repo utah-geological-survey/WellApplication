@@ -77,12 +77,12 @@ def mk_test(x, alpha = 0.05):
     return pd.Series({'trend':trend, 'varS':round(var_s,3), 'p':round(p,3), 'z':round(z,3), 's':round(s,3), 'n':n, 'ta':ta})
     
 def mk_ts(df, const, group1, orderby = 'year', alpha = 0.05):
-    '''
+    """
     df = dataframe
     const = variable tested for trend
     group1 = variable to group by
     orderby = variable to order by (typically a date)
-    '''
+    """
     
     def zcalc(Sp, Varp):
         if Sp > 0:
@@ -94,13 +94,13 @@ def mk_ts(df, const, group1, orderby = 'year', alpha = 0.05):
     
     df.is_copy = False
     
-    df[const] = df.ix[:,const].convert_objects(convert_numeric=True)
+    df[const] = pd.to_numeric(df.ix[:,const])
     # remove null values
     df[const].dropna(inplace=True)
     # remove index
     df.reset_index(inplace=True, drop=True)
     # sort by groups, then time
-    df.sort(columns=[group1,orderby],axis=0, inplace=True)
+    df.sort_values(by=[group1,orderby],axis=0, inplace=True)
     
     # group by group and apply mk_test
     dg = df.groupby(group1).apply(lambda x: mk_test(x.loc[:,const].dropna().values, alpha))

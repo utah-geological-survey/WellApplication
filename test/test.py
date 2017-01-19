@@ -15,7 +15,7 @@ m = wa.Meso(token='demotoken')
 def test_getelev():
     print('Testing getelev')
     x = [-111.21, 41.4]
-    m = wa.getelev(x)
+    m = wa.get_elev(x)
     assert m > 100.0
 
 def test_gethuc():
@@ -59,31 +59,31 @@ def test_pipe():
     assert type(pipr.plot) == matplotlib.figure.Figure
     
 def test_new_xle_imp():
-    xle = 'docs/20160919_LittleHobble.xle'
+    xle = './20160919_LittleHobble.xle'
     xle_df = wa.new_xle_imp(xle)
     assert len(xle_df) > 0 
 
 def test_xle_head_table():
-    xle_dir = 'docs/'
+    xle_dir = './'
     dir_df = wa.xle_head_table(xle_dir)
     assert len(xle_dir) > 0
 
 def test_dataendclean():
-    xle = 'docs/20160919_LittleHobble.xle'
+    xle = './20160919_LittleHobble.xle'
     df = wa.new_xle_imp(xle)
     x = 'Level'
     xle1 = wa.dataendclean(df, x)
     assert len(xle1) > 1
     
 def test_smoother():
-    xle = 'docs/20160919_LittleHobble.xle'
+    xle = './20160919_LittleHobble.xle'
     df = wa.new_xle_imp(xle)
     x = 'Level'
     xle1 = wa.smoother(df, x, sd=1)
     assert len(xle1) > 1
     
 def test_hourly_resample():
-    xle = 'docs/20160919_LittleHobble.xle'
+    xle = './20160919_LittleHobble.xle'
     df = wa.new_xle_imp(xle)
     xle1 = wa.hourly_resample(df, minutes=30)
 
@@ -107,32 +107,32 @@ def test_WQ2():
     assert "OrgId" in list(df.columns)
     
 def test_imp_new_well():
-    inputfile = "docs/ag13c 2016-08-02.xle"
-    manualwls = "docs/All tape measurements.csv"
+    inputfile = "./ag13c 2016-08-02.xle"
+    manualwls = "./All tape measurements.csv"
     manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
-    barofile = "docs/baro.csv"
+    barofile = "./baro.csv"
     baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
-    wellinfo = pd.read_csv("docs/wellinfo4.csv")
+    wellinfo = pd.read_csv("./wellinfo4.csv")
     g, drift, wellname = wa.imp_new_well(inputfile, wellinfo, manual, baro)
     assert wellname == 'ag13c'
     
 def test_well_baro_merge():
-    inputfile = "docs/ag13c 2016-08-02.xle"
-    manualwls = "docs/All tape measurements.csv"
-    xle = "docs/ag13c 2016-08-02.xle"
+    inputfile = "./ag13c 2016-08-02.xle"
+    manualwls = "./All tape measurements.csv"
+    xle = "./ag13c 2016-08-02.xle"
     xle_df = wa.new_xle_imp(xle)
     manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
-    barofile = "docs/baro.csv"
+    barofile = "./baro.csv"
     baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
     baro['Level'] = baro['pw03']
-    wellinfo = pd.read_csv("docs/wellinfo4.csv")
+    wellinfo = pd.read_csv("./wellinfo4.csv")
     assert len(wa.well_baro_merge(xle_df, baro, sampint=60)) > 10
 
 def test_fix_drift():
-    xle = "docs/ag13c 2016-08-02.xle"
+    xle = "./ag13c 2016-08-02.xle"
     xle_df = wa.new_xle_imp(xle)
     
-    manualwls = "docs/All tape measurements.csv"
+    manualwls = "./All tape measurements.csv"
     manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
     manual35 = manual[manual['WellID']==35]
     manual35['dt'] = pd.to_datetime(manual35.index)
@@ -142,28 +142,28 @@ def test_fix_drift():
     assert 'DriftCorrection' in list(fd[0].columns)
     
 def test_getwellid():
-    inputfile = "docs/ag13c 2016-08-02.xle"
-    wellinfo = pd.read_csv("docs/wellinfo4.csv")
+    inputfile = "./ag13c 2016-08-02.xle"
+    wellinfo = pd.read_csv("./wellinfo4.csv")
     wid = wa.getwellid(inputfile, wellinfo)
     assert wid[1] == 35
 
 def test_barodistance():
-    wellinfo = pd.read_csv("docs/wellinfo4.csv")
+    wellinfo = pd.read_csv("./wellinfo4.csv")
     bd = wa.barodistance(wellinfo)
     assert 'closest_baro' in list(bd.columns)
 
 def test_imp_new_well_csv():
-    inputfile = "docs/ag14a 2016-08-02.csv"
-    manualwls = "docs/All tape measurements.csv"
+    inputfile = "./ag14a 2016-08-02.csv"
+    manualwls = "./All tape measurements.csv"
     manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
-    barofile = "docs/baro.csv"
+    barofile = "./baro.csv"
     baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
-    wellinfo = pd.read_csv("docs/wellinfo4.csv")
+    wellinfo = pd.read_csv("./wellinfo4.csv")
     g, drift, wellname = wa.imp_new_well(inputfile, wellinfo, manual, baro)
     assert wellname == 'ag14a'
     
 def test_jumpfix():
-    xle = "docs/ag13c 2016-08-02.xle"
+    xle = "./ag13c 2016-08-02.xle"
     df = wa.new_xle_imp(xle)
     jf = wa.jumpfix(df, 'Level', threashold=0.005)
     assert jf['newVal'][-1] > 10
@@ -194,3 +194,8 @@ def test_recess():
 def test_get_recess_int():
     ashley = wa.nwis('dv', '09265500','sites', startDT='2015-01-02' ,endDT='2015-10-14')
     assert type(wa.get_recess_int(ashley.data, 'value')[0]) == pd.DataFrame
+
+def test_mk_ts():
+    usgsP = pd.read_csv('./usgsP.csv')
+    var = wa.MannKendall.mk_ts(usgsP, 'PO4', 'month', 'year',0.05)
+    assert var[0] == -87.0

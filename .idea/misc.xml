@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 2.7.10 virtualenv at C:\Users\PAULINKENBRANDT\WA_venv" project-jdk-type="Python SDK" />
+  <component name="IpnbSettings">
+    <option name="workingDirectory" value="M:\GitHub" />
+  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 2.7.10 (C:\Python27\ArcGISx6410.4\python.exe)" project-jdk-type="Python SDK" />
 </project>
