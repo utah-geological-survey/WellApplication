@@ -161,7 +161,17 @@ def test_imp_new_well_csv():
     wellinfo = pd.read_csv("test/wellinfo4.csv")
     g, drift, wellname = wa.imp_new_well(inputfile, wellinfo, manual, baro)
     assert wellname == 'ag14a'
-    
+
+def test_baro_drift_correct():
+    inputfile = "test/ag14a 2016-08-02.csv"
+    manualwls = "test/All tape measurements.csv"
+    manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
+    barofile = "test/baro.csv"
+    baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
+    wellinfo = pd.read_csv("test/wellinfo4.csv")
+    df = wa.baro_drift_correct(inputfile, baro, manual)
+    assert type(df) == pd.DataFrame
+
 def test_jumpfix():
     xle = "test/ag13c 2016-08-02.xle"
     df = wa.new_xle_imp(xle)
