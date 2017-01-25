@@ -115,7 +115,8 @@ def ratingCurve(discharge, stage):
     return popt, r_squ()
 
 def RB_Flashiness(series):
-    """Richards-Baker Flashiness Index for a series of daily mean discharges."""
+    """Richards-Baker Flashiness Index for a series of daily mean discharges.
+    https://github.com/hydrogeog/hydro"""
     Qsum = np.sum(series)           # sum of daily mean discharges
     Qpath = 0.0
     for i in range(len(series)):
@@ -128,7 +129,8 @@ def RB_Flashiness(series):
 
 def flow_duration(series):
     """Creates the flow duration curve for a discharge dataset. Returns a pandas
-    series whose index is the discharge values and series is exceedance probability."""
+    series whose index is the discharge values and series is exceedance probability.
+    https://github.com/hydrogeog/hydro"""
     fd = pd.Series(series).value_counts()               # frequency of unique values
     fd.sort_index(inplace=True)                         # sort in order of increasing discharges
     fd = fd.cumsum()                                    # cumulative sum of frequencies
@@ -140,6 +142,7 @@ def Lyne_Hollick(series, alpha=.925, direction='f'):
     series = array of discharge measurements
     alpha = filter parameter
     direction = (f)orward or (r)everse calculation
+    https://github.com/hydrogeog/hydro
     """
     series = np.array(series)
     f = np.zeros(len(series))
@@ -160,6 +163,7 @@ def Eckhardt(series, alpha=.98, BFI=.80):
     series = array of discharge measurements
     alpha = filter parameter
     BFI = BFI_max (maximum baseflow index)
+    https://github.com/hydrogeog/hydro
     """
     series = np.array(series)
     f = np.zeros(len(series))
