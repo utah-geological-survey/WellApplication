@@ -10,3 +10,4 @@ from chem import *
 from mesopy import *
 from graphs import *
 import MannKendall
+from hydropy import *
