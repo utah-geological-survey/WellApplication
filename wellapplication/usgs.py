@@ -275,8 +275,8 @@ class nwis(object):
         zi = griddata((x, y), z, (xi[None, :], yi[:, None]), method=meth)
 
         cmap = plt.cm.get_cmap('RdYlBu')
-        #norm = mpl.colors.Normalize(vmin=z.min(), vmax=z.max())
-        norm = mpl.colors.LogNorm(vmin=0.1, vmax=100000)
+        norm = mpl.colors.Normalize(vmin=z.min(), vmax=z.max())
+        #norm = mpl.colors.LogNorm(vmin=0.1, vmax=100000)
         m = cm.ScalarMappable(norm=norm, cmap=cmap)
         m.set_array(z)
 
