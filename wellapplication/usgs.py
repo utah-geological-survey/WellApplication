@@ -276,7 +276,7 @@ class nwis(object):
 
         cmap = plt.cm.get_cmap('RdYlBu')
         #norm = mpl.colors.Normalize(vmin=z.min(), vmax=z.max())
-        norm = LogNorm()
+        norm = mpl.colors.LogNorm()
         m = cm.ScalarMappable(norm=norm, cmap=cmap)
         m.set_array(z)
 
