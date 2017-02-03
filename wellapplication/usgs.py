@@ -9,7 +9,7 @@ import pandas as pd
 from datetime import datetime
 try:
     from httplib import BadStatusLine
-except:
+except ImportError:
     from http.client import BadStatusLine
 import matplotlib.pyplot as plt
 import numpy as np
@@ -184,7 +184,7 @@ class nwis(object):
         numlist = []
         num = 0
         for line in linefile:
-            if line.startswith("#"):
+            if line.startswith(b"#"):
                 numlist.append(num)
             num += 1
         numlist.append(numlist[-1] + 2)

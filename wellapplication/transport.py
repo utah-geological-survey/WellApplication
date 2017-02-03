@@ -6,7 +6,7 @@ import os
 import glob
 import re
 import xmltodict
-
+import sys
 
 def well_baro_merge(wellfile, barofile, sampint=60):
     """Remove barometric pressure from nonvented transducers.
@@ -72,7 +72,10 @@ def xle_head_table(folder):
             # open text file
             with open(infile) as fd:
                 # parse xml
-                obj = xmltodict.parse(fd.read(), encoding="ISO-8859-1")
+                if (sys.version_info > (3, 0)):
+                    obj = xmltodict.parse(fd.read())
+                else:
+                    obj = xmltodict.parse(fd.read(), encoding="ISO-8859-1")
             # navigate through xml to the data
             filenm.append(filename)
             downld_inst.append(obj['Body_xle']['File_info']['Created_by'])
@@ -678,7 +681,10 @@ def new_xle_imp(infile):
     # open text file
     with open(infile) as fd:
         # parse xml to a dictionary, encode for degree signs
-        obj = xmltodict.parse(fd.read(), encoding="ISO-8859-1")
+        if sys.version_info >= (3, 0):
+            obj = xmltodict.parse(fd.read())
+        else:
+            obj = xmltodict.parse(fd.read(), encoding="ISO-8859-1")
     # navigate through xml to the data
     wellrawdata = obj['Body_xle']['Data']['Log']
     # convert xml data to pandas dataframe
