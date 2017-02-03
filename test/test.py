@@ -117,21 +117,16 @@ def test_imp_new_well():
     assert wellname == 'ag13c'
     
 def test_well_baro_merge():
-    inputfile = "test/ag13c 2016-08-02.xle"
-    manualwls = "test/All tape measurements.csv"
     xle = "test/ag13c 2016-08-02.xle"
     xle_df = wa.new_xle_imp(xle)
-    manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
     barofile = "test/baro.csv"
     baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
     baro['Level'] = baro['pw03']
-    wellinfo = pd.read_csv("test/wellinfo4.csv")
     assert len(wa.well_baro_merge(xle_df, baro, sampint=60)) > 10
 
 def test_fix_drift():
     xle = "test/ag13c 2016-08-02.xle"
     xle_df = wa.new_xle_imp(xle)
-    
     manualwls = "test/All tape measurements.csv"
     manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
     manual35 = manual[manual['WellID']==35]
@@ -161,7 +156,7 @@ def test_imp_new_well_csv():
     wellinfo = pd.read_csv("test/wellinfo4.csv")
     g, drift, wellname = wa.imp_new_well(inputfile, wellinfo, manual, baro)
     assert wellname == 'ag14a'
-    
+
 def test_jumpfix():
     xle = "test/ag13c 2016-08-02.xle"
     df = wa.new_xle_imp(xle)
@@ -185,21 +180,16 @@ def test_get_info():
     df = nw.get_info(siteStatus='all')
     assert 'site_no' in list(df.columns)
 
+#def test_recess():
+#    ashley = wa.nwis('dv', '09265500', 'sites', startDT='2015-06-02', endDT='2015-06-14')
+#    rec = wa.graphs.recess(ashley.data, 'value', st=[2015, 6, 2])
+#    assert round(rec.rec_results[0], 2) == 0.04
 
-def test_recess():
-    ashley = wa.nwis('dv', '09265500', 'sites', startDT='2015-06-02', endDT='2015-06-14')
-    rec = wa.graphs.recess(ashley.data, 'value', st=[2015, 6, 2])
-    assert round(rec.rec_results[0], 2) == 0.04
-
-def test_get_recess_int():
-    ashley = wa.nwis('dv', '09265500','sites', startDT='2015-01-02' ,endDT='2015-10-14')
-    assert type(wa.get_recess_int(ashley.data, 'value')[0]) == pd.DataFrame
+#def test_get_recess_int():
+#    ashley = wa.nwis('dv', '09265500','sites', startDT='2015-01-02' ,endDT='2015-10-14')
+#    assert type(wa.get_recess_int(ashley.data, 'value')[0]) == pd.DataFrame
 
 def test_mk_ts():
     usgsP = pd.read_csv('test/usgsP.csv')
     var = wa.MannKendall.mk_ts(usgsP, 'PO4', 'month', 'year',0.05)
     assert var[0] == -87.0
-
-def test_get_recess():
-    ashley = wa.nwis('dv', '09265500', 'sites', startDT='2015-01-02', endDT='2015-10-14')
-    assert type(wa.get_recess(ashley.data, 'value', '1D')) == pd.DataFrame

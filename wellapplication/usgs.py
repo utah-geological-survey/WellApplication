@@ -7,7 +7,7 @@ Created on Sun Jan  3 00:30:36 2016
 import pandas as pd
 from datetime import datetime
 from httplib import BadStatusLine
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import numpy as np
 import requests
 
@@ -254,6 +254,53 @@ class nwis(object):
         else:
             return x
 
+    def nwis_heat_map(self):
+        from scipy.interpolate import griddata
+        import matplotlib.cm as cm
+        import matplotlib as mpl
+
+        meth = 'linear'  # 'nearest'
+
+        data = self.data
+
+        if isinstance(data.index, pd.core.index.MultiIndex):
+            data.index = data.index.droplevel(0)
+
+        x = data.index.dayofyear
+        y = data.index.year
+        z = data.value.values
+
+        xi = np.linspace(x.min(), x.max(), 1000)
+        yi = np.linspace(y.min(), y.max(), 1000)
+        zi = griddata((x, y), z, (xi[None, :], yi[:, None]), method=meth)
+
+        cmap = plt.cm.get_cmap('RdYlBu')
+        norm = mpl.colors.Normalize(vmin=z.min(), vmax=z.max())
+        #norm = mpl.colors.LogNorm(vmin=0.1, vmax=100000)
+        m = cm.ScalarMappable(norm=norm, cmap=cmap)
+        m.set_array(z)
+
+        br = plt.contourf(xi, yi, zi, color=m.to_rgba(z), cmap=cmap)
+        # setup the colorbar
+
+
+        cbar = plt.colorbar(m)
+        cbar.set_label('Discharge (cfs)')
+
+        plt.xlabel('Month')
+        plt.ylabel('Year')
+        plt.yticks(range(y.min(), y.max()))
+
+        mons = {'Apr': 90.25, 'Aug': 212.25, 'Dec': 334.25, 'Feb': 31, 'Jan': 1, 'Jul': 181.25, 'Jun': 151.25,
+                'Mar': 59.25, 'May': 120.25,
+                'Nov': 304.25, 'Oct': 273.25, 'Sep': 243.25}
+        monnms = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+        plt.title(self.sites.station_nm[0].title())
+        tickplc = []
+        plt.xticks([mons[i] for i in monnms], monnms)
+        plt.grid()
+
 def get_elev(x, units='Meters'):
     """Uses USGS elevation service to retrieve elevation
     :param x: longitude and latitude of point where elevation is desired
@@ -360,4 +407,89 @@ def get_recess(df, Q, freq='1D', inplace=False):
     return df
 
 
+def RB_Flashiness(series):
+    """Richards-Baker Flashiness Index for a series of daily mean discharges.
+    https://github.com/hydrogeog/hydro/blob/master/hydro/core.py
+    """
+    Qsum = np.sum(series)           # sum of daily mean discharges
+    Qpath = 0.0
+    for i in range(len(series)):
+        if i == 0:
+            Qpath = series[i]       # first entry only
+        else:
+            Qpath += np.abs(series[i] - series[i-1])    # sum the absolute differences of the mean discharges
+    return Qpath/Qsum
 
+
+def flow_duration(series):
+    """Creates the flow duration curve for a discharge dataset. Returns a pandas
+    series whose index is the discharge values and series is exceedance probability.
+    https://github.com/hydrogeog/hydro/blob/master/hydro/core.py
+    """
+    fd = pd.Series(series).value_counts()               # frequency of unique values
+    fd.sort_index(inplace=True)                         # sort in order of increasing discharges
+    fd = fd.cumsum()                                    # cumulative sum of frequencies
+    fd = fd.apply(lambda x: 100 - x/fd.max() * 100)     # normalize
+    return fd
+
+def Lyne_Hollick(series, alpha=.925, direction='f'):
+    """Recursive digital filter for baseflow separation. Based on Lyne and Hollick, 1979.
+    series = array of discharge measurements
+    alpha = filter parameter
+    direction = (f)orward or (r)everse calculation
+    https://github.com/hydrogeog/hydro/blob/master/hydro/core.py
+    """
+    series = np.array(series)
+    f = np.zeros(len(series))
+    if direction == 'f':
+        for t in np.arange(1,len(series)):
+            f[t] = alpha * f[t-1] + (1 + alpha)/2 * (series[t] - series[t-1])
+            if series[t] - f[t] > series[t]:
+                f[t] = 0
+    elif direction == 'r':
+        for t in np.arange(len(series)-2, 1, -1):
+            f[t] = alpha * f[t+1] + (1 + alpha)/2 * (series[t] - series[t+1])
+            if series[t] - f[t] > series[t]:
+                f[t] = 0
+    return np.array(series - f)
+
+def Eckhardt(series, alpha=.98, BFI=.80):
+    """Recursive digital filter for baseflow separation. Based on Eckhardt, 2004.
+    series = array of discharge measurements
+    alpha = filter parameter
+    BFI = BFI_max (maximum baseflow index)
+    https://github.com/hydrogeog/hydro/blob/master/hydro/core.py
+    """
+    series = np.array(series)
+    f = np.zeros(len(series))
+    f[0] = series[0]
+    for t in np.arange(1,len(series)):
+        f[t] = ((1 - BFI) * alpha * f[t-1] + (1 - alpha) * BFI * series[t]) / (1 - alpha * BFI)
+        if f[t] > series[t]:
+            f[t] = series[t]
+    return f
+
+def ratingCurve(discharge, stage):
+    """Computes rating curve based on discharge measurements coupled with stage
+    readings.
+    discharge = array of measured discharges;
+    stage = array of corresponding stage readings;
+    Returns coefficients a, b for the rating curve in the form y = a * x**b
+    https://github.com/hydrogeog/hydro/blob/master/hydro/core.py
+    """
+    from scipy.optimize import curve_fit
+
+    exp_curve = lambda x, a, b: (a * x ** b)
+    popt, pcov = curve_fit(exp_curve, stage, discharge)
+
+
+    a = 0.0
+    b = 0.0
+
+    for i, j in zip(discharge, stage):
+        a += (i - exp_curve(j, popt[0], popt[1]))**2
+        b += (i - np.mean(discharge))**2
+    r_squ = 1 - a / b
+
+
+    return popt, r_squ
