@@ -1,3 +1,5 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 # ==================================================================================================================== #
 # MesoPy                                                                                                               #
 # Version: 2.0.0                                                                                                       #
@@ -23,7 +25,7 @@ except ImportError:
 
 import json
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+
 # ==================================================================================================================== #
 # MesoPyError class                                                                                                    #
 # Type: Exception                                                                                                      #
