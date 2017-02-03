@@ -331,7 +331,7 @@ def get_elev(x, units='Meters'):
              g = float(response['USGS_Elevation_Point_Query_Service']['Elevation_Query']['Elevation'])
              break
          except(BadStatusLine):
-             print "Connection attempt {:} of 3 failed.".format(attempts)
+             print("Connection attempt {:} of 3 failed.".format(attempts))
              attempts += 1
              g = 0
     return g

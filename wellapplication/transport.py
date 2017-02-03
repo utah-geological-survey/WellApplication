@@ -851,7 +851,7 @@ def jumpfix(df, meas, threashold=0.005):
     jump = df1[abs(df1['delta' + meas]) > threashold]
     jump['cumul'] = jump.loc[:, 'delta' + meas].cumsum()
     df1['newVal'] = df1.loc[:, meas]
-    print jump
+    print(jump)
     for i in range(len(jump)):
         jt = jump.index[i]
         ja = jump['cumul'][i]
