@@ -70,7 +70,7 @@ def xle_head_table(folder):
         filename, filetype = os.path.splitext(infile)
         if filetype == '.xle':
             # open text file
-            with open(infile) as fd:
+            with open(infile, 'rb') as fd:
                 # parse xml
                 if (sys.version_info > (3, 0)):
                     obj = xmltodict.parse(fd.read())
@@ -626,9 +626,12 @@ def compilation(inputfile):
             # run computations using xle files
         elif filetype == '.xle':
             # open text file
-            with open(infile) as fd:
+            with open(infile, 'rb') as fd:
                 # parse xml
-                obj = xmltodict.parse(fd.read(), encoding="ISO-8859-1")
+                if (sys.version_info > (3, 0)):
+                    obj = xmltodict.parse(fd.read())
+                else:
+                    obj = xmltodict.parse(fd.read(), encoding="ISO-8859-1")
             # navigate through xml to the data
             wellrawdata = obj['Body_xle']['Data']['Log']
             # convert xml data to pandas dataframe
@@ -679,7 +682,7 @@ def new_xle_imp(infile):
         A Pandas DataFrame containing the transducer data
     """
     # open text file
-    with open(infile) as fd:
+    with open(infile, 'rb') as fd:
         # parse xml to a dictionary, encode for degree signs
         if sys.version_info >= (3, 0):
             obj = xmltodict.parse(fd.read())
