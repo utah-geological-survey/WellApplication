@@ -4,9 +4,10 @@ __version__ = '0.4.20'
 __author__ = 'Paul Inkenbrandt'
 __name__ = 'wellapplication'
 
-from transport import *
-from usgs import *
-from chem import *
-from mesopy import *
-from graphs import *
-import MannKendall
+import wellapplication
+from wellapplication.transport import *
+from wellapplication.usgs import *
+from wellapplication.chem import *
+from wellapplication.mesopy import *
+from wellapplication.graphs import *
+import wellapplication.MannKendall
