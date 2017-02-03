@@ -9,7 +9,7 @@ from wellapplication import __version__, __name__, __author__
 #  than python 2 or 3
 if not sys.version_info[0] in [2,3]:
     print('Sorry, wellapplication not supported in your Python version')
-    print('  Supported versions: 2 and maybe 3')
+    print('  Supported versions: 2 and 3')
     print('  Your version of Python: {}'.format(sys.version_info[0]))
     sys.exit(1)  # return non-zero value for failure
 
