@@ -73,9 +73,9 @@ def xle_head_table(folder):
             with open(infile, 'rb') as fd:
                 # parse xml
                 if (sys.version_info > (3, 0)):
-                    obj = xmltodict.parse(fd.read())
+                    obj = xmltodict.parse(fd)
                 else:
-                    obj = xmltodict.parse(fd.read(), encoding="ISO-8859-1")
+                    obj = xmltodict.parse(fd, encoding="ISO-8859-1")
             # navigate through xml to the data
             filenm.append(filename)
             downld_inst.append(obj['Body_xle']['File_info']['Created_by'])
@@ -629,9 +629,9 @@ def compilation(inputfile):
             with open(infile, 'rb') as fd:
                 # parse xml
                 if (sys.version_info > (3, 0)):
-                    obj = xmltodict.parse(fd.read())
+                    obj = xmltodict.parse(fd)
                 else:
-                    obj = xmltodict.parse(fd.read(), encoding="ISO-8859-1")
+                    obj = xmltodict.parse(fd, encoding="ISO-8859-1")
             # navigate through xml to the data
             wellrawdata = obj['Body_xle']['Data']['Log']
             # convert xml data to pandas dataframe
@@ -685,9 +685,9 @@ def new_xle_imp(infile):
     with open(infile, 'rb') as fd:
         # parse xml to a dictionary, encode for degree signs
         if sys.version_info >= (3, 0):
-            obj = xmltodict.parse(fd.read())
+            obj = xmltodict.parse(fd)
         else:
-            obj = xmltodict.parse(fd.read(), encoding="ISO-8859-1")
+            obj = xmltodict.parse(fd, encoding="ISO-8859-1")
     # navigate through xml to the data
     wellrawdata = obj['Body_xle']['Data']['Log']
     # convert xml data to pandas dataframe
