@@ -4,9 +4,13 @@ Created on Sun Jan  3 00:30:36 2016
 
 @author: p
 """
+from __future__ import absolute_import, division, print_function, unicode_literals
 import pandas as pd
 from datetime import datetime
-from httplib import BadStatusLine
+try:
+    from httplib import BadStatusLine
+except:
+    from http.client import BadStatusLine
 import matplotlib.pyplot as plt
 import numpy as np
 import requests

@@ -4,6 +4,7 @@ Created on Thu Nov 19 12:32:51 2015
 
 @author: paulinkenbrandt
 """
+from __future__ import absolute_import, division, print_function, unicode_literals
 from scipy import stats as sp
 import pandas as pd
 import matplotlib.pyplot as plt

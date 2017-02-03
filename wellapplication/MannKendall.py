@@ -4,12 +4,17 @@ Created on Fri Jan  8 19:55:22 2016
 
 @author: p
 """
-
+from __future__ import absolute_import, division, print_function, unicode_literals
 import numpy as np
 import pandas as pd
 import scipy as sc
 from scipy.stats import norm
 
+import sys
+
+if sys.version_info >= (3, 0):
+    def xrange(*args, **kwargs):
+        return iter(range(*args, **kwargs))
 
 def mk_test(x, alpha = 0.05):
     """This perform the MK (Mann-Kendall) test to check if there is any trend present in 

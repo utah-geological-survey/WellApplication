@@ -4,6 +4,7 @@ Hydropy package
 from: https://github.com/stijnvanhoey/hydropy/tree/master/hydropy
 for a better and more up to date copy of this script go to the original repo.
 """
+from __future__ import absolute_import, division, print_function, unicode_literals
 import pandas as pd
 import numpy as np
 
