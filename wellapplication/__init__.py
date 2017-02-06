@@ -1,13 +1,25 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
+
+
+from .transport import *
+from .usgs import *
+from .chem import *
+from .mesopy import *
+from .graphs import *
+from .MannKendall import *
 
 __version__ = '0.4.21'
 __author__ = 'Paul Inkenbrandt'
 __name__ = 'wellapplication'
 
-import wellapplication
-from wellapplication.transport import *
-from wellapplication.usgs import *
-from wellapplication.chem import *
-from wellapplication.mesopy import *
-from wellapplication.graphs import *
-import wellapplication.MannKendall
+__all__ = ['WQP',
+           'get_response',
+           'get_wqp_stations',
+           'get_wqp_results',
+           'massage_results',
+           'datetimefix',
+           'parnorm',
+           'unitfix',
+           'massage_stations',
+           'piv_chem']

@@ -8,6 +8,7 @@ import re
 import xmltodict
 import sys
 
+
 def well_baro_merge(wellfile, barofile, sampint=60):
     """Remove barometric pressure from nonvented transducers.
     Args:
