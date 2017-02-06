@@ -57,44 +57,22 @@ def xle_head_table(folder):
         >>> wa.xle_head_table('C:/folder_with_xles/')
     """
     # open text file
-
-    filenames = []
-    for fn in next(os.walk(folder))[2]:
-        filenames.append(os.path.join(folder, fn))
-
-    instType, downld_inst, modelNum, serialNum, firmWare,  = [], [], [], [], []
-    project, well, startTime, stopTime, batteryPct = [],[],[],[],[]
-    filenm = []
-    for infile in filenames:
+    df = {}
+    for infile in os.listdir(folder):
 
         # get the extension of the input file
-        filename, filetype = os.path.splitext(infile)
+        filename, filetype = os.path.splitext(folder+infile)
+
         if filetype == '.xle':
             # open text file
-            with open(infile, 'rb') as fd:
-                # parse xml
-                if (sys.version_info > (3, 0)):
-                    obj = xmltodict.parse(fd)
-                else:
-                    obj = xmltodict.parse(fd, encoding="ISO-8859-1")
+            with open(folder+infile, "rb") as f:
+                d = xmltodict.parse(f, xml_attribs=True, encoding="ISO-8859-1")
             # navigate through xml to the data
-            filenm.append(filename)
-            downld_inst.append(obj['Body_xle']['File_info']['Created_by'])
-            instType.append(obj['Body_xle']['Instrument_info']['Instrument_type'])
-            modelNum.append(obj['Body_xle']['Instrument_info']['Model_number'])
-            serialNum.append(obj['Body_xle']['Instrument_info']['Serial_number'])
-            batteryPct.append(obj['Body_xle']['Instrument_info']['Battery_level'])
-            firmWare.append(obj['Body_xle']['Instrument_info']['Firmware'])
-            project.append(obj['Body_xle']['Instrument_info_data_header']['Project_ID'])
-            well.append(obj['Body_xle']['Instrument_info_data_header']['Location'])
-            startTime.append(obj['Body_xle']['Instrument_info_data_header']['Stop_time'])
-            stopTime.append(obj['Body_xle']['Instrument_info_data_header']['Stop_time'])
-    properties = pd.DataFrame(
-        {'file name':filenm,'instType': instType, 'modelNum': modelNum, 'serialNum': serialNum, 'firmWare': firmWare,
-         'project': project, 'well': well, 'stopTime': stopTime, 'batteryPct': batteryPct,
-         'downloadInstrument':downld_inst,'startTime':startTime})
-
-    return properties
+            data  = list(d['Body_xle']['Instrument_info_data_header'].values()) + list(d['Body_xle']['Instrument_info'].values())
+            cols = list(d['Body_xle']['Instrument_info_data_header'].keys()) + list(d['Body_xle']['Instrument_info'].keys())
+            serial_number = d['Body_xle']['Instrument_info']['Serial_number']
+            df[serial_number] = pd.DataFrame( data=data, index=cols).T
+    return pd.concat(df)
 
 
 def fix_drift(well, manualfile, meas='Level', manmeas='MeasuredDTW', outcolname='DriftCorrection'):
@@ -627,12 +605,8 @@ def compilation(inputfile):
             # run computations using xle files
         elif filetype == '.xle':
             # open text file
-            with open(infile, 'rb') as fd:
-                # parse xml
-                if (sys.version_info > (3, 0)):
-                    obj = xmltodict.parse(fd)
-                else:
-                    obj = xmltodict.parse(fd, encoding="ISO-8859-1")
+            with open(folder+infile, "rb") as f:
+                obj = xmltodict.parse(f, xml_attribs=True, encoding="ISO-8859-1")
             # navigate through xml to the data
             wellrawdata = obj['Body_xle']['Data']['Log']
             # convert xml data to pandas dataframe
@@ -683,12 +657,8 @@ def new_xle_imp(infile):
         A Pandas DataFrame containing the transducer data
     """
     # open text file
-    with open(infile, 'rb') as fd:
-        # parse xml to a dictionary, encode for degree signs
-        if sys.version_info >= (3, 0):
-            obj = xmltodict.parse(fd)
-        else:
-            obj = xmltodict.parse(fd, encoding="ISO-8859-1")
+    with open(folder + infile, "rb") as f:
+        obj = xmltodict.parse(f, xml_attribs=True, encoding="ISO-8859-1")
     # navigate through xml to the data
     wellrawdata = obj['Body_xle']['Data']['Log']
     # convert xml data to pandas dataframe

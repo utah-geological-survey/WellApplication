@@ -4,11 +4,7 @@ import os
 from setuptools import setup, find_packages
 
 rootpath = os.path.abspath(os.path.dirname(__file__))
-# To use:
-#	   python setup.py bdist --format=wininst
 
-# trap someone trying to install flopy with something other
-#  than python 2 or 3
 if not sys.version_info[0] in [2,3]:
     print('Sorry, wellapplication not supported in your Python version')
     print('  Supported versions: 2 and 3')
