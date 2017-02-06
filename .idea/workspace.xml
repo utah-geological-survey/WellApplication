@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d5a82257-6a90-41c3-87e5-13b1695dbcbb" name="Default" comment="python 3 compatibility">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/wellapplication/VERSION" />
+    <list default="true" id="d5a82257-6a90-41c3-87e5-13b1695dbcbb" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/setup.py" afterPath="$PROJECT_DIR$/setup.py" />
     </list>
@@ -42,11 +41,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="setup.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="setup.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/setup.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="544">
-              <caret line="32" column="16" lean-forward="false" selection-start-line="32" selection-start-column="16" selection-end-line="32" selection-end-column="16" />
+            <state relative-caret-position="289">
+              <caret line="17" column="55" lean-forward="false" selection-start-line="17" selection-start-column="55" selection-end-line="17" selection-end-column="55" />
               <folding>
                 <element signature="e#0#82#0" expanded="true" />
               </folding>
@@ -54,7 +53,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="VERSION" pinned="false" current-in-tab="true">
+      <file leaf-file-name="VERSION" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wellapplication/VERSION">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
@@ -183,8 +182,8 @@
         <option value="$PROJECT_DIR$/wellapplication/__init__.py" />
         <option value="$PROJECT_DIR$/wellapplication/chem.py" />
         <option value="$PROJECT_DIR$/test/__init__.py" />
-        <option value="$PROJECT_DIR$/setup.py" />
         <option value="$PROJECT_DIR$/wellapplication/VERSION" />
+        <option value="$PROJECT_DIR$/setup.py" />
       </list>
     </option>
   </component>
@@ -578,13 +577,6 @@
       <option name="presentableId" value="Default" />
       <updated>1483036980477</updated>
     </task>
-    <task id="LOCAL-00034" summary="recess cleanup">
-      <created>1484147869233</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1484147869233</updated>
-    </task>
     <task id="LOCAL-00035" summary="recess cleanup">
       <created>1484148260343</created>
       <option name="number" value="00035" />
@@ -921,7 +913,14 @@
       <option name="project" value="LOCAL" />
       <updated>1486356218422</updated>
     </task>
-    <option name="localTasksCounter" value="83" />
+    <task id="LOCAL-00083" summary="python 3 compatibility">
+      <created>1486358062603</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1486358062603</updated>
+    </task>
+    <option name="localTasksCounter" value="84" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1321,21 +1320,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/setup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
-          <caret line="32" column="16" lean-forward="false" selection-start-line="32" selection-start-column="16" selection-end-line="32" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#82#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/VERSION">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="6" lean-forward="false" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="6" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="55" lean-forward="false" selection-start-line="17" selection-start-column="55" selection-end-line="17" selection-end-column="55" />
+          <folding>
+            <element signature="e#0#82#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
