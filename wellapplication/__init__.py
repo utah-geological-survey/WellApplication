@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
-
+import os
 
 from .transport import *
 from .usgs import *
@@ -9,7 +9,11 @@ from .mesopy import *
 from .graphs import *
 from .MannKendall import *
 
-__version__ = '0.4.21'
+rootpath = os.path.abspath(os.path.dirname(__file__))
+version_file = open(os.path.join(rootpath, 'VERSION'))
+version = version_file.read().strip()
+
+__version__ = version
 __author__ = 'Paul Inkenbrandt'
 __name__ = 'wellapplication'
 
