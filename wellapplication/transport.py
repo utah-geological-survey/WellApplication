@@ -67,7 +67,7 @@ def xle_head_table(folder):
             with open(folder+infile, "rb") as f:
                 d = xmltodict.parse(f, xml_attribs=True, encoding="ISO-8859-1")
             # navigate through xml to the data
-            data  = list(d['Body_xle']['Instrument_info_data_header'].values()) + list(d['Body_xle']['Instrument_info'].values())
+            data = list(d['Body_xle']['Instrument_info_data_header'].values()) + list(d['Body_xle']['Instrument_info'].values())
             cols = list(d['Body_xle']['Instrument_info_data_header'].keys()) + list(d['Body_xle']['Instrument_info'].keys())
             serial_number = d['Body_xle']['Instrument_info']['Serial_number']
             df[serial_number] = pd.DataFrame( data=data, index=cols).T
@@ -604,7 +604,7 @@ def compilation(inputfile):
             # run computations using xle files
         elif filetype == '.xle':
             # open text file
-            with open(folder+infile, "rb") as f:
+            with open(infile, "rb") as f:
                 obj = xmltodict.parse(f, xml_attribs=True, encoding="ISO-8859-1")
             # navigate through xml to the data
             wellrawdata = obj['Body_xle']['Data']['Log']
@@ -656,7 +656,7 @@ def new_xle_imp(infile):
         A Pandas DataFrame containing the transducer data
     """
     # open text file
-    with open(folder + infile, "rb") as f:
+    with open(infile, "rb") as f:
         obj = xmltodict.parse(f, xml_attribs=True, encoding="ISO-8859-1")
     # navigate through xml to the data
     wellrawdata = obj['Body_xle']['Data']['Log']
