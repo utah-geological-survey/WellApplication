@@ -1,10 +1,11 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 import sys
+import os
 from setuptools import setup, find_packages
+
+rootpath = os.path.abspath(os.path.dirname(__file__))
 # To use:
 #	   python setup.py bdist --format=wininst
-
-from wellapplication import __version__, __name__, __author__
 
 # trap someone trying to install flopy with something other
 #  than python 2 or 3
@@ -13,6 +14,19 @@ if not sys.version_info[0] in [2,3]:
     print('  Supported versions: 2 and 3')
     print('  Your version of Python: {}'.format(sys.version_info[0]))
     sys.exit(1)  # return non-zero value for failure
+
+def extract_version(module='wellapplication'):
+    version = None
+    fname = os.path.join(rootpath, module, '__init__.py')
+    with open(fname) as f:
+        for line in f:
+            if (line.startswith('__version__')):
+                _, version = line.split('=')
+                version = version.strip()[1:-1]  # Remove quotation characters.
+                break
+    return version
+
+
 
 long_description = 'A tool for hydrogeologists to upload and display hydrographs and geochemical data'
 
@@ -23,11 +37,11 @@ try:
 except:
     pass
 
-setup(name=__name__,
+setup(name='wellapplication',
       description = 'Interface with xle files; analyze hydrographs; plot hydrographs; download USGS data',
       long_description = long_description,
-      version = __version__,
-      author = __author__,
+      version = extract_version(),
+      author = 'Paul Inkenbrandt',
       author_email = 'paulinkenbrandt@utah.gov',
       url = 'https://github.com/inkenbrandt/WellApplication',
       license = 'LICENSE.txt',
