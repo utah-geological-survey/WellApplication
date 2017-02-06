@@ -1,9 +1,10 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
 import sys
 from setuptools import setup, find_packages
 # To use:
 #	   python setup.py bdist --format=wininst
 
-from wellapplication import __version__, __name__, __author__
+from .wellapplication import __version__, __name__, __author__
 
 # trap someone trying to install flopy with something other
 #  than python 2 or 3
