@@ -4,7 +4,7 @@ Created on Tue Jan 05 09:50:51 2016
 
 @author: paulinkenbrandt
 """
-
+from __future__ import absolute_import, division, print_function, unicode_literals
 import pandas as pd
 from datetime import datetime
 import numpy as np
