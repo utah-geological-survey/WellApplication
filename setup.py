@@ -15,18 +15,8 @@ if not sys.version_info[0] in [2,3]:
     print('  Your version of Python: {}'.format(sys.version_info[0]))
     sys.exit(1)  # return non-zero value for failure
 
-def extract_version(module='wellapplication'):
-    version = None
-    fname = os.path.join(rootpath, module, '__init__.py')
-    with open(fname) as f:
-        for line in f:
-            if (line.startswith('__version__')):
-                _, version = line.split('=')
-                version = version.strip()[1:-1]  # Remove quotation characters.
-                break
-    return version
-
-
+version_file = open(os.path.join(rootpath, 'VERSION'))
+version = version_file.read().strip()
 
 long_description = 'A tool for hydrogeologists to upload and display hydrographs and geochemical data'
 
@@ -40,7 +30,7 @@ except:
 setup(name='wellapplication',
       description = 'Interface with xle files; analyze hydrographs; plot hydrographs; download USGS data',
       long_description = long_description,
-      version = extract_version(),
+      version = version,
       author = 'Paul Inkenbrandt',
       author_email = 'paulinkenbrandt@utah.gov',
       url = 'https://github.com/inkenbrandt/WellApplication',
