@@ -9,8 +9,8 @@ from .mesopy import *
 from .graphs import *
 from .MannKendall import *
 
-rootpath = os.path.abspath(os.path.join('.', os.path.pardir))
-version_file = open(os.path.join(rootpath, 'VERSION'))
+
+version_file = open('VERSION')
 version = version_file.read().strip()
 
 __version__ = version
