@@ -9,11 +9,7 @@ from .mesopy import *
 from .graphs import *
 from .MannKendall import *
 
-
-version_file = open('VERSION')
-version = version_file.read().strip()
-
-__version__ = version
+__version__ = '0.4.23'
 __author__ = 'Paul Inkenbrandt'
 __name__ = 'wellapplication'
 
