@@ -3,15 +3,13 @@ import sys
 import os
 from setuptools import setup, find_packages
 
-rootpath = os.path.abspath(os.path.dirname(__file__))
-
 if not sys.version_info[0] in [2,3]:
     print('Sorry, wellapplication not supported in your Python version')
     print('  Supported versions: 2 and 3')
     print('  Your version of Python: {}'.format(sys.version_info[0]))
     sys.exit(1)  # return non-zero value for failure
 
-version_file = open(os.path.join(rootpath, 'VERSION'))
+version_file = open('VERSION')
 version = version_file.read().strip()
 
 long_description = 'A tool for hydrogeologists to upload and display hydrographs and geochemical data'
