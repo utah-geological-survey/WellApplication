@@ -7,7 +7,11 @@
 
 Set of tools for groundwater level and water chemistry analysis.  Allows for rapid download and graphing of data from the USGS NWIS database and the Water Quality Portal.
 
-
+## Installation
+To install the most recent version, use <a href='https://pypi.python.org/pypi/pip'>pip</a>.
+```Bash 
+pip install wellapplication
+```
 ## Modules
 
 ### transport
