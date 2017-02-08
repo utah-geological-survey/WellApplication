@@ -2,6 +2,8 @@
 [![Build Status](https://travis-ci.org/inkenbrandt/WellApplication.svg?branch=master)](https://travis-ci.org/inkenbrandt/WellApplication)
 [![PyPI version](https://badge.fury.io/py/WellApplication.svg)](https://badge.fury.io/py/WellApplication)
 [![codecov](https://codecov.io/gh/inkenbrandt/WellApplication/branch/master/graph/badge.svg)](https://codecov.io/gh/inkenbrandt/WellApplication)
+[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org:/repo/inkenbrandt/wellapplication)
+
 
 # Well Application
 
