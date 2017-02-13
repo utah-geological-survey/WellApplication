@@ -129,11 +129,16 @@ class nwis(object):
             station_nm.append(dt[i]['sourceInfo'][u'siteName'])
 
             df = pd.DataFrame(dt[i]['values'][0]['value'])
-            df.index = pd.to_datetime(df.pop('dateTime'))
-            df.value = df.value.astype(float)
-            df.index.name = 'datetime'
-            df.replace(to_replace='-999999', value=np.nan)
-            f[dt[i]['sourceInfo']['siteCode'][0]['value']] = df
+            if 'dateTime' in df.columns:
+                df.index = pd.to_datetime(df.pop('dateTime'))
+                df.value = df.value.astype(float)
+                df.index.name = 'datetime'
+                df.replace(to_replace='-999999', value=np.nan)
+                f[dt[i]['sourceInfo']['siteCode'][0]['value']] = df
+            else:
+                print(df.index)
+                pass
+
         stat_dict = {'site_no': station_id, 'dec_lat_va': lat, 'dec_long_va': lon, 'dec_coord_datum_cd': srs,
                      'station_nm': station_nm, 'data_type_cd': station_type}
         stations = pd.DataFrame(stat_dict)
