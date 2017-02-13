@@ -11,6 +11,7 @@ Set of tools for groundwater level and water chemistry analysis.  Allows for rap
 
 ## Installation
 Wellapplication should be compatible with both Python 2.7 and 3.5.  It has been tested most rigously on Python 2.7.  It should work on both 32 and 64-bit platforms.  I have used it on Linux and Windows machines.
+
 To install the most recent version, use <a href='https://pypi.python.org/pypi/pip'>pip</a>.
 ```Bash 
 pip install wellapplication
