@@ -4,6 +4,8 @@
 [![codecov](https://codecov.io/gh/inkenbrandt/WellApplication/branch/master/graph/badge.svg)](https://codecov.io/gh/inkenbrandt/WellApplication)
 [![Binder](http://mybinder.org/badge.svg)](http://mybinder.org:/repo/inkenbrandt/wellapplication)
 
+<img src="http://www.exchangenetwork.net/wp-content/themes/exchange-network/images/exchange-network-logo.jpg">
+Developed with funding from the U.S. EPA Exchange Network
 
 # Well Application
 
