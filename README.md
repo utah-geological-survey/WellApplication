@@ -5,7 +5,7 @@
 [![Binder](http://mybinder.org/badge.svg)](http://mybinder.org:/repo/inkenbrandt/wellapplication)
 
 <img src="http://www.exchangenetwork.net/wp-content/themes/exchange-network/images/exchange-network-logo.jpg">
-Developed with funding from the U.S. EPA Exchange Network
+Developed with funding from the <a href="http://www.exchangenetwork.net/">U.S. EPA Exchange Network</a>
 
 # Well Application
 
