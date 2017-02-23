@@ -3,6 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/WellApplication.svg)](https://badge.fury.io/py/WellApplication)
 [![codecov](https://codecov.io/gh/inkenbrandt/WellApplication/branch/master/graph/badge.svg)](https://codecov.io/gh/inkenbrandt/WellApplication)
 [![Binder](http://mybinder.org/badge.svg)](http://mybinder.org:/repo/inkenbrandt/wellapplication)
+[![Coolness]https://img.shields.io/badge/Coolness-very-brightgreen.svg
 
 <img src="http://www.exchangenetwork.net/wp-content/themes/exchange-network/images/exchange-network-logo.jpg">
 Developed with funding from the <a href="http://www.exchangenetwork.net/">U.S. EPA Exchange Network</a>
