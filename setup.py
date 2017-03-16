@@ -33,7 +33,8 @@ setup(name='wellapplication',
                         "scipy >= 0.10.0",
                         "pyproj >= 1.9.4",
                         "requests >= 2.11.1",
-                        "xlrd >= 0.5.4"],
+                        "xlrd >= 0.5.4",
+                        "statsmodels >= 0.6.0"],
       packages = find_packages(exclude=['contrib', 'docs', 'tests*']))
 
 
