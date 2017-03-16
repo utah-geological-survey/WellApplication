@@ -21,7 +21,7 @@ except:
 setup(name='wellapplication',
       description = 'Interface with xle files; analyze hydrographs; plot hydrographs; download USGS data',
       long_description = long_description,
-      version = '0.4.23',
+      version = '0.4.24',
       author = 'Paul Inkenbrandt',
       author_email = 'paulinkenbrandt@utah.gov',
       url = 'https://github.com/inkenbrandt/WellApplication',
