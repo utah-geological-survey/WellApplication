@@ -816,7 +816,7 @@ def fcl(df, dtObj):
     return df.iloc[np.argmin(np.abs(pd.to_datetime(df.index) - dtObj))]  # remove to_pydatetime()
 
 
-def jumpfix(df, meas, threashold=0.005):
+def jumpfix(df, meas, threashold=0.005, return_jump=False):
     """Removes jumps or jolts in time series data (where offset is lasting)
     Args:
         df (object):
@@ -825,19 +825,26 @@ def jumpfix(df, meas, threashold=0.005):
             name of field with jolts
         threashold (float):
             size of jolt to search for
+    Returns:
+        df1: dataframe of corrected data
+        jump: dataframe of jumps corrected in data
     """
     df1 = df.copy(deep=True)
     df1['delta' + meas] = df1.loc[:, meas].diff()
     jump = df1[abs(df1['delta' + meas]) > threashold]
     jump['cumul'] = jump.loc[:, 'delta' + meas].cumsum()
     df1['newVal'] = df1.loc[:, meas]
-    print(jump)
+    
     for i in range(len(jump)):
         jt = jump.index[i]
         ja = jump['cumul'][i]
         df1.loc[jt:, 'newVal'] = df1[meas].apply(lambda x: x - ja, 1)
     df1[meas] = df1['newVal']
-    return df1
+    if return_jump:
+        print(jump)
+        return df1, jump
+    else:
+        return df1
 
 
 def rollmeandiff(df1, p1, df2, p2, win):
