@@ -130,6 +130,8 @@ class nwis(object):
 
             df = pd.DataFrame(dt[i]['values'][0]['value'])
             df.columns = [dt[i]['variable']['variableDescription'] if x == 'value' else x for x in df.columns]
+            df.columns = [dt[i]['variable']['variableDescription'] + ' qualifiers' if x == 'qualifiers' else x for x in df.columns]
+
             if 'dateTime' in df.columns:
                 df.index = pd.to_datetime(df.pop('dateTime'))
 
