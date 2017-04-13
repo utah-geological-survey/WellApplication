@@ -129,22 +129,12 @@ class nwis(object):
             station_nm.append(dt[i]['sourceInfo'][u'siteName'])
 
             df = pd.DataFrame(dt[i]['values'][0]['value'])
-            df.columns = [dt[i]['variable']['variableDescription'] if x == 'value' else x for x in df.columns]
-            df.columns = [dt[i]['variable']['variableDescription'] + ' qualifiers' if x == 'qualifiers' else x for x in df.columns]
-
-            if 'dateTime' in df.columns:
+            if 'dateTime' in df.columns and dt[i]['variable']['variableDescription'] == u'Discharge, cubic feet per second':
                 df.index = pd.to_datetime(df.pop('dateTime'))
-
-                df[dt[i]['variable']['variableDescription']] = df[dt[i]['variable']['variableDescription']].astype(float)
+                df.value = df.value.astype(float)
                 df.index.name = 'datetime'
                 df.replace(to_replace='-999999', value=np.nan)
-                if i > 0:
-                    if dt[i]['sourceInfo']['siteCode'][0]['value'] == dt[i-1]['sourceInfo']['siteCode'][0]['value']:
-                        f[dt[i]['sourceInfo']['siteCode'][0]['value']] = pd.concat([df,f[dt[i-1]['sourceInfo']['siteCode'][0]['value']]],axis=1)
-                    else:
-                        f[dt[i]['sourceInfo']['siteCode'][0]['value']] = df
-                else:
-                    f[dt[i]['sourceInfo']['siteCode'][0]['value']] = df
+                f[dt[i]['sourceInfo']['siteCode'][0]['value']] = df
             else:
                 print(df.index)
                 pass
@@ -152,10 +142,10 @@ class nwis(object):
         stat_dict = {'site_no': station_id, 'dec_lat_va': lat, 'dec_long_va': lon, 'dec_coord_datum_cd': srs,
                      'station_nm': station_nm, 'data_type_cd': station_type}
         stations = pd.DataFrame(stat_dict)
-        if len(dt) > 1 and len(f) > 1:
+        if len(dt) > 1:
             data = pd.concat(f)
             data.index.set_names('site_no', level=0, inplace=True)
-        elif len(f) == 1:
+        elif len(dt) == 1:
             data = f[dt[0]['sourceInfo']['siteCode'][0]['value']]
             data['site_no'] = dt[0]['sourceInfo']['siteCode'][0]['value']
         else:
