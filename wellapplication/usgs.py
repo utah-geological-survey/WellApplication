@@ -131,7 +131,7 @@ class nwis(object):
             df = pd.DataFrame(dt[i]['values'][0]['value'])
             if 'dateTime' in df.columns and dt[i]['variable']['variableDescription'] == u'Discharge, cubic feet per second':
                 df.index = pd.to_datetime(df.pop('dateTime'))
-                df.replace(to_replace=['-999999','-99999','-9999',-99999], value=[np.nan,np.nan,np.nan,np.nan])
+                df.replace(to_replace=['-9999+',-99999,-9999], value=np.nan)
                 df.value = df.value.astype(float)
                 df.index.name = 'datetime'
                 
