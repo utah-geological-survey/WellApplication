@@ -129,7 +129,7 @@ class nwis(object):
             station_nm.append(dt[i]['sourceInfo'][u'siteName'])
 
             df = pd.DataFrame(dt[i]['values'][0]['value'])
-            if 'dateTime' in df.columns and dt[i]['variable']['variableDescription'] == u'Discharge, cubic feet per second':
+            if 'dateTime' in df.columns and 'Gage height, feet' not in dt[i]['variable']['variableDescription']:
                 df.index = pd.to_datetime(df.pop('dateTime'))
                 df.value = df.value.astype(float)
                 df.value = df.value.where(df.value > -999, np.nan)
