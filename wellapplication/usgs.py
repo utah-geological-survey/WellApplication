@@ -136,7 +136,7 @@ class nwis(object):
                 df.replace(to_replace='-999999', value=np.nan)
                 f[dt[i]['sourceInfo']['siteCode'][0]['value']] = df
             else:
-                print(df.index)
+                print(dt[i]['variable']['variableDescription'] + " skipped!")
                 pass
 
         stat_dict = {'site_no': station_id, 'dec_lat_va': lat, 'dec_long_va': lon, 'dec_coord_datum_cd': srs,
@@ -145,7 +145,7 @@ class nwis(object):
         if len(dt) > 1:
             data = pd.concat(f)
             data.index.set_names('site_no', level=0, inplace=True)
-        elif len(dt) == 1:
+        elif len(dt) == 1 and len(f) >= 1:
             data = f[dt[0]['sourceInfo']['siteCode'][0]['value']]
             data['site_no'] = dt[0]['sourceInfo']['siteCode'][0]['value']
         else:
