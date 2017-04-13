@@ -142,7 +142,7 @@ class nwis(object):
         stat_dict = {'site_no': station_id, 'dec_lat_va': lat, 'dec_long_va': lon, 'dec_coord_datum_cd': srs,
                      'station_nm': station_nm, 'data_type_cd': station_type}
         stations = pd.DataFrame(stat_dict)
-        if len(dt) > 1:
+        if len(dt) > 1 and len(f) >= 1:
             data = pd.concat(f)
             data.index.set_names('site_no', level=0, inplace=True)
         elif len(dt) == 1 and len(f) >= 1:
