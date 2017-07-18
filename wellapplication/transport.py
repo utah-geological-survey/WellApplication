@@ -43,14 +43,11 @@ def well_baro_merge(wellfile, barofile, sampint=60):
 
 def xle_head_table(folder):
     """Creates a Pandas DataFrame containing header information from all xle files in a folder
-
     Args:
         folder (directory):
             folder containing xle files
-
     Returns:
         A Pandas DataFrame containing the transducer header data
-
     Example::
         >>> import wellapplication as wa
         >>> wa.xle_head_table('C:/folder_with_xles/')
@@ -61,7 +58,7 @@ def xle_head_table(folder):
 
         # get the extension of the input file
         filename, filetype = os.path.splitext(folder+infile)
-
+        basename = os.path.basename(folder+infile)
         if filetype == '.xle':
             # open text file
             with open(folder+infile, "rb") as f:
@@ -69,8 +66,8 @@ def xle_head_table(folder):
             # navigate through xml to the data
             data = list(d['Body_xle']['Instrument_info_data_header'].values()) + list(d['Body_xle']['Instrument_info'].values())
             cols = list(d['Body_xle']['Instrument_info_data_header'].keys()) + list(d['Body_xle']['Instrument_info'].keys())
-            serial_number = d['Body_xle']['Instrument_info']['Serial_number']
-            df[serial_number] = pd.DataFrame( data=data, index=cols).T
+
+            df[basename[:-4]] = pd.DataFrame( data=data, index=cols).T
     return pd.concat(df)
 
 
@@ -559,17 +556,14 @@ def appendomatic(infile, existingfile):
     os.remove(existingfile)
     g.to_csv(existingfile)
 
-
 def compilation(inputfile):
     """This function reads multiple xle transducer files in a directory and generates a compiled Pandas DataFrame.
     Args:
         inputfile (file):
             complete file path to input files; use * for wildcard in file name
-
     Returns:
         outfile (object):
             Pandas DataFrame of compiled data
-
     Example::
         >>> compilation('O:\\Snake Valley Water\\Transducer Data\\Raw_data_archive\\all\\LEV\\*baro*')
         picks any file containing 'baro'
@@ -593,40 +587,17 @@ def compilation(inputfile):
                 indices = fd.readlines().index('[Data]\n')
 
             # convert data to pandas dataframe starting at the indexed data line
-            f[getfilename(infile)] = pd.read_table(infile, parse_dates=True, sep='     ', index_col=0,
+            f[wa.getfilename(infile)] = pd.read_table(infile, parse_dates=True, sep='     ', index_col=0,
                                                    skiprows=indices + 2,
                                                    names=['DateTime', 'Level', 'Temperature'],
                                                    skipfooter=1, engine='python')
             # add extension-free file name to dataframe
             f[getfilename(infile)]['name'] = getfilename(infile)
-            f['Level'] = pd.to_numeric(f['Level'])
-            f['Temperature'] = pd.to_numeric(f['Temperature'])
-            # run computations using xle files
-        elif filetype == '.xle':
-            # open text file
-            with open(infile, "rb") as f:
-                obj = xmltodict.parse(f, xml_attribs=True, encoding="ISO-8859-1")
-            # navigate through xml to the data
-            wellrawdata = obj['Body_xle']['Data']['Log']
-            # convert xml data to pandas dataframe
-            f[getfilename(infile)] = pd.DataFrame(wellrawdata)
-            # get header names and apply to the pandas dataframe
-            f[getfilename(infile)][str(obj['Body_xle']['Ch1_data_header']['Identification']).title()] = \
-                f[getfilename(infile)]['ch1']
-            f[getfilename(infile)][str(obj['Body_xle']['Ch2_data_header']['Identification']).title()] = \
-                f[getfilename(infile)]['ch2']
-
-            # add extension-free file name to dataframe
-            f[getfilename(infile)]['name'] = getfilename(infile)
-            # combine Date and Time fields into one field
-            f[getfilename(infile)]['DateTime'] = pd.to_datetime(
-                f[getfilename(infile)].apply(lambda x: x['Date'] + ' ' + x['Time'], 1))
-            f[getfilename(infile)] = f[getfilename(infile)].reset_index()
-            f[getfilename(infile)] = f[getfilename(infile)].set_index('DateTime')
-            f[getfilename(infile)] = f[getfilename(infile)].drop(
-                ['Date', 'Time', '@id', 'ch1', 'ch2', 'index', 'ms'], axis=1)
-        # run computations using csv files
-
+            f[getfilename(infile)]['Level'] = pd.to_numeric(f[getfilename(infile)]['Level'])
+            f[getfilename(infile)]['Temperature'] = pd.to_numeric(f[getfilename(infile)]['Temperature'])
+        
+        elif filetype == '.xle': # run computations using xle files
+            f[getfilename(infile)] = new_xle_imp(infile)
         else:
             pass
     # concatenate all of the DataFrames in dictionary f to one DataFrame: g
@@ -640,7 +611,7 @@ def compilation(inputfile):
     g['ind'] = g.index
     g.drop_duplicates(subset='ind', inplace=True)
     g.drop('ind', axis=1, inplace=True)
-    g = g.sort()
+    g = g.sort_index()
     outfile = g
     return outfile
 
@@ -768,26 +739,30 @@ def hourly_resample(df, bse=0, minutes=60):
             base time to set; optional; default is zero (on the hour);
         minutes (int):
             sampling recurrence interval in minutes; optional; default is 60 (hourly samples)
-
     Returns:
         A Pandas DataFrame that has been resampled to every hour, at the minute defined by the base (bse)
-
     Description:
         see http://pandas.pydata.org/pandas-docs/dev/generated/pandas.DataFrame.resample.html for more info
-
         This function uses pandas powerful time-series manipulation to upsample to every minute, then downsample to every hour,
         on the hour.
-
         This function will need adjustment if you do not want it to return hourly samples, or iusgsGisf you are sampling more frequently than
         once per minute.
-
         see http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases
     """
-    df = df.resample('1Min').first()  # you can make this smaller to accomodate for a higher sampling frequency
-    df = df.interpolate(method='time',
-                        limit=90)  # http://pandas.pydata.org/pandas-docs/dev/generated/pandas.Series.interpolate.html
-    df = df.resample(str(minutes) + 'Min', closed='left', label='left',
-                     base=bse).first()  # modify '60Min' to change the resulting frequency
+    if int(str(pd.__version__).split('.')[0]) == 0 and int(str(pd.__version__).split('.')[1]) < 18: # pandas versioning
+        df = df.resample('1Min')
+    else:
+        # you can make this smaller to accomodate for a higher sampling frequency
+        df = df.resample('1Min').first()  
+        
+    # http://pandas.pydata.org/pandas-docs/dev/generated/pandas.Series.interpolate.html
+    df = df.interpolate(method='time', limit=90)
+    
+    if int(str(pd.__version__).split('.')[0]) == 0 and int(str(pd.__version__).split('.')[1]) < 18: # pandas versioning
+        df = df.resample(str(minutes) + 'Min', closed='left', label='left', base=bse)
+    else:
+        # modify '60Min' to change the resulting frequency
+        df = df.resample(str(minutes) + 'Min', closed='left', label='left', base=bse).first()  
     return df
 
 
