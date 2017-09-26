@@ -268,6 +268,9 @@ class piper(object):
         SO4EC = df['SO4EC'].values
         NaKEC = df['NaKEC'].values
         SO4ClEC = df[['ClEC', 'SO4EC']].apply(lambda x: x[0] + x[1], 1).values
+        NaKECp= df['NaKECp'].values
+        SO4ClECp = df['SO4ClECp'].values
+        
         
         num_samps = len(df)
         if var_col == '':
