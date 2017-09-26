@@ -369,6 +369,21 @@ def get_huc(x):
     response = requests.get(huc_url, params=values).json()
     return response['features'][0]['attributes']['HUC12'], response['features'][0]['attributes']['NAME']
 
+def get_fips(x):
+    """Receive the content of ``url``, parse it as JSON and return the object.
+    :param x: [longitude, latitude]
+    :returns: tuple containing five digit county fips and county name
+    """
+    values = {
+        'latitude': '{:}'.format(x[1]),
+        'longitude': '{:}'.format(x[0]),
+        'showall': 'true',
+        'format': 'json'}
+
+    huc_url = "http://data.fcc.gov/api/block/find?"
+    response = requests.get(huc_url, params=values).json()
+    return response['County']['FIPS'], response['County']['name']
+
 def USGSID(x):
     """Parses decimal latitude and longitude values into DDMMSSDDDMMSS01 USGS site id.
     See https://help.waterdata.usgs.gov/faq/sites/do-station-numbers-have-any-particular-meaning for documentation.
