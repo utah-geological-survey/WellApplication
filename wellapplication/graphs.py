@@ -181,7 +181,7 @@ class piper(object):
         # fill in nulls with 0
         for col in df.columns:
             if col in self.fieldnames:
-                for i in range(len(df)):
+                for i in df.index:
                     if df.loc[i, col] is None or df.loc[i, col] == '' or np.isnan(df.loc[i, col]):
                         df.loc[i, col] = 0
             else:
