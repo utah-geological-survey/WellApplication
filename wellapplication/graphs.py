@@ -386,7 +386,7 @@ class piper(object):
 
         if len(typ) > 0:
             for j in range(len(typ)):
-                ax2.scatter(NaKEC[j], SO4ClEC[j], s=markSize, c=vart[j], cmap=cmap, norm=cNorm, marker=typdict[typ[j]],
+                ax2.scatter(NaKECp[j], SO4ClECp[j], s=markSize, c=vart[j], cmap=cmap, norm=cNorm, marker=typdict[typ[j]],
                             linewidths=lineW)
         else:
             ax2.scatter(NaKECp, SO4ClECp, s=markSize, c=vart, cmap=cmap, norm=cNorm, linewidths=lineW)
