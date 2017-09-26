@@ -252,8 +252,7 @@ class piper(object):
             df[ion + 'EC'] = df[[ion + '_meq', 'anions']].apply(lambda x: 100 * x[0] / x[1], 1)
         for ion in self.cations:
             df[ion + 'EC'] = df[[ion + '_meq', 'cations']].apply(lambda x: 100 * x[0] / x[1], 1)
-        df['NaKECp'] = df[['NaK_meq','total_ions']].apply(lambda x: 100 * x[0] / x[1], 1)
-        df['SO4ClECp'] = df[['SO4_meq','Cl_meq','total_ions']].apply(lambda x: 100 * (x[0]+x[1]) / x[2], 1)
+
         return df
 
     def piperplot(self, df,  type_col, var_col):
@@ -268,8 +267,7 @@ class piper(object):
         SO4EC = df['SO4EC'].values
         NaKEC = df['NaKEC'].values
         SO4ClEC = df[['ClEC', 'SO4EC']].apply(lambda x: x[0] + x[1], 1).values
-        NaKECp= df['NaKECp'].values
-        SO4ClECp = df['SO4ClECp'].values
+
         
         
         num_samps = len(df)
@@ -389,10 +387,10 @@ class piper(object):
 
         if len(typ) > 0:
             for j in range(len(typ)):
-                ax2.scatter(NaKECp[j], SO4ClECp[j], s=markSize, c=vart[j], cmap=cmap, norm=cNorm, marker=typdict[typ[j]],
+                ax2.scatter(NaKEC[j], SO4ClEC[j], s=markSize, c=vart[j], cmap=cmap, norm=cNorm, marker=typdict[typ[j]],
                             linewidths=lineW)
         else:
-            ax2.scatter(NaKECp, SO4ClECp, s=markSize, c=vart, cmap=cmap, norm=cNorm, linewidths=lineW)
+            ax2.scatter(NaKEC, SO4ClEC, s=markSize, c=vart, cmap=cmap, norm=cNorm, linewidths=lineW)
 
         ax2.set_xlim(0, 100)
         ax2.set_ylim(0, 100)
