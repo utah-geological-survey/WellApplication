@@ -181,7 +181,7 @@ class WQP(object):
                        "ResultTimeBasisText", "ResultValueTypeName", "ResultWeightBasisText", "SampleAquifer",
                        "SampleCollectionMethod/MethodIdentifierContext", "SampleTissueAnatomyName",
                        "StatisticalBaseCode",
-                       "SubjectTaxonomicName", "SampleDate", "SampleTime"]
+                       "SubjectTaxonomicName", "SampleTime"]
 
         # Drop fields
         df1 = df1.drop(resdroplist, axis=1)
