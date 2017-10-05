@@ -689,7 +689,7 @@ def scatterColor(x0, y, w):
     plt.legend()
     cbar = plt.colorbar(m)
 
-    cbar.set_label('use cbar.set_label("label") to label this axis')
+    cbar.set_label('Julian Date')
 
     return slope, const
 
