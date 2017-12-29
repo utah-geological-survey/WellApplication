@@ -56,6 +56,7 @@ class WQP(object):
 
         if 'siteType' not in kwargs:
             kwargs['siteType'] = ['Spring', 'Well']
+            print('This function is biased towards groundwater. For all sites, use')
 
         if 'characteristicType' not in kwargs:
             kwargs['characteristicType'] = self.cTgroups
@@ -123,7 +124,7 @@ class WQP(object):
         df = pd.read_csv(csv, dtype=Rdtypes, parse_dates=dt)
         return df
 
-    def massage_results(self):
+    def massage_results(self, df = ''):
         """Massage WQP result data for analysis
 
         When called, this function:
@@ -134,6 +135,9 @@ class WQP(object):
 
 
         """
+        if df == '':
+            df = self.results
+
         # Map new names for columns
         ResFieldDict = {"AnalysisStartDate": "AnalysisDate", "ResultAnalyticalMethod/MethodIdentifier": "AnalytMeth",
                         "ResultAnalyticalMethod/MethodName": "AnalytMethId",
@@ -202,7 +206,7 @@ class WQP(object):
         df1['Param'], df1['ResultValue'], df1['Unit'] = zip(
             *df1[['Param', 'ResultValue', 'Unit']].apply(lambda x: self.parnorm(x), 1))
 
-        self.results = df1
+        #self.results = df1
 
         return df1
 
@@ -325,7 +329,7 @@ class WQP(object):
         # Remove preceding WQX from StationId field to remove duplicate station data created by legacy database.
         df['StationId'] = df['StationId'].str.replace('_WQX-', '-')
         df.drop_duplicates(subset=['StationId'], inplace=True)
-        self.stations = df
+        #self.stations = df
         return df
 
     def piv_chem(self, results='', chems='piper'):
