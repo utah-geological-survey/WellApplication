@@ -9,7 +9,7 @@ from .mesopy import *
 from .graphs import *
 from .MannKendall import *
 
-__version__ = '0.4.28'
+__version__ = '0.4.29'
 __author__ = 'Paul Inkenbrandt'
 __name__ = 'wellapplication'
 

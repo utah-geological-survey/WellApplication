@@ -96,13 +96,13 @@ def testmetadata():
     
 def test_WQP():
     wqq = wa.WQP('16010204','huc')
-    wqq.massage_results()
+    wqq.results = wqq.massage_results()
     pivchem = wqq.piv_chem()
     assert 'Alk' in pivchem.columns
 
 def test_WQ2():
     wqq = wa.WQP('16010204','huc')
-    wqq.massage_stations()
+    wqq.stations = wqq.massage_stations()
     df = wqq.stations
     assert "OrgId" in list(df.columns)
     
