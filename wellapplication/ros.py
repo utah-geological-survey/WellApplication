@@ -442,7 +442,7 @@ def _do_ros(df, result, censorship, transform_in, transform_out):
 def ROS(result, censorship, df=None, min_uncensored=2,
         max_fraction_censored=0.8, substitution_fraction=0.5,
         transform_in=numpy.log, transform_out=numpy.exp,
-        as_array=True):
+        as_array=False):
     """
     Impute censored dataset using Regression on Order Statistics (ROS)
     or simple substitution if insufficient uncensored data exists.

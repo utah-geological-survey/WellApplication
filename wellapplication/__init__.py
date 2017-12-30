@@ -23,4 +23,5 @@ __all__ = ['WQP',
            'parnorm',
            'unitfix',
            'massage_stations',
-           'piv_chem','ros']
+           'piv_chem',
+           'ros']
