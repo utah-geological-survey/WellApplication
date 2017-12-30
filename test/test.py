@@ -168,12 +168,12 @@ def test_gantt():
     gn = wa.gantt(ashley.data, stations=['value'])
     assert type(gn.gantt()[2]) == matplotlib.figure.Figure
 
-def test_scatterColor():
-    x = np.arange(1, 100, 1)
-    y = np.arange(0.1, 10.0, 0.1)
-    w = np.arange(5, 500, 5)
-    out = wa.scatterColor(x, y, w)
-    assert round(out[0], 1) == 0.1
+#def test_scatterColor():
+#    x = np.arange(1, 100, 1)
+#    y = np.arange(0.1, 10.0, 0.1)
+#    w = np.arange(5, 500, 5)
+#    out = wa.scatterColor(x, y, w)
+#    assert round(out[0], 1) == 0.1
 
 def test_get_info():
     nw = wa.nwis('gwlevels', '16010204', 'huc', siteStatus='all')
