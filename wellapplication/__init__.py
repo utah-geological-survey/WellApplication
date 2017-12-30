@@ -8,6 +8,7 @@ from .chem import *
 from .mesopy import *
 from .graphs import *
 from .MannKendall import *
+from .ros import *
 
 __version__ = '0.4.29'
 __author__ = 'Paul Inkenbrandt'
@@ -22,4 +23,4 @@ __all__ = ['WQP',
            'parnorm',
            'unitfix',
            'massage_stations',
-           'piv_chem']
+           'piv_chem','ros']
