@@ -265,16 +265,19 @@ def new_xle_imp(infile):
         pass
 
     # CH 2 manipulation
-    ch2ID = obj['Body_xle']['Ch2_data_header']['Identification']
-    f[str(ch2ID).title()] = f['ch2']
-    ch2Unit = obj['Body_xle']['Ch2_data_header']['Unit']
-    numCh2 = pd.to_numeric(f['ch2'])
-    if ch2Unit == 'Deg C' or ch2Unit == u'\N{DEGREE SIGN}' + u'C':
-        f[str(ch2ID).title()] = numCh2
-    elif ch2Unit == 'Deg F' or ch2Unit == u'\N{DEGREE SIGN}' + u'F':
-        printmes('Temp in F, converting to C')
-        f[str(ch2ID).title()] = (numCh2 - 32) * 5 / 9
-
+    try:
+        ch2ID = obj['Body_xle']['Ch2_data_header']['Identification']
+        f[str(ch2ID).title()] = f['ch2']
+        ch2Unit = obj['Body_xle']['Ch2_data_header']['Unit']
+        numCh2 = pd.to_numeric(f['ch2'])
+        if ch2Unit == 'Deg C' or ch2Unit == u'\N{DEGREE SIGN}' + u'C':
+            f[str(ch2ID).title()] = numCh2
+        elif ch2Unit == 'Deg F' or ch2Unit == u'\N{DEGREE SIGN}' + u'F':
+            printmes('Temp in F, converting to C')
+            f[str(ch2ID).title()] = (numCh2 - 32) * 5 / 9
+        f[str(ch2ID).title()] = pd.to_numeric(f[str(ch2ID).title()])
+    except (KeyError,UnboundLocalError):
+        printmes('No channel 2 for {:}'.format(infile))
     # CH 1 manipulation
     ch1ID = obj['Body_xle']['Ch1_data_header']['Identification']  # Usually level
     ch1Unit = obj['Body_xle']['Ch1_data_header']['Unit']  # Usually ft
@@ -302,7 +305,7 @@ def new_xle_imp(infile):
     # combine Date and Time fields into one field
     f['DateTime'] = pd.to_datetime(f.apply(lambda x: x['Date'] + ' ' + x['Time'], 1))
     f[str(ch1ID).title()] = pd.to_numeric(f[str(ch1ID).title()])
-    f[str(ch2ID).title()] = pd.to_numeric(f[str(ch2ID).title()])
+
 
     try:
         ch3ID = obj['Body_xle']['Ch3_data_header']['Identification']
