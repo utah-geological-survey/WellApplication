@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d5a82257-6a90-41c3-87e5-13b1695dbcbb" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/test/test.py" afterPath="$PROJECT_DIR$/test/test.py" />
       <change beforePath="$PROJECT_DIR$/wellapplication/transport.py" afterPath="$PROJECT_DIR$/wellapplication/transport.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -63,8 +62,8 @@
       <file leaf-file-name="transport.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="53">
-              <caret line="278" column="37" lean-forward="true" selection-start-line="278" selection-start-column="37" selection-end-line="278" selection-end-column="37" />
+            <state relative-caret-position="584">
+              <caret line="953" column="36" lean-forward="true" selection-start-line="953" selection-start-column="36" selection-end-line="953" selection-end-column="36" />
               <folding>
                 <element signature="e#0#82#0" expanded="true" />
               </folding>
@@ -110,7 +109,7 @@
         <entry file="file://$PROJECT_DIR$/wellapplication/arcpy_functions.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="221">
-              <caret line="13" column="8" lean-forward="true" selection-start-line="13" selection-start-column="8" selection-end-line="13" selection-end-column="8" />
+              <caret line="13" column="8" lean-forward="false" selection-start-line="13" selection-start-column="8" selection-end-line="13" selection-end-column="8" />
               <folding>
                 <element signature="e#0#82#0" expanded="true" />
               </folding>
@@ -263,6 +262,105 @@
               <item name="Root" type="cbb8eebc:String" user="Root" />
               <item name="WellApplication" type="cbb8eebc:String" user="WellApplication" />
               <item name="wellapplication" type="cbb8eebc:String" user="wellapplication" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="External Dependencies" type="cbb8eebc:String" user="External Dependencies" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="External Dependencies" type="cbb8eebc:String" user="External Dependencies" />
+              <item name="C:" type="cbb8eebc:String" user="C:" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="External Dependencies" type="cbb8eebc:String" user="External Dependencies" />
+              <item name="C:" type="cbb8eebc:String" user="C:" />
+              <item name="Program Files" type="cbb8eebc:String" user="Program Files" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="External Dependencies" type="cbb8eebc:String" user="External Dependencies" />
+              <item name="C:" type="cbb8eebc:String" user="C:" />
+              <item name="Program Files" type="cbb8eebc:String" user="Program Files" />
+              <item name="ArcGIS" type="cbb8eebc:String" user="ArcGIS" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="External Dependencies" type="cbb8eebc:String" user="External Dependencies" />
+              <item name="C:" type="cbb8eebc:String" user="C:" />
+              <item name="Program Files" type="cbb8eebc:String" user="Program Files" />
+              <item name="ArcGIS" type="cbb8eebc:String" user="ArcGIS" />
+              <item name="Pro" type="cbb8eebc:String" user="Pro" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="External Dependencies" type="cbb8eebc:String" user="External Dependencies" />
+              <item name="C:" type="cbb8eebc:String" user="C:" />
+              <item name="Program Files" type="cbb8eebc:String" user="Program Files" />
+              <item name="ArcGIS" type="cbb8eebc:String" user="ArcGIS" />
+              <item name="Pro" type="cbb8eebc:String" user="Pro" />
+              <item name="bin" type="cbb8eebc:String" user="bin" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="External Dependencies" type="cbb8eebc:String" user="External Dependencies" />
+              <item name="C:" type="cbb8eebc:String" user="C:" />
+              <item name="Program Files" type="cbb8eebc:String" user="Program Files" />
+              <item name="ArcGIS" type="cbb8eebc:String" user="ArcGIS" />
+              <item name="Pro" type="cbb8eebc:String" user="Pro" />
+              <item name="bin" type="cbb8eebc:String" user="bin" />
+              <item name="Python" type="cbb8eebc:String" user="Python" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="External Dependencies" type="cbb8eebc:String" user="External Dependencies" />
+              <item name="C:" type="cbb8eebc:String" user="C:" />
+              <item name="Program Files" type="cbb8eebc:String" user="Program Files" />
+              <item name="ArcGIS" type="cbb8eebc:String" user="ArcGIS" />
+              <item name="Pro" type="cbb8eebc:String" user="Pro" />
+              <item name="bin" type="cbb8eebc:String" user="bin" />
+              <item name="Python" type="cbb8eebc:String" user="Python" />
+              <item name="envs" type="cbb8eebc:String" user="envs" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="External Dependencies" type="cbb8eebc:String" user="External Dependencies" />
+              <item name="C:" type="cbb8eebc:String" user="C:" />
+              <item name="Program Files" type="cbb8eebc:String" user="Program Files" />
+              <item name="ArcGIS" type="cbb8eebc:String" user="ArcGIS" />
+              <item name="Pro" type="cbb8eebc:String" user="Pro" />
+              <item name="bin" type="cbb8eebc:String" user="bin" />
+              <item name="Python" type="cbb8eebc:String" user="Python" />
+              <item name="envs" type="cbb8eebc:String" user="envs" />
+              <item name="arcgispro-py3" type="cbb8eebc:String" user="arcgispro-py3" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="External Dependencies" type="cbb8eebc:String" user="External Dependencies" />
+              <item name="C:" type="cbb8eebc:String" user="C:" />
+              <item name="Program Files" type="cbb8eebc:String" user="Program Files" />
+              <item name="ArcGIS" type="cbb8eebc:String" user="ArcGIS" />
+              <item name="Pro" type="cbb8eebc:String" user="Pro" />
+              <item name="bin" type="cbb8eebc:String" user="bin" />
+              <item name="Python" type="cbb8eebc:String" user="Python" />
+              <item name="envs" type="cbb8eebc:String" user="envs" />
+              <item name="arcgispro-py3" type="cbb8eebc:String" user="arcgispro-py3" />
+              <item name="Lib" type="cbb8eebc:String" user="Lib" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="External Dependencies" type="cbb8eebc:String" user="External Dependencies" />
+              <item name="C:" type="cbb8eebc:String" user="C:" />
+              <item name="Program Files" type="cbb8eebc:String" user="Program Files" />
+              <item name="ArcGIS" type="cbb8eebc:String" user="ArcGIS" />
+              <item name="Pro" type="cbb8eebc:String" user="Pro" />
+              <item name="bin" type="cbb8eebc:String" user="bin" />
+              <item name="Python" type="cbb8eebc:String" user="Python" />
+              <item name="envs" type="cbb8eebc:String" user="envs" />
+              <item name="arcgispro-py3" type="cbb8eebc:String" user="arcgispro-py3" />
+              <item name="Lib" type="cbb8eebc:String" user="Lib" />
+              <item name="site-packages" type="cbb8eebc:String" user="site-packages" />
             </path>
           </expand>
           <select />
@@ -710,13 +808,6 @@
       <option name="presentableId" value="Default" />
       <updated>1483036980477</updated>
     </task>
-    <task id="LOCAL-00056" summary="adding doc strings">
-      <created>1484260631585</created>
-      <option name="number" value="00056" />
-      <option name="presentableId" value="LOCAL-00056" />
-      <option name="project" value="LOCAL" />
-      <updated>1484260631586</updated>
-    </task>
     <task id="LOCAL-00057" summary="adding doc strings">
       <created>1484262831031</created>
       <option name="number" value="00057" />
@@ -1053,7 +1144,14 @@
       <option name="project" value="LOCAL" />
       <updated>1516722198645</updated>
     </task>
-    <option name="localTasksCounter" value="105" />
+    <task id="LOCAL-00105" summary="added ch2 exception for xle imports">
+      <created>1516725241421</created>
+      <option name="number" value="00105" />
+      <option name="presentableId" value="LOCAL-00105" />
+      <option name="project" value="LOCAL" />
+      <updated>1516725241421</updated>
+    </task>
+    <option name="localTasksCounter" value="106" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1161,7 +1259,8 @@
     <MESSAGE value="Added ROS import and updated version" />
     <MESSAGE value="changed ROS output behavior" />
     <MESSAGE value="reconfigured transport to match loggerloader." />
-    <option name="LAST_COMMIT_MESSAGE" value="reconfigured transport to match loggerloader." />
+    <MESSAGE value="added ch2 exception for xle imports" />
+    <option name="LAST_COMMIT_MESSAGE" value="added ch2 exception for xle imports" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1407,7 +1506,7 @@
     <entry file="file://$PROJECT_DIR$/wellapplication/arcpy_functions.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
-          <caret line="13" column="8" lean-forward="true" selection-start-line="13" selection-start-column="8" selection-end-line="13" selection-end-column="8" />
+          <caret line="13" column="8" lean-forward="false" selection-start-line="13" selection-start-column="8" selection-end-line="13" selection-end-column="8" />
           <folding>
             <element signature="e#0#82#0" expanded="true" />
           </folding>
@@ -1488,8 +1587,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="53">
-          <caret line="278" column="37" lean-forward="true" selection-start-line="278" selection-start-column="37" selection-end-line="278" selection-end-column="37" />
+        <state relative-caret-position="584">
+          <caret line="953" column="36" lean-forward="true" selection-start-line="953" selection-start-column="36" selection-end-line="953" selection-end-column="36" />
           <folding>
             <element signature="e#0#82#0" expanded="true" />
           </folding>
