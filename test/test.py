@@ -150,15 +150,15 @@ def test_barodistance():
     bd = wa.barodistance(wellinfo)
     assert 'closest_baro' in list(bd.columns)
 
-def test_imp_new_well_csv():
-    inputfile = "test/ag14a 2016-08-02.csv"
-    manualwls = "test/All tape measurements.csv"
-    manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
-    barofile = "test/baro.csv"
-    baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
-    wellinfo = pd.read_csv("test/wellinfo4.csv")
-    g, drift, wellname = wa.imp_new_well(inputfile, wellinfo, manual, baro)
-    assert wellname == 'ag14a'
+#def test_imp_new_well_csv():
+#    inputfile = "test/ag14a 2016-08-02.csv"
+#    manualwls = "test/All tape measurements.csv"
+#    manual = pd.read_csv(manualwls, index_col="DateTime", engine="python")
+#    barofile = "test/baro.csv"
+#    baro = pd.read_csv(barofile,index_col=0, parse_dates=True)
+#    wellinfo = pd.read_csv("test/wellinfo4.csv")
+#    g, drift, wellname = wa.imp_new_well(inputfile, wellinfo, manual, baro)
+#    assert wellname == 'ag14a'
 
 def test_jumpfix():
     xle = "test/ag13c 2016-08-02.xle"
