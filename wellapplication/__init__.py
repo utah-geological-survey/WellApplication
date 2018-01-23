@@ -10,7 +10,7 @@ from .graphs import *
 from .MannKendall import *
 from .ros import *
 
-__version__ = '0.4.29'
+__version__ = '0.5.1'
 __author__ = 'Paul Inkenbrandt'
 __name__ = 'wellapplication'
 
