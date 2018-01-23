@@ -501,6 +501,7 @@ def ROS(result, censorship, df=None, min_uncensored=2,
     N_censored = df[censorship].astype(int).sum()
     N_uncensored = N_observations - N_censored
     fraction_censored = N_censored / N_observations
+    print(N_censored,N_uncensored,fraction_censored)
 
     # add plotting positions if there are no censored values
     if N_censored == 0:
@@ -519,5 +520,6 @@ def ROS(result, censorship, df=None, min_uncensored=2,
     # convert to an array if necessary
     if as_array:
         output = output['final'].values
+
 
     return output

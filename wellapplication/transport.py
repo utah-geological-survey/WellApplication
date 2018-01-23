@@ -1,94 +1,85 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
+
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+import matplotlib.ticker as tick
+import tempfile
+from shutil import copyfile
+import datetime
 import os
 import glob
 import re
 import xmltodict
+from pylab import rcParams
 
 
-def baro_drift_correct(wellfile, barofile, manualfile, sampint=60, wellelev=4800, stickup=0):
-    """Remove barometric pressure and corrects drift.
+rcParams['figure.figsize'] = 15, 10
+
+
+def rollmeandiff(df1, p1, df2, p2, win):
+    """Returns the rolling mean difference of two columns from two different dataframes
     Args:
-        wellfile (pandas.core.frame.DataFrame):
-            Pandas DataFrame of water level data labeled 'Level'; index must be datetime
-        barofile (pandas.core.frame.DataFrame):
-            Pandas DataFrame barometric data labeled 'Level'; index must be datetime
-        manualfile (pandas.core.frame.DataFrame):
-            Pandas DataFrame manual level data in the first column after the index; index must be datetime
-        sampint (int):
-            sampling interval in minutes; default 60
-        wellelev (int):
-            site ground surface elevation in feet
-        stickup (float):
-            offset of measure point from ground in feet
+        df1 (object):
+            dataframe 1
+        p1 (str):
+            column in df1
+        df2 (object):
+            dataframe 2
+        p2 (str):
+            column in df2
+        win (int):
+            window in days
 
-    Returns:
-        wellbarofinal (Pandas DataFrame):
-           corrected water levels
+    Return:
+        diff (float):
+            difference
     """
-    # Remove dangling ends
-    baroclean = dataendclean(barofile, 'Level')
-    wellclean = dataendclean(wellfile, 'Level')
+    win = win * 60 * 24
+    df1 = df1.resample('1Min').mean()
+    df1 = df1.interpolate(method='time')
+    df2 = df2.resample('1Min').mean()
+    df2 = df2.interpolate(method='time')
+    df1['rm' + p1] = df1[p1].rolling(window=win, center=True).mean()
+    df2['rm' + p2] = df2[p2].rolling(window=win, center=True).mean()
+    df3 = pd.merge(df1, df2, left_index=True, right_index=True, how='outer')
+    df3 = df3[np.isfinite(df3['rm' + p1])]
+    df4 = df3[np.isfinite(df3['rm' + p2])]
+    df5 = df4['rm' + p1] - df4['rm' + p2]
+    diff = round(df5.mean(), 3)
+    del (df3, df4, df5)
+    return diff
 
-    # resample data to make sample interval consistent
-    baro = hourly_resample(baroclean, 0, sampint)
-    well = hourly_resample(wellclean, 0, sampint)
+def jumpfix(df, meas, threashold=0.005, return_jump=False):
+    """Removes jumps or jolts in time series data (where offset is lasting)
+    Args:
+        df (object):
+            dataframe to manipulate
+        meas (str):
+            name of field with jolts
+        threashold (float):
+            size of jolt to search for
+    Returns:
+        df1: dataframe of corrected data
+        jump: dataframe of jumps corrected in data
+    """
+    df1 = df.copy(deep=True)
+    df1['delta' + meas] = df1.loc[:, meas].diff()
+    jump = df1[abs(df1['delta' + meas]) > threashold]
+    jump['cumul'] = jump.loc[:, 'delta' + meas].cumsum()
+    df1['newVal'] = df1.loc[:, meas]
 
-    # reassign `Level` to reduce ambiguity
-    well['abs_feet_above_levelogger'] = well['Level']
-    baro['abs_feet_above_barologger'] = baro['Level']
-
-    # combine baro and well data for easy calculations, graphing, and manipulation
-    wellbaro = pd.merge(well, baro, left_index=True, right_index=True, how='inner')
-
-    # subtract barometric pressure from total pressure measured by transducer
-    wellbaro['adjusted_levelogger'] = wellbaro['abs_feet_above_levelogger'] - wellbaro['abs_feet_above_barologger']
-
-    breakpoints = []
-    for i in range(len(manualfile) + 1):
-        breakpoints.append(fcl(wellbaro, manualfile.index.to_datetime()[i - 1]).name)
-
-    last_man_wl, first_man_wl, last_tran_wl, driftlen = [], [], [], []
-    bracketedwls = {}
-    for i in range(len(manualfile) - 1):
-        # Break up time series into pieces based on timing of manual measurements
-        bracketedwls[i + 1] = wellbaro.loc[
-            (wellbaro.index.to_datetime() > breakpoints[i + 1]) & (wellbaro.index.to_datetime() < breakpoints[i + 2])]
-        # get difference in transducer water measurements
-        bracketedwls[i + 1]['diff_wls'] = bracketedwls[i + 1]['abs_feet_above_levelogger'].diff()
-        # get difference of each depth to water from initial measurement
-        bracketedwls[i + 1].loc[:, 'DeltaLevel'] = bracketedwls[i + 1].loc[:, 'adjusted_levelogger'] - \
-                                                   bracketedwls[i + 1].ix[0, 'adjusted_levelogger']
-        bracketedwls[i + 1].loc[:, 'MeasuredDTW'] = fcl(manualfile, breakpoints[i + 1])[0] - \
-                                                    bracketedwls[i + 1].loc[:, 'DeltaLevel']
-        last_man_wl.append(fcl(manualfile, breakpoints[i + 2])[0])
-        first_man_wl.append(fcl(manualfile, breakpoints[i + 1])[0])
-        last_tran_wl.append(
-            float(bracketedwls[i + 1].loc[max(bracketedwls[i + 1].index.to_datetime()), 'MeasuredDTW']))
-        driftlen.append(len(bracketedwls[i + 1].index))
-        bracketedwls[i + 1].loc[:, 'last_diff_int'] = np.round((last_tran_wl[i] - last_man_wl[i]), 4) / np.round(
-            driftlen[i] - 1.0, 4)
-        bracketedwls[i + 1].loc[:, 'DriftCorrection'] = np.round(
-            bracketedwls[i + 1].loc[:, 'last_diff_int'].cumsum() - bracketedwls[i + 1].loc[:, 'last_diff_int'], 4)
-
-    wellbarofixed = pd.concat(bracketedwls)
-    wellbarofixed.reset_index(inplace=True)
-    wellbarofixed.set_index('DateTime', inplace=True)
-    # Get Depth to water below casing
-    wellbarofixed.loc[:, 'DTWBelowCasing'] = wellbarofixed['MeasuredDTW'] - wellbarofixed['DriftCorrection']
-
-    # subtract casing height from depth to water below casing
-    wellbarofixed.loc[:, 'DTWBelowGroundSurface'] = wellbarofixed.loc[:,
-                                                    'DTWBelowCasing'] - stickup  # well riser height
-
-    # subtract depth to water below ground surface from well surface elevation
-    wellbarofixed.loc[:, 'WaterElevation'] = wellelev - wellbarofixed.loc[:, 'DTWBelowGroundSurface']
-
-    wellbarofinal = smoother(wellbarofixed, 'WaterElevation')
-
-    return wellbarofinal
-
+    for i in range(len(jump)):
+        jt = jump.index[i]
+        ja = jump['cumul'][i]
+        df1.loc[jt:, 'newVal'] = df1[meas].apply(lambda x: x - ja, 1)
+    df1[meas] = df1['newVal']
+    if return_jump:
+        print(jump)
+        return df1, jump
+    else:
+        return df1
 
 def smoother(df, p, win=30, sd=3):
     """Remove outliers from a pandas dataframe column and fill with interpolated values.
@@ -139,428 +130,99 @@ def smoother(df, p, win=30, sd=3):
     df = df[1:-1]
     return df
 
+def printmes(x):
+    try:
+        import arcpy
+        arcpy.AddMessage(x)
+        print(x)
+    except ModuleNotFoundError:
+        print(x)
 
-def imp_new_well(infile, wellinfo, manual, baro):
-    """Imports Solinst xle file or GlobalWater csv as DataFrame, removing barometric pressure effects and correcting for drift.
-    Args:
-        infile (path):
-            full file path of well to import
-        wellinfo (pandas.core.frame.DataFrame):
-            Pandas DataFrame containing information of wells
-        manual (pandas.core.frame.DataFrame):
-            Pandas DataFrame containing manual water level measurements
-        baro (pandas.core.frame.DataFrame):
-            Pandas DataFrame containing barometric pressure data
+def compilefiles(searchdir,copydir,filecontains,filetypes=['lev','xle']):
+    filecontains = list(filecontains)
+    filetypes = list(filetypes)
+    for pack in os.walk(searchdir):
+        for name in filecontains:
+            for i in glob.glob(pack[0]+'/'+'*{:}*'.format(name)):
+                if i.split('.')[-1] in filetypes:
+                    dater = str(datetime.datetime.fromtimestamp(os.path.getmtime(i)).strftime('%Y-%m-%d'))
+                    rightfile = dater + "_" + os.path.basename(i)
+                    if not os.path.exists(copydir):
+                        print('Creating {:}'.format(copydir))
+                        os.makedirs(copydir)
+                    else:
+                        pass
+                    if os.path.isfile(os.path.join(copydir, rightfile)):
+                        pass
+                    else:
+                        print(os.path.join(copydir, rightfile))
+                        try:
+                            copyfile(i, os.path.join(copydir, rightfile))
+                        except:
+                            pass
+    printmes('Copy Complete!')
+    return
 
-    Returns:
-        A Pandas DataFrame, maximum calculated drift, and well name
+def new_lev_imp(infile):
+    with open(infile, "r") as fd:
+        txt = fd.readlines()
 
-    """
-    wellname, wellid = getwellid(infile, wellinfo)  # see custom getwellid function
-    print('Well = ' + wellname)
-    if wellinfo[wellinfo['Well'] == wellname]['LoggerTypeName'].values[0] == 'Solinst':  # Reads Solinst Raw File
-        f = new_xle_imp(infile)
-        # Remove first and/or last measurements if the transducer was out of the water
-        f = dataendclean(f, 'Level')
+    try:
+        data_ind = txt.index('[Data]\n')
+        # inst_info_ind = txt.index('[Instrument info from data header]\n')
+        ch1_ind = txt.index('[CHANNEL 1 from data header]\n')
+        ch2_ind = txt.index('[CHANNEL 2 from data header]\n')
+        level = txt[ch1_ind + 1].split('=')[-1].strip().title()
+        level_units = txt[ch1_ind + 2].split('=')[-1].strip().lower()
+        temp = txt[ch2_ind + 1].split('=')[-1].strip().title()
+        temp_units = txt[ch2_ind + 2].split('=')[-1].strip().lower()
+        # serial_num = txt[inst_info_ind+1].split('=')[-1].strip().strip(".")
+        # inst_num = txt[inst_info_ind+2].split('=')[-1].strip()
+        # location = txt[inst_info_ind+3].split('=')[-1].strip()
+        # start_time = txt[inst_info_ind+6].split('=')[-1].strip()
+        # stop_time = txt[inst_info_ind+7].split('=')[-1].strip()
 
-        bse = int(f.index.to_datetime().minute[0])
-        try:
-            bp = str(wellinfo[wellinfo['Well'] == wellname]['BE barologger'].values[0])
-            b = hourly_resample(baro[bp], bse)
-            b = b.to_frame()
-        except (KeyError, NameError):
-            print('No BP match, using pw03')
-            b = hourly_resample(baro['pw03'], bse)
-            b = b.to_frame()
-            b['bp'] = b['pw03']
-            bp = 'bp'
-        f = hourly_resample(f, bse)
-        g = pd.merge(f, b, left_index=True, right_index=True, how='inner')
+        df = pd.read_table(infile, parse_dates=[[0, 1]], sep='\s+', skiprows=data_ind + 2,
+                           names=['Date', 'Time', level, temp],
+                           skipfooter=1, engine='python')
+        df.rename(columns={'Date_Time': 'DateTime'}, inplace=True)
+        df.set_index('DateTime', inplace=True)
 
-        g['MeasuredLevel'] = g['Level']
-
-        glist = f.columns.tolist()
-        if 'Temperature' in glist:
-            g['Temp'] = g['Temperature']
-            g.drop(['Temperature'], inplace=True, axis=1)
-        elif 'Temp' in glist:
-            pass
-        # Get Baro Efficiency
-        be = wellinfo[wellinfo['WellID'] == wellid]['BaroEfficiency']
-        be = be.iloc[0]
-
-        # Barometric Efficiency Correction
-        print('Efficiency = ' + str(be))
-        g['BaroEfficiencyLevel'] = g[['MeasuredLevel', bp]].apply(lambda x: x[0] - x[1] + x[1] * float(be), 1)
-    # Reads Global Water Raw File
-    else:
-        f = pd.read_csv(infile, skiprows=1, parse_dates=[[0, 1]])
-        # f = f.reset_index()
-        f['DateTime'] = pd.to_datetime(f['Date_ Time'], errors='coerce')
-        f = f[f.DateTime.notnull()]
-        if ' Feet' in list(f.columns.values):
-            f['Level'] = f[' Feet']
-            f.drop([' Feet'], inplace=True, axis=1)
-        elif 'Feet' in list(f.columns.values):
-            f['Level'] = f['Feet']
-            f.drop(['Feet'], inplace=True, axis=1)
+        if level_units == "feet" or level_units == "ft":
+            df[level] = pd.to_numeric(df[level])
+        elif level_units == "kpa":
+            df[level] = pd.to_numeric(df[level]) * 0.33456
+            printmes("Units in kpa, converting to ft...")
+        elif level_units == "mbar":
+            df[level] = pd.to_numeric(df[level]) * 0.0334552565551
+        elif level_units == "psi":
+            df[level] = pd.to_numeric(df[level]) * 2.306726
+            printmes("Units in psi, converting to ft...")
+        elif level_units == "m" or level_units == "meters":
+            df[level] = pd.to_numeric(df[level]) * 3.28084
+            printmes("Units in psi, converting to ft...")
         else:
-            f['Level'] = f.iloc[:, 1]
-        # Remove first and/or last measurements if the transducer was out of the water
-        f = dataendclean(f, 'Level')
-        flist = f.columns.tolist()
-        if ' Temp C' in flist:
-            f['Temperature'] = f[' Temp C']
-            f['Temp'] = f['Temperature']
-            f.drop([' Temp C', 'Temperature'], inplace=True, axis=1)
-        else:
-            f['Temp'] = np.nan
-        f.set_index(['DateTime'], inplace=True)
-        f['date'] = f.index.to_julian_date().values
-        f['datediff'] = f['date'].diff()
-        f = f[f['datediff'] > 0]
-        f = f[f['datediff'] < 1]
-        bse = int(f.index.to_datetime().minute[0])
-        f = hourly_resample(f, bse)
-        f.drop([u' Volts', u'date', u'datediff'], inplace=True, axis=1)
+            df[level] = pd.to_numeric(df[level])
+            printmes("Unknown units, no conversion")
 
-        try:
-            bp = str(wellinfo[wellinfo['Well'] == wellname]['BE barologger'].values[0])
-            b = hourly_resample(baro[bp], bse)
-            b = b.to_frame()
-        except (KeyError, NameError):
-            print('No match, using Level')
-            bp = u'Level'
-            b = b.to_frame()
-            b['bp'] = b['Level']
-            bp = 'bp'
-            b.drop(['bp'], inplace=True, axis=1)
+        if temp_units == 'Deg C' or temp_units == u'\N{DEGREE SIGN}' + u'C':
+            df[temp] = df[temp]
+        elif temp_units == 'Deg F' or temp_units == u'\N{DEGREE SIGN}' + u'F':
+            printmes('Temp in F, converting to C')
+            df[temp] = (df[temp] - 32.0) * 5.0 / 9.0
+        df['name'] = infile
+        return df
+    except ValueError:
+        printmes('File {:} has formatting issues'.format(infile))
 
-        # b = hourly_resample(baro[bp], bse)
-        f = hourly_resample(f, bse)
-        g = pd.merge(f, b, left_index=True, right_index=True, how='inner')
-        g['MeasuredLevel'] = g['Level']
-
-        # Get Baro Efficiency
-        be = wellinfo[wellinfo['WellID'] == wellid]['BaroEfficiency']
-        be = be.iloc[0]
-
-        # Barometric Efficiency Correction
-        # g['BaroEfficiencyCorrected'] = g['MeasuredLevel'] + be*g[bp]
-        print('Efficiency = ' + str(be))
-        g['BaroEfficiencyLevel'] = g[['MeasuredLevel', str(bp)]].apply(lambda x: x[0] + x[1] * float(be), 1)
-
-    g['DeltaLevel'] = g['BaroEfficiencyLevel'] - g['BaroEfficiencyLevel'][0]
-
-    # Match manual water level to closest date ------------------------
-    g['MeasuredDTW'] = fcl(manual[manual['WellID'] == wellid], min(g.index.to_datetime()))[1] - g[
-        'DeltaLevel']
-
-    # Drift Correction ------------------------
-    # get first and last manual measurements that match 1st and last transducer measurements
-    last = fcl(manual[manual['WellID'] == wellid], max(g.index.to_datetime()))[1]
-    # get last transducer measurement
-    lastg = float(g[g.index.to_datetime() == max(g.index.to_datetime())]['MeasuredDTW'].values)
-    # get number of measurements between first and last transducer measurement
-    driftlen = len(g.index)
-    # determine increment of drift for each time step
-    g['last_diff_int'] = np.round((lastg - last), 4) / np.round(driftlen - 1.0, 4)
-    # make increment cumulative over duration of transducer measurement
-    g['DriftCorrection'] = np.round(g['last_diff_int'].cumsum() - g['last_diff_int'], 4)
-
-    print('Max Drift = ' + str(g['DriftCorrection'][-1]))
-
-    # Assign well id to column
-    g['WellID'] = wellid
-
-    # Get Depth to water below casing ------------------------
-    g['DTWBelowCasing'] = g['MeasuredDTW'] - g['DriftCorrection']
-
-    # subtract casing height from depth to water below casing ------------------------
-    g['DTWBelowGroundSurface'] = g['DTWBelowCasing'] - wellinfo[wellinfo['WellID'] == wellid]['Offset'].values[0]
-
-    # subtract depth to water below ground surface from well surface elevation
-    g['WaterElevation'] = wellinfo[wellinfo['WellID'] == wellid]['GroundElevation'].values[0] - \
-                          g['DTWBelowGroundSurface']
-    g['WaterElevation'] = g['WaterElevation'].apply(lambda x: round(x, 2))
-
-    # assign tape value
-    g['Tape'] = 0
-    g['MeasuredByID'] = 0
-
-    g['DateTime'] = g.index.to_datetime()
-    g = g.loc[:, ["WellID", "DateTime", "MeasuredLevel", "Temp", "BaroEfficiencyLevel", "DeltaLevel",
-                  "MeasuredDTW", "DriftCorrection", "DTWBelowCasing", "DTWBelowGroundSurface",
-                  "WaterElevation", "Tape", "MeasuredByID"]]
-    max_drift = g['DriftCorrection'][-1]
-    return g, max_drift, wellname
-
-    # Use `g[wellinfo[wellinfo['Well']==wellname]['closest_baro']]` to match the closest barometer to the data
-
-
-def barodistance(wellinfo):
-    """Determines Closest Barometer to Each Well using wellinfo DataFrame"""
-    barometers = {'barom': ['pw03', 'pw10', 'pw19'], 'X': [240327.49, 271127.67, 305088.9],
-                  'Y': [4314993.95, 4356071.98, 4389630.71], 'Z': [1623.079737, 1605.187759, 1412.673738]}
-    barolocal = pd.DataFrame(barometers)
-    barolocal = barolocal.reset_index()
-    barolocal.set_index('barom', inplace=True)
-
-    wellinfo['pw03'] = np.sqrt((barolocal.loc['pw03', 'X'] - wellinfo['UTMEasting']) ** 2 + \
-                               (barolocal.loc['pw03', 'Y'] - wellinfo['UTMNorthing']) ** 2 + \
-                               (barolocal.loc['pw03', 'Z'] - wellinfo['G_Elev_m']) ** 2)
-    wellinfo['pw10'] = np.sqrt((barolocal.loc['pw10', 'X'] - wellinfo['UTMEasting']) ** 2 + \
-                               (barolocal.loc['pw10', 'Y'] - wellinfo['UTMNorthing']) ** 2 + \
-                               (barolocal.loc['pw10', 'Z'] - wellinfo['G_Elev_m']) ** 2)
-    wellinfo['pw19'] = np.sqrt((barolocal.loc['pw19', 'X'] - wellinfo['UTMEasting']) ** 2 + \
-                               (barolocal.loc['pw19', 'Y'] - wellinfo['UTMNorthing']) ** 2 + \
-                               (barolocal.loc['pw19', 'Z'] - wellinfo['G_Elev_m']) ** 2)
-    wellinfo['closest_baro'] = wellinfo[['pw03', 'pw10', 'pw19']].T.idxmin()
-    return wellinfo
-
-
-def make_files_table(folder, wellinfo):
-    """This tool will make a descriptive table (Pandas DataFrame) containing filename, date, and site id.
-    For it to work properly, files must be named in the following fashion:
-    siteid YYYY-MM-DD
-    example: pw03a 2015-03-15.csv
-
-    This tool assumes that if there are two files with the same name but different extensions,
-    then the datalogger for those data is a Solinst datalogger.
-
-    Args:
-        folder (dir):
-            directory containing the newly downloaded transducer data
-        wellinfo (object):
-            Pandas DataFrame containing well information
-
-    Returns:
-        files (object):
-            Pandas DataFrame containing summary of different files in the input directory
-    """
-
-    filenames = next(os.walk(folder))[2]
-    site_id, exten, dates, fullfilename = [], [], [], []
-    # parse filename into relevant pieces
-    for i in filenames:
-        site_id.append(i[:-14].lower().strip())
-        exten.append(i[-4:])
-        dates.append(i[-14:-4])
-        fullfilename.append(i)
-    files = {'siteid': site_id, 'extensions': exten, 'date': dates, 'full_file_name': fullfilename}
-    files = pd.DataFrame(files)
-
-    files['LoggerTypeName'] = files['extensions'].apply(lambda x: 'Global Water' if x == '.csv' else 'Solinst', 1)
-    files.drop_duplicates(subset='siteid', keep='last', inplace=True)
-
-    wellinfo = wellinfo[wellinfo['Well'] != np.nan]
-    wellinfo["G_Elev_m"] = np.divide(wellinfo["GroundElevation"], 3.2808)
-    wellinfo['Well'] = wellinfo['Well'].apply(lambda x: str(x).lower().strip())
-    files = pd.merge(files, wellinfo, left_on='siteid', right_on='Well')
-
-    return files
-
-
-def appendomatic(infile, existingfile):
-    """Appends data from one table to an existing compilation this tool will delete and replace the existing file
-
-    Args:
-        infile (file):
-           input file
-        existingfile (file):
-           file you wish to append to
-
-    Returns:
-        Overwrights existing file
-    """
-
-    # get the extension of the input file
-    filetype = os.path.splitext(infile)[1]
-
-    # run computations using lev files
-    if filetype == '.lev':
-        # open text file
-        with open(infile) as fd:
-            # find beginning of data
-            indices = fd.readlines().index('[Data]\n')
-
-        # convert data to pandas dataframe starting at the indexed data line
-        f = pd.read_table(infile, parse_dates=True, sep='     ', index_col=0,
-                          skiprows=indices + 2, names=['DateTime', 'Level', 'Temperature'], skipfooter=1,
-                          engine='python')
-        # add extension-free file name to dataframe
-        f['name'] = getfilename(infile)
-
-    # run computations using xle files
-    elif filetype == '.xle':
-        f = new_xle_imp(infile)
-
-    # run computations using csv files
-    elif filetype == '.csv':
-        with open(infile) as fd:
-            # find beginning of data
-            try:
-                indices = fd.readlines().index('Date,Time,ms,Level,Temperature\n')
-            except ValueError:
-                indices = fd.readlines().index(',Date,Time,100 ms,Level,Temperature\n')
-        f = pd.read_csv(infile, skiprows=indices, skipfooter=1, engine='python')
-        # add extension-free file name to dataframe
-        f['name'] = getfilename(infile)
-        # combine Date and Time fields into one field
-        f['DateTime'] = pd.to_datetime(f.apply(lambda x: x['Date'] + ' ' + x['Time'], 1))
-        f = f.reset_index()
-        f = f.set_index('DateTime')
-        f = f.drop(['Date', 'Time', 'ms', 'index'], axis=1)
-        # skip other file types
-    else:
-        pass
-
-    # ensure that the Level and Temperature data are in a float format
-    f['Level'] = pd.to_numeric(f['Level'])
-    f['Temperature'] = pd.to_numeric(f['Temperature'])
-    h = pd.read_csv(existingfile, index_col=0, header=0, parse_dates=True)
-    g = pd.concat([h, f])
-    # remove duplicates based on index then sort by index
-    g['ind'] = g.index
-    g.drop_duplicates(subset='ind', inplace=True)
-    g.drop('ind', axis=1, inplace=True)
-    g = g.sort_index()
-    os.remove(existingfile)
-    g.to_csv(existingfile)
-
-
-def compilation(inputfile):
-    """This function reads multiple xle transducer files in a directory and generates a compiled Pandas DataFrame.
-    Args:
-        inputfile (file):
-            complete file path to input files; use * for wildcard in file name
-    Returns:
-        outfile (object):
-            Pandas DataFrame of compiled data
-    Example::
-        >>> compilation('O:\\Snake Valley Water\\Transducer Data\\Raw_data_archive\\all\\LEV\\*baro*')
-        picks any file containing 'baro'
-    """
-
-    # create empty dictionary to hold DataFrames
-    f = {}
-
-    # generate list of relevant files
-    filelist = glob.glob(inputfile)
-
-    # iterate through list of relevant files
-    for infile in filelist:
-        # get the extension of the input file
-        filetype = os.path.splitext(infile)[1]
-        # run computations using lev files
-        if filetype == '.lev':
-            # open text file
-            with open(infile) as fd:
-                # find beginning of data
-                indices = fd.readlines().index('[Data]\n')
-
-            # convert data to pandas dataframe starting at the indexed data line
-            f[getfilename(infile)] = pd.read_table(infile, parse_dates=True, sep='     ', index_col=0,
-                                                   skiprows=indices + 2,
-                                                   names=['DateTime', 'Level', 'Temperature'],
-                                                   skipfooter=1, engine='python')
-            # add extension-free file name to dataframe
-            f[getfilename(infile)]['name'] = getfilename(infile)
-            f[getfilename(infile)]['Level'] = pd.to_numeric(f[getfilename(infile)]['Level'])
-            f[getfilename(infile)]['Temperature'] = pd.to_numeric(f[getfilename(infile)]['Temperature'])
-
-        elif filetype == '.xle':  # run computations using xle files
-            f[getfilename(infile)] = new_xle_imp(infile)
-        else:
-            pass
-    # concatenate all of the DataFrames in dictionary f to one DataFrame: g
-    g = pd.concat(f)
-    # remove multiindex and replace with index=Datetime
-    g = g.reset_index()
-    g = g.set_index(['DateTime'])
-    # drop old indexes
-    g = g.drop(['level_0'], axis=1)
-    # remove duplicates based on index then sort by index
-    g['ind'] = g.index
-    g.drop_duplicates(subset='ind', inplace=True)
-    g.drop('ind', axis=1, inplace=True)
-    g = g.sort_index()
-    outfile = g
-    return outfile
-
-
-def jumpfix(df, meas, threashold=0.005, return_jump=False):
-    """Removes jumps or jolts in time series data (where offset is lasting)
-    Args:
-        df (object):
-            dataframe to manipulate
-        meas (str):
-            name of field with jolts
-        threashold (float):
-            size of jolt to search for
-    Returns:
-        df1: dataframe of corrected data
-        jump: dataframe of jumps corrected in data
-    """
-    df1 = df.copy(deep=True)
-    df1['delta' + meas] = df1.loc[:, meas].diff()
-    jump = df1[abs(df1['delta' + meas]) > threashold]
-    jump['cumul'] = jump.loc[:, 'delta' + meas].cumsum()
-    df1['newVal'] = df1.loc[:, meas]
-
-    for i in range(len(jump)):
-        jt = jump.index[i]
-        ja = jump['cumul'][i]
-        df1.loc[jt:, 'newVal'] = df1[meas].apply(lambda x: x - ja, 1)
-    df1[meas] = df1['newVal']
-    if return_jump:
-        print(jump)
-        return df1, jump
-    else:
-        return df1
-
-
-def rollmeandiff(df1, p1, df2, p2, win):
-    """Returns the rolling mean difference of two columns from two different dataframes
-    Args:
-        df1 (object):
-            dataframe 1
-        p1 (str):
-            column in df1
-        df2 (object):
-            dataframe 2
-        p2 (str):
-            column in df2
-        win (int):
-            window in days
-    
-    Return:
-        diff (float):
-            difference
-    """
-    win = win * 60 * 24
-    df1 = df1.resample('1Min').mean()
-    df1 = df1.interpolate(method='time')
-    df2 = df2.resample('1Min').mean()
-    df2 = df2.interpolate(method='time')
-    df1['rm' + p1] = df1[p1].rolling(window=win, center=True).mean()
-    df2['rm' + p2] = df2[p2].rolling(window=win, center=True).mean()
-    df3 = pd.merge(df1, df2, left_index=True, right_index=True, how='outer')
-    df3 = df3[np.isfinite(df3['rm' + p1])]
-    df4 = df3[np.isfinite(df3['rm' + p2])]
-    df5 = df4['rm' + p1] - df4['rm' + p2]
-    diff = round(df5.mean(), 3)
-    del (df3, df4, df5)
-    return diff
-
-
-##################################################################
 
 def new_xle_imp(infile):
     """This function uses an exact file path to upload a xle transducer file.
+
     Args:
         infile (file):
             complete file path to input file
+
     Returns:
         A Pandas DataFrame containing the transducer data
     """
@@ -570,8 +232,11 @@ def new_xle_imp(infile):
     # navigate through xml to the data
     wellrawdata = obj['Body_xle']['Data']['Log']
     # convert xml data to pandas dataframe
-    f = pd.DataFrame(wellrawdata)
-
+    try:
+        f = pd.DataFrame(wellrawdata)
+    except ValueError:
+        printmes('xle file {:} incomplete'.format(infile))
+        return
     # CH 3 check
     try:
         ch3ID = obj['Body_xle']['Ch3_data_header']['Identification']
@@ -587,7 +252,7 @@ def new_xle_imp(infile):
     if ch2Unit == 'Deg C' or ch2Unit == u'\N{DEGREE SIGN}' + u'C':
         f[str(ch2ID).title()] = numCh2
     elif ch2Unit == 'Deg F' or ch2Unit == u'\N{DEGREE SIGN}' + u'F':
-        print('Temp in F, converting to C')
+        printmes('Temp in F, converting to C')
         f[str(ch2ID).title()] = (numCh2 - 32) * 5 / 9
 
     # CH 1 manipulation
@@ -599,18 +264,18 @@ def new_xle_imp(infile):
         f[str(ch1ID).title()] = pd.to_numeric(f['ch1'])
     elif unit == "kpa":
         f[str(ch1ID).title()] = pd.to_numeric(f['ch1']) * 0.33456
-        print("Units in kpa, converting to ft...")
+        printmes("Units in kpa, converting to ft...")
     elif unit == "mbar":
         f[str(ch1ID).title()] = pd.to_numeric(f['ch1']) * 0.0334552565551
     elif unit == "psi":
         f[str(ch1ID).title()] = pd.to_numeric(f['ch1']) * 2.306726
-        print("Units in psi, converting to ft...")
+        printmes("Units in psi, converting to ft...")
     elif unit == "m" or unit == "meters":
         f[str(ch1ID).title()] = pd.to_numeric(f['ch1']) * 3.28084
-        print("Units in psi, converting to ft...")
+        printmes("Units in psi, converting to ft...")
     else:
         f[str(ch1ID).title()] = pd.to_numeric(f['ch1'])
-        print("Unknown units, no conversion")
+        printmes("Unknown units, no conversion")
 
     # add extension-free file name to dataframe
     f['name'] = infile.split('\\').pop().split('/').pop().rsplit('.', 1)[0]
@@ -635,9 +300,11 @@ def new_xle_imp(infile):
 
 def new_csv_imp(infile):
     """This function uses an exact file path to upload a csv transducer file.
+
     Args:
         infile (file):
             complete file path to input file
+
     Returns:
         A Pandas DataFrame containing the transducer data
     """
@@ -678,17 +345,88 @@ def new_csv_imp(infile):
     return f
 
 
+def new_trans_imp(infile):
+    """This function uses an imports and cleans the ends of transducer file.
+
+    Args:
+        infile (file):
+            complete file path to input file
+        xle (bool):
+            if true, then the file type should be xle; else it should be csv
+
+    Returns:
+        A Pandas DataFrame containing the transducer data
+    """
+    file_ext = os.path.splitext(infile)[1]
+    try:
+        if file_ext == '.xle':
+            well = new_xle_imp(infile)
+        elif file_ext == '.lev':
+            well = new_lev_imp(infile)
+        elif file_ext == '.csv':
+            well = new_csv_imp(infile)
+        else:
+            printmes('filetype not recognized')
+            pass
+        return dataendclean(well, 'Level')
+    except AttributeError:
+        printmes('Bad File')
+        return
+
+
+def compilation(inputfile):
+    """This function reads multiple xle transducer files in a directory and generates a compiled Pandas DataFrame.
+    Args:
+        inputfile (file):
+            complete file path to input files; use * for wildcard in file name
+    Returns:
+        outfile (object):
+            Pandas DataFrame of compiled data
+    Example::
+        >>> compilation('O:\\Snake Valley Water\\Transducer Data\\Raw_data_archive\\all\\LEV\\*baro*')
+        picks any file containing 'baro'
+    """
+
+    # create empty dictionary to hold DataFrames
+    f = {}
+
+    # generate list of relevant files
+    filelist = glob.glob(inputfile)
+
+    # iterate through list of relevant files
+    for infile in filelist:
+        # run computations using lev files
+        f[getfilename(infile)] = new_trans_imp(infile)
+    # concatenate all of the DataFrames in dictionary f to one DataFrame: g
+    g = pd.concat(f)
+    # remove multiindex and replace with index=Datetime
+    g = g.reset_index()
+    g = g.set_index(['DateTime'])
+    # drop old indexes
+    g = g.drop(['level_0'], axis=1)
+    # remove duplicates based on index then sort by index
+    g['ind'] = g.index
+    g.drop_duplicates(subset='ind', inplace=True)
+    g.drop('ind', axis=1, inplace=True)
+    g = g.sort_index()
+    outfile = g
+    return g
+
+
 def dataendclean(df, x, inplace=False):
     """Trims off ends and beginnings of datasets that exceed 2.0 standard deviations of the first and last 30 values
+
     :param df: Pandas DataFrame
     :type df: pandas.core.frame.DataFrame
     :param x: Column name of data to be trimmed contained in df
     :type x: str
     :param inplace: if DataFrame should be duplicated
     :type inplace: bool
+
     :returns: df trimmed data
     :rtype: pandas.core.frame.DataFrame
-    This function prints a message if data are trimmed.
+
+    This function printmess a message if data are trimmed.
     """
     # Examine Mean Values
     if inplace:
@@ -701,37 +439,26 @@ def dataendclean(df, x, inplace=False):
         for i in range(len(jump)):
             if jump.index[i] < df.index[50]:
                 df = df[df.index > jump.index[i]]
-                print("Dropped from beginning to " + str(jump.index[i]))
+                printmes("Dropped from beginning to " + str(jump.index[i]))
             if jump.index[i] > df.index[-50]:
                 df = df[df.index < jump.index[i]]
-                print("Dropped from end to " + str(jump.index[i]))
+                printmes("Dropped from end to " + str(jump.index[i]))
     except IndexError:
-        print('No Jumps')
+        printmes('No Jumps')
     return df
 
 
-def new_trans_imp(infile):
-    """This function uses an imports and cleans the ends of transducer file.
+def getfilename(path):
+    """This function extracts the file name without file path or extension
+
     Args:
-        infile (file):
-            complete file path to input file
-        xle (bool):
-            if true, then the file type should be xle; else it should be csv
+        path (file):
+            full path and file (including extension of file)
+
     Returns:
-        A Pandas DataFrame containing the transducer data
+        name of file as string
     """
-    file_ext = os.path.splitext(infile)[1]
-    if file_ext == '.xle':
-        well = new_xle_imp(infile)
-    elif file_ext == '.csv':
-        well = new_csv_imp(infile)
-    else:
-        print('filetype not recognized')
-        pass
-    return dataendclean(well, 'Level')
-
-    # Use `g[wellinfo[wellinfo['Well']==wellname]['closest_baro']]` to match the closest barometer to the data
-
+    return path.split('\\').pop().split('/').pop().rsplit('.', 1)[0]
 
 def correct_be(site_number, well_table, welldata, be=None, meas='corrwl', baro='barometer'):
     if be:
@@ -772,27 +499,15 @@ def hourly_resample(df, bse=0, minutes=60):
         once per minute.
         see http://pandas.pydata.org/pandas-docs/stable/timeseries.html#offset-aliases
     """
-    if int(str(pd.__version__).split('.')[0]) == 0 and int(
-            str(pd.__version__).split('.')[1]) < 18:  # pandas versioning
-        df = df.resample('1Min', how='first')
-    else:
-        # you can make this smaller to accomodate for a higher sampling frequency
-        df = df.resample('1Min').first()
-        # http://pandas.pydata.org/pandas-docs/dev/generated/pandas.Series.interpolate.html
-    df = df.interpolate(method='time', limit=90)
 
-    if int(str(pd.__version__).split('.')[0]) == 0 and int(
-            str(pd.__version__).split('.')[1]) < 18:  # pandas versioning
-        df = df.resample(str(minutes) + 'Min', closed='left', label='left', base=bse, how='first')
-    else:
-        # modify '60Min' to change the resulting frequency
-        df = df.resample(str(minutes) + 'Min', closed='left', label='left', base=bse).first()
+    df = df.resample('1Min').mean().interpolate(method='time', limit=90)
+
+    df = df.resample(str(minutes) + 'Min', closed='left', label='left', base=bse).mean()
     return df
 
 
 def well_baro_merge(wellfile, barofile, barocolumn='Level', wellcolumn='Level', outcolumn='corrwl',
-                    vented=False,
-                    sampint=60):
+                    vented=False, sampint=60):
     """Remove barometric pressure from nonvented transducers.
     Args:
         wellfile (pd.DataFrame):
@@ -801,6 +516,7 @@ def well_baro_merge(wellfile, barofile, barocolumn='Level', wellcolumn='Level', 
             Pandas DataFrame barometric data labeled 'Level'; index must be datetime
         sampint (int):
             sampling interval in minutes; default 60
+
     Returns:
         wellbaro (Pandas DataFrame):
            corrected water levels with bp removed
@@ -815,6 +531,8 @@ def well_baro_merge(wellfile, barofile, barocolumn='Level', wellcolumn='Level', 
 
     if 'TEMP' in baro.columns:
         baro.drop('TEMP', axis=1, inplace=True)
+    elif 'Temperature' in baro.columns:
+        baro.drop('Temperature', axis=1, inplace=True)
 
     # combine baro and well data for easy calculations, graphing, and manipulation
     wellbaro = pd.merge(well, baro, left_index=True, right_index=True, how='inner')
@@ -829,6 +547,94 @@ def well_baro_merge(wellfile, barofile, barocolumn='Level', wellcolumn='Level', 
         wellbaro[outcolumn] = wellbaro[['dbp', 'dwl']].apply(lambda x: x[1] - x[0], 1).cumsum() + first_well
     wellbaro.loc[wellbaro.index[0], outcolumn] = first_well
     return wellbaro
+
+
+def one_well(well_file, baro_file, well_table, man_startdate, man_start_level, man_endate,
+             man_end_level, wellid, be=None):
+
+    if os.path.splitext(well_file)[1] == '.xle':
+        trans_type = 'Solinst'
+    else:
+        trans_type = 'Global Water'
+
+    printmes('Trans type for well is {:}.'.format(trans_type))
+
+
+    well = new_trans_imp(well_file)
+    baro = new_trans_imp(baro_file)
+
+
+    corrwl = well_baro_merge(well, baro, vented=(trans_type != 'Solinst'))
+
+    if be:
+        corrwl = correct_be(wellid, corrwl, be=be)
+        corrwl['corrwl'] = corrwl['BAROEFFICIENCYLEVEL']
+
+    stickup, well_elev = get_stickup_elev(wellid, well_table)
+
+    man = pd.DataFrame(
+        {'DateTime': [man_startdate, man_endate],
+         'MeasuredDTW': [man_start_level, man_end_level]}).set_index(
+        'DateTime')
+    printmes(man)
+    man['Meas_GW_Elev'] = well_elev - (man['MeasuredDTW'] - stickup)
+
+    man['MeasuredDTW'] = man['MeasuredDTW'] * -1
+
+    dft = fix_drift(corrwl, man, meas='corrwl', manmeas='MeasuredDTW')
+    drift = round(float(dft[1]['drift'].values[0]), 3)
+    printmes('Drift for well {:} is {:}.'.format(wellid, drift))
+    df = dft[0]
+
+    rowlist, fieldnames = prepare_fieldnames(df, wellid, stickup, well_elev)
+
+    return rowlist, df, man, be, drift
+
+def calc_dtw(df, stickup, well_elev, level='Level', dtw='DTW_WL'):
+    """
+
+    :param df: pandas DataFrame of processed well data
+    :param stickup: raw transducer level from new_trans_imp, new_xle_imp, or new_csv_imp functions
+    :param well_elev: well elevation
+    :param level: raw transducer level from new_trans_imp, new_xle_imp, or new_csv_imp functions
+    :param dtw: drift-corrected depth to water from fix_drift function
+    :return:
+    """
+    df['MEASUREDLEVEL'] = df[level]
+    df['MEASUREDDTW'] = df[dtw] * -1
+    df['DTWBELOWCASING'] = df['MEASUREDDTW']
+    df['DTWBELOWGROUNDSURFACE'] = df['MEASUREDDTW'].apply(lambda x: x - stickup, 1)
+    df['WATERELEVATION'] = df['DTWBELOWGROUNDSURFACE'].apply(lambda x: well_elev - x, 1)
+    return df
+
+def prep_fields(df,wellid):
+    df['TAPE'] = 0
+    df['LOCATIONID'] = wellid
+
+    df.sort_index(inplace=True)
+
+    fieldnames = ['READINGDATE', 'MEASUREDLEVEL', 'MEASUREDDTW', 'DRIFTCORRECTION',
+                  'TEMP', 'LOCATIONID', 'DTWBELOWCASING', 'BAROEFFICIENCYLEVEL',
+                  'DTWBELOWGROUNDSURFACE', 'WATERELEVATION', 'TAPE']
+
+    if 'Temperature' in df.columns:
+        df.rename(columns={'Temperature': 'TEMP'}, inplace=True)
+
+    if 'TEMP' in df.columns:
+        df['TEMP'] = df['TEMP'].apply(lambda x: np.round(x, 4), 1)
+    else:
+        df['TEMP'] = None
+
+    if 'BAROEFFICIENCYLEVEL' in df.columns:
+        pass
+    else:
+        df['BAROEFFICIENCYLEVEL'] = 0
+    # subset bp df and add relevant fields
+    df.index.name = 'READINGDATE'
+
+    subset = df.reset_index()
+
+    return subset, fieldnames
 
 
 def prepare_fieldnames(df, wellid, stickup, well_elev, level='Level', dtw='DTW_WL'):
@@ -886,20 +692,8 @@ def getwellid(infile, wellinfo):
     wellid = wellinfo[wellinfo['Well'] == wellname]['WellID'].values[0]
     return wellname, wellid
 
-
-def getfilename(path):
-    """This function extracts the file name without file path or extension
-    Args:
-        path (file):
-            full path and file (including extension of file)
-    Returns:
-        name of file as string
-    """
-    return path.split('\\').pop().split('/').pop().rsplit('.', 1)[0]
-
-
-def get_stickup_elev(site_number, wells):
-    stdata = wells[wells['AltLocationID'] == str(site_number)]
+def get_stickup_elev(site_number, well_table):
+    stdata = well_table[well_table['AltLocationID'] == str(site_number)]
     stickup = float(stdata['Offset'].values[0])
     well_elev = float(stdata['Altitude'].values[0])
     return stickup, well_elev
@@ -931,6 +725,66 @@ def get_gw_elevs(site_number, well_table, manual, stable_elev=True):
     return man_sub, stickup, well_elev
 
 
+def fix_well(well_table, file, baro_out, wellid, manual, stbl_elev=True):
+
+    # import well file
+    well = new_trans_imp(file)
+
+    file_ext = os.path.splitext(file)[1]
+    if file_ext == '.xle':
+        trans_type = 'Solinst'
+    else:
+        trans_type = 'Global Water'
+    try:
+        baroid = well_table.loc[wellid, 'BaroLoggerType']
+        printmes('{:}'.format(baroid))
+        corrwl = well_baro_merge(well, baro_out[str(baroid)], barocolumn='MEASUREDLEVEL',
+                                      vented=(trans_type != 'Solinst'))
+    except:
+        corrwl = well_baro_merge(well, baro_out['9003'], barocolumn='MEASUREDLEVEL',
+                                      vented=(trans_type != 'Solinst'))
+
+    # be, intercept, r = clarks(corrwl, 'barometer', 'corrwl')
+    # correct barometric efficiency
+    wls, be = correct_be(wellid, well_table, corrwl)
+
+    # get manual groundwater elevations
+    # man, stickup, well_elev = self.get_gw_elevs(wellid, well_table, manual, stable_elev = stbl_elev)
+    stdata = well_table[well_table['WellID'] == str(wellid)]
+    man_sub = manual[manual['Location ID'] == int(wellid)]
+    well_elev = float(stdata['Altitude'].values[0]) # Should be in feet
+
+    if stbl_elev:
+        if stdata['Offset'].values[0] is None:
+            stickup = 0
+            printmes('Well ID {:} missing stickup!'.format(wellid))
+        else:
+            stickup = float(stdata['Offset'].values[0])
+    else:
+
+        stickup = man_sub.loc[man_sub.last_valid_index(), 'Current Stickup Height']
+
+    # manual = manual['MeasuredDTW'].to_frame()
+    man_sub.loc[:, 'MeasuredDTW'] = man_sub['Water Level (ft)'] * -1
+    man_sub.loc[:, 'Meas_GW_Elev'] = man_sub['MeasuredDTW'].apply(lambda x: float(well_elev) + (x + float(stickup)),
+                                                                  1)
+    printmes('Stickup: {:}, Well Elev: {:}'.format(stickup, well_elev))
+
+    # fix transducer drift
+
+    dft = fix_drift(wls, man_sub, meas='BAROEFFICIENCYLEVEL', manmeas='MeasuredDTW')
+    drift = np.round(float(dft[1]['drift'].values[0]), 3)
+
+    df = dft[0]
+    df.sort_index(inplace=True)
+    first_index = df.first_valid_index()
+
+    rowlist, fieldnames = prepare_fieldnames(df, wellid, stickup, well_elev)
+
+    #    pass
+    return rowlist, man_sub, be, drift
+
+
 def fcl(df, dtObj):
     """Finds closest date index in a dataframe to a date object
     Args:
@@ -938,12 +792,13 @@ def fcl(df, dtObj):
             DataFrame
         dtObj:
             date object
+
     taken from: http://stackoverflow.com/questions/15115547/find-closest-row-of-dataframe-to-given-time-in-pandas
     """
     return df.iloc[np.argmin(np.abs(pd.to_datetime(df.index) - dtObj))]  # remove to_pydatetime()
 
 
-def fix_drift(well, manualfile, meas='Level', manmeas='MeasuredDTW', outcolname='DriftCorrection'):
+def fix_drift(well, manualfile, meas='Level', corrwl='corrwl', manmeas='MeasuredDTW', outcolname='DTW_WL'):
     """Remove transducer drift from nonvented transducer data. Faster and should produce same output as fix_drift_stepwise
     Args:
         well (pd.DataFrame):
@@ -967,9 +822,18 @@ def fix_drift(well, manualfile, meas='Level', manmeas='MeasuredDTW', outcolname=
     manualfile.index = pd.to_datetime(manualfile.index)
     manualfile.sort_index(inplace=True)
 
+    wellnona = well.dropna(subset=[corrwl])
+
+    if manualfile.first_valid_index() > wellnona.first_valid_index():
+        breakpoints.append(wellnona.first_valid_index())
+
     for i in range(len(manualfile)):
-        breakpoints.append(fcl(well, manualfile.index[i]).name)
-    breakpoints = sorted(list(set(breakpoints)))
+        breakpoints.append(fcl(wellnona, manualfile.index[i]).name)
+
+    breakpoints = pd.Series(breakpoints)
+    breakpoints = pd.to_datetime(breakpoints)
+    breakpoints.sort_values(inplace=True)
+    breakpoints.drop_duplicates(inplace=True)
 
     bracketedwls, drift_features = {}, {}
 
@@ -980,26 +844,39 @@ def fix_drift(well, manualfile, meas='Level', manmeas='MeasuredDTW', outcolname=
         well.index.name = 'DateTime'
 
     manualfile.loc[:, 'julian'] = manualfile.index.to_julian_date()
+
     for i in range(len(breakpoints) - 1):
         # Break up pandas dataframe time series into pieces based on timing of manual measurements
         bracketedwls[i] = well.loc[
-            (well.index.to_datetime() > breakpoints[i]) & (well.index.to_datetime() < breakpoints[i + 1])]
+            (well.index.to_datetime() >= breakpoints[i]) & (well.index.to_datetime() <= breakpoints[i + 1])]
         df = bracketedwls[i]
         if len(df) > 0:
+            df.sort_index(inplace=True)
             df.loc[:, 'julian'] = df.index.to_julian_date()
 
-            last_trans = df.loc[df.index[-1], meas]  # last transducer measurement
-            first_trans = df.loc[df.index[0], meas]  # first transducer measurement
+            last_trans = df.loc[df.last_valid_index(), meas]  # last transducer measurement
+            first_trans = df.loc[df.first_valid_index(), meas]  # first transducer measurement
+
+            first_man = fcl(manualfile, breakpoints[i])
+
+            if df.first_valid_index() < manualfile.first_valid_index():
+                first_man[manmeas] = None
 
             last_man = fcl(manualfile, breakpoints[i + 1])  # first manual measurment
-            first_man = fcl(manualfile, breakpoints[i])  # last manual mesurement
 
             # intercept of line = value of first manual measurement
-            b = first_trans - first_man[manmeas]
+            if pd.isna(first_man[manmeas]):
+                b = last_trans - last_man[manmeas]
+                drift = 0.000001
+            elif pd.isna(last_man[manmeas]):
+                b = first_trans - first_man[manmeas]
+                drift = 0.000001
+            else:
+                b = first_trans - first_man[manmeas]
+                drift = ((last_trans - last_man[manmeas]) - b)
 
             # slope of line = change in difference between manual and transducer over time;
-            drift = ((last_trans - last_man[manmeas]) - b)
-            m = drift / (last_man['julian'] - first_man['julian'])
+            m = drift / (df.loc[df.last_valid_index(), 'julian'] - df.loc[df.first_valid_index(), 'julian'])
 
             # datechange = amount of time between manual measurements
             df.loc[:, 'datechange'] = df['julian'].apply(lambda x: x - df.loc[df.index[0], 'julian'], 1)
@@ -1007,11 +884,13 @@ def fix_drift(well, manualfile, meas='Level', manmeas='MeasuredDTW', outcolname=
             # bracketedwls[i].loc[:, 'wldiff'] = bracketedwls[i].loc[:, meas] - first_trans
             # apply linear drift to transducer data to fix drift; flipped x to match drift
             df.loc[:, 'DRIFTCORRECTION'] = df['datechange'].apply(lambda x: m * x, 1)
-            df[outcolname] = df[meas] - (df['DRIFTCORRECTION'] + b)
+            df.loc[:, outcolname] = df[meas] - (df['DRIFTCORRECTION'] + b)
 
-            drift_features[i] = {'begining': first_man, 'end': last_man, 'intercept': b, 'slope': m,
+            drift_features[i] = {'t_beg': breakpoints[i], 'man_beg': first_man.name, 't_end': breakpoints[i + 1],
+                                 'man_end': last_man.name,
+                                 'intercept': b, 'slope': m,
                                  'first_meas': first_man[manmeas], 'last_meas': last_man[manmeas],
-                                 'drift': drift}
+                                 'drift': drift, 'first_trans': first_trans, 'last_trans': last_trans}
         else:
             pass
 
@@ -1031,8 +910,7 @@ def xle_head_table(folder):
     Returns:
         A Pandas DataFrame containing the transducer header data
     Example::
-        >>> import wellapplication as wa
-        >>> wa.xle_head_table('C:/folder_with_xles/')
+        >>> xle_head_table('C:/folder_with_xles/')
     """
     # open text file
     df = {}
@@ -1091,3 +969,109 @@ def csv_info_table(folder):
                 pass
     df.set_index('filename', inplace=True)
     return df, csv
+
+
+
+
+
+class wellmod(object):
+    def __init__(self):
+        self.sde_conn = None
+        self.well_file = None
+        self.baro_file = None
+        self.man_startdate = None
+        self.man_enddate = None
+        self.man_start_level = None
+        self.man_end_level = None
+        self.wellid = None
+        self.xledir = None
+        self.well_files = None
+        self.wellname = None
+        self.welldict = None
+        self.filedict = None
+        self.man_file = None
+        self.save_location = None
+        self.should_plot = None
+        self.chart_out = None
+        self.tol = None
+        self.stbl = None
+        self.ovrd = None
+        self.toexcel = None
+        self.baro_comp_file = None
+        self.to_import = None
+        self.idget = None
+
+    def read_xle(self):
+        well = new_xle_imp(self.well_file)
+        well.to_csv(self.save_location)
+        return
+
+
+    def remove_bp(self):
+
+        well = self.new_trans_imp(self.well_file)
+        baro = self.new_trans_imp(self.baro_file)
+
+        df = self.well_baro_merge(well, baro, barocolumn='Level', wellcolumn='Level', outcolumn='corrwl', vented=False,
+                                  sampint=60)
+
+        df.to_csv(self.save_location)
+
+    def remove_bp_drift(self):
+
+        well = self.new_trans_imp(self.well_file)
+        baro = self.new_trans_imp(self.baro_file)
+
+        man = pd.DataFrame(
+            {'DateTime': [self.man_startdate, self.man_enddate],
+             'MeasuredDTW': [self.man_start_level * -1, self.man_end_level * -1]}).set_index('DateTime')
+
+        corrwl = self.well_baro_merge(well, baro, barocolumn='Level', wellcolumn='Level', outcolumn='corrwl',
+                                      vented=False,
+                                      sampint=60)
+
+        dft = self.fix_drift(corrwl, man, meas='corrwl', manmeas='MeasuredDTW')
+        drift = round(float(dft[1]['drift'].values[0]), 3)
+
+        printmes("Drift is {:} feet".format(drift))
+        dft[0].to_csv(self.save_location)
+
+        if self.should_plot:
+            pdf_pages = PdfPages(self.chart_out)
+
+            # plot data
+            df = dft[0]
+            y1 = df['DTW_WL'].values
+            y2 = df['barometer'].values
+            x1 = df.index.values
+            x2 = df.index.values
+
+            x4 = man.index
+            y4 = man['MeasuredDTW']
+            fig, ax1 = plt.subplots()
+            plt.xticks(rotation=70)
+            ax1.scatter(x4, y4, color='purple')
+            ax1.plot(x1, y1, color='blue', label='Water Level')
+            ax1.set_ylabel('Depth to Water (ft)', color='blue')
+            ax1.set_ylim(min(y1), max(y1))
+            y_formatter = tick.ScalarFormatter(useOffset=False)
+            ax1.yaxis.set_major_formatter(y_formatter)
+            ax2 = ax1.twinx()
+            ax2.set_ylabel('Barometric Pressure (ft)', color='red')
+            ax2.plot(x2, y2, color='red', label='Barometric pressure (ft)')
+            h1, l1 = ax1.get_legend_handles_labels()
+            h2, l2 = ax2.get_legend_handles_labels()
+            ax1.legend(h1 + h2, l1 + l2, loc=3)
+            plt.xlim(df.first_valid_index() - datetime.timedelta(days=3),
+                     df.last_valid_index() + datetime.timedelta(days=3))
+
+            pdf_pages.savefig(fig)
+            plt.close()
+            pdf_pages.close()
+
+    def get_ftype(self, x):
+        if x[1] == 'Solinst':
+            ft = '.xle'
+        else:
+            ft = '.csv'
+        return self.filedict.get(x[0] + ft)
