@@ -17,6 +17,27 @@ from pylab import rcParams
 rcParams['figure.figsize'] = 15, 10
 
 
+
+def barodistance(wellinfo):
+    """Determines Closest Barometer to Each Well using wellinfo DataFrame"""
+    barometers = {'barom': ['pw03', 'pw10', 'pw19'], 'X': [240327.49, 271127.67, 305088.9],
+                  'Y': [4314993.95, 4356071.98, 4389630.71], 'Z': [1623.079737, 1605.187759, 1412.673738]}
+    barolocal = pd.DataFrame(barometers)
+    barolocal = barolocal.reset_index()
+    barolocal.set_index('barom', inplace=True)
+
+    wellinfo['pw03'] = np.sqrt((barolocal.loc['pw03', 'X'] - wellinfo['UTMEasting']) ** 2 + \
+                               (barolocal.loc['pw03', 'Y'] - wellinfo['UTMNorthing']) ** 2 + \
+                               (barolocal.loc['pw03', 'Z'] - wellinfo['G_Elev_m']) ** 2)
+    wellinfo['pw10'] = np.sqrt((barolocal.loc['pw10', 'X'] - wellinfo['UTMEasting']) ** 2 + \
+                               (barolocal.loc['pw10', 'Y'] - wellinfo['UTMNorthing']) ** 2 + \
+                               (barolocal.loc['pw10', 'Z'] - wellinfo['G_Elev_m']) ** 2)
+    wellinfo['pw19'] = np.sqrt((barolocal.loc['pw19', 'X'] - wellinfo['UTMEasting']) ** 2 + \
+                               (barolocal.loc['pw19', 'Y'] - wellinfo['UTMNorthing']) ** 2 + \
+                               (barolocal.loc['pw19', 'Z'] - wellinfo['G_Elev_m']) ** 2)
+    wellinfo['closest_baro'] = wellinfo[['pw03', 'pw10', 'pw19']].T.idxmin()
+    return wellinfo
+
 def rollmeandiff(df1, p1, df2, p2, win):
     """Returns the rolling mean difference of two columns from two different dataframes
     Args:
@@ -548,8 +569,20 @@ def well_baro_merge(wellfile, barofile, barocolumn='Level', wellcolumn='Level', 
     return wellbaro
 
 
-def one_well(well_file, baro_file, well_table, man_startdate, man_start_level, man_endate,
-             man_end_level, wellid, be=None):
+def one_well(well_file, baro_file, well_table, man_startdate, man_start_level, man_endate,  man_end_level, wellid, be=None):
+    """
+    imports one well with the right files and manual data
+    :param well_file: raw file of well data (lev, csv, or xle)
+    :param baro_file: barometric pressure dictionary of pandas dataframes
+    :param well_table: table of well information
+    :param man_startdate: first manual measurement date near data interval
+    :param man_start_level: first manual measurement near data interval
+    :param man_endate: last manual measurement date near data interval
+    :param man_end_level: last manual measurement near data interval
+    :param wellid: unique id for well (alternate id in well table)
+    :param be: barometric efficiency of well; default is None
+    :return: rowlist, df, man, be, drift
+    """
 
     if os.path.splitext(well_file)[1] == '.xle':
         trans_type = 'Solinst'
@@ -573,8 +606,7 @@ def one_well(well_file, baro_file, well_table, man_startdate, man_start_level, m
 
     man = pd.DataFrame(
         {'DateTime': [man_startdate, man_endate],
-         'MeasuredDTW': [man_start_level, man_end_level]}).set_index(
-        'DateTime')
+         'MeasuredDTW': [man_start_level, man_end_level]}).set_index('DateTime')
     printmes(man)
     man['Meas_GW_Elev'] = well_elev - (man['MeasuredDTW'] - stickup)
 
@@ -607,6 +639,12 @@ def calc_dtw(df, stickup, well_elev, level='Level', dtw='DTW_WL'):
     return df
 
 def prep_fields(df,wellid):
+    """
+    Prepares dataframe fields for import
+    :param df: pandas dataframe containing groundwater levels
+    :param wellid: unique well id
+    :return: subset, fieldnames
+    """
     df['TAPE'] = 0
     df['LOCATIONID'] = wellid
 
@@ -724,7 +762,7 @@ def get_gw_elevs(site_number, well_table, manual, stable_elev=True):
     return man_sub, stickup, well_elev
 
 
-def fix_well(well_table, file, baro_out, wellid, manual, stbl_elev=True):
+def fix_well(well_table, file, baro_out, wellid, manual, stbl_elev=True, barocol='MEASUREDLEVEL', mancol = ''):
 
     # import well file
     well = new_trans_imp(file)
@@ -734,13 +772,14 @@ def fix_well(well_table, file, baro_out, wellid, manual, stbl_elev=True):
         trans_type = 'Solinst'
     else:
         trans_type = 'Global Water'
+
     try:
         baroid = well_table.loc[wellid, 'BaroLoggerType']
         printmes('{:}'.format(baroid))
-        corrwl = well_baro_merge(well, baro_out[str(baroid)], barocolumn='MEASUREDLEVEL',
+        corrwl = well_baro_merge(well, baro_out[str(baroid)], barocolumn=barocol,
                                       vented=(trans_type != 'Solinst'))
     except:
-        corrwl = well_baro_merge(well, baro_out['9003'], barocolumn='MEASUREDLEVEL',
+        corrwl = well_baro_merge(well, baro_out['9003'], barocolumn=barocol,
                                       vented=(trans_type != 'Solinst'))
 
     # be, intercept, r = clarks(corrwl, 'barometer', 'corrwl')
