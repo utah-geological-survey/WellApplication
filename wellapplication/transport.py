@@ -132,8 +132,8 @@ def smoother(df, p, win=30, sd=3):
 
 def printmes(x):
     try:
-        import arcpy
-        arcpy.AddMessage(x)
+        from arcpy import AddMessage
+        AddMessage(x)
         print(x)
     except ModuleNotFoundError:
         print(x)

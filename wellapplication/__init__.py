@@ -9,6 +9,7 @@ from .mesopy import *
 from .graphs import *
 from .MannKendall import *
 from .ros import *
+from .arcpy_functions import *
 
 __version__ = '0.5.1'
 __author__ = 'Paul Inkenbrandt'
