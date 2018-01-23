@@ -135,7 +135,8 @@ def test_fix_drift():
     manual35['dt'] = pd.to_datetime(manual35.index)
     manual_35 = manual35.reset_index()
     manual_35.set_index('dt',inplace=True)
-    fd = wa.fix_drift(xle_df, manual_35, meas='Level', manmeas='MeasuredDTW', outcolname='DriftCorrection')
+    fd = wa.fix_drift(xle_df, manual_35, meas='Level', corrwl='Level',
+                      manmeas='MeasuredDTW', outcolname='DriftCorrection')
     assert 'DriftCorrection' in list(fd[0].columns)
     
 def test_getwellid():

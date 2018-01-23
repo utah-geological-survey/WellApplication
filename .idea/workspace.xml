@@ -6,12 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d5a82257-6a90-41c3-87e5-13b1695dbcbb" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/VERSION" afterPath="$PROJECT_DIR$/VERSION" />
-      <change beforePath="$PROJECT_DIR$/docs/UMAR_Chem_Compile.ipynb" afterPath="$PROJECT_DIR$/docs/UMAR_Chem_Compile.ipynb" />
-      <change beforePath="$PROJECT_DIR$/setup.py" afterPath="$PROJECT_DIR$/setup.py" />
       <change beforePath="$PROJECT_DIR$/test/test.py" afterPath="$PROJECT_DIR$/test/test.py" />
-      <change beforePath="$PROJECT_DIR$/wellapplication/__init__.py" afterPath="$PROJECT_DIR$/wellapplication/__init__.py" />
-      <change beforePath="$PROJECT_DIR$/wellapplication/transport.py" afterPath="$PROJECT_DIR$/wellapplication/transport.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -67,8 +62,8 @@
       <file leaf-file-name="transport.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="448">
-              <caret line="805" column="62" lean-forward="true" selection-start-line="805" selection-start-column="44" selection-end-line="805" selection-end-column="62" />
+            <state relative-caret-position="40">
+              <caret line="838" column="60" lean-forward="false" selection-start-line="838" selection-start-column="46" selection-end-line="838" selection-end-column="61" />
               <folding>
                 <element signature="e#0#82#0" expanded="true" />
               </folding>
@@ -79,8 +74,8 @@
       <file leaf-file-name="test.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="319">
-              <caret line="118" column="1" lean-forward="false" selection-start-line="118" selection-start-column="1" selection-end-line="118" selection-end-column="1" />
+            <state relative-caret-position="408">
+              <caret line="132" column="26" lean-forward="false" selection-start-line="132" selection-start-column="26" selection-end-line="132" selection-end-column="26" />
               <folding>
                 <element signature="e#80#162#0" expanded="true" />
               </folding>
@@ -735,13 +730,6 @@
       <option name="presentableId" value="Default" />
       <updated>1483036980477</updated>
     </task>
-    <task id="LOCAL-00053" summary="fixing recess">
-      <created>1484167748260</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
-      <option name="project" value="LOCAL" />
-      <updated>1484167748260</updated>
-    </task>
     <task id="LOCAL-00054" summary="fixing recess">
       <created>1484169221382</created>
       <option name="number" value="00054" />
@@ -1078,7 +1066,14 @@
       <option name="project" value="LOCAL" />
       <updated>1516714583405</updated>
     </task>
-    <option name="localTasksCounter" value="102" />
+    <task id="LOCAL-00102" summary="reconfigured transport to match loggerloader.">
+      <created>1516716762221</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
+      <option name="project" value="LOCAL" />
+      <updated>1516716762221</updated>
+    </task>
+    <option name="localTasksCounter" value="103" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1503,8 +1498,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="448">
-          <caret line="805" column="62" lean-forward="true" selection-start-line="805" selection-start-column="44" selection-end-line="805" selection-end-column="62" />
+        <state relative-caret-position="40">
+          <caret line="838" column="60" lean-forward="false" selection-start-line="838" selection-start-column="46" selection-end-line="838" selection-end-column="61" />
           <folding>
             <element signature="e#0#82#0" expanded="true" />
           </folding>
@@ -1513,8 +1508,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="319">
-          <caret line="118" column="1" lean-forward="false" selection-start-line="118" selection-start-column="1" selection-end-line="118" selection-end-column="1" />
+        <state relative-caret-position="408">
+          <caret line="132" column="26" lean-forward="false" selection-start-line="132" selection-start-column="26" selection-end-line="132" selection-end-column="26" />
           <folding>
             <element signature="e#80#162#0" expanded="true" />
           </folding>
