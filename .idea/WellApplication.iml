@@ -2,8 +2,10 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
-    <orderEntry type="jdk" jdkName="Python 3.5.3 (C:\Program Files\ArcGIS\Pro\bin\Python\envs\arcgispro-py3\pythonw.exe)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.5 (oraconnection.py)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="R User Library" level="project" />
+    <orderEntry type="library" name="R Skeletons" level="application" />
   </component>
   <component name="ReSTService">
     <option name="workdir" value="$MODULE_DIR$" />

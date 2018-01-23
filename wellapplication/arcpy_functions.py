@@ -10,7 +10,7 @@ try:
 
     arcpy.env.overwriteOutput = True
 
-except ModuleNotFoundError:
+except ImportError:
     pass
 
 

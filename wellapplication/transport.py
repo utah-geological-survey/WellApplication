@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.ticker as tick
-import tempfile
+
 from shutil import copyfile
 import datetime
 import os
@@ -13,7 +13,6 @@ import glob
 import re
 import xmltodict
 from pylab import rcParams
-
 
 rcParams['figure.figsize'] = 15, 10
 

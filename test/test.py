@@ -8,6 +8,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import wellapplication as wa
 import pandas as pd
 import matplotlib
+import sys
+sys.path.append('../')
 import numpy as np
 
 m = wa.Meso(token='demotoken')
