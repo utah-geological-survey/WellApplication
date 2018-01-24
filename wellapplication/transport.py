@@ -212,15 +212,15 @@ def new_lev_imp(infile):
             df[level] = pd.to_numeric(df[level])
         elif level_units == "kpa":
             df[level] = pd.to_numeric(df[level]) * 0.33456
-            printmes("Units in kpa, converting to ft...")
+            printmes("Units in kpa, converting {:} to ft...".format(os.path.basename(infile)))
         elif level_units == "mbar":
             df[level] = pd.to_numeric(df[level]) * 0.0334552565551
         elif level_units == "psi":
             df[level] = pd.to_numeric(df[level]) * 2.306726
-            printmes("Units in psi, converting to ft...")
+            printmes("Units in psi, converting {:} to ft...".format(os.path.basename(infile)))
         elif level_units == "m" or level_units == "meters":
             df[level] = pd.to_numeric(df[level]) * 3.28084
-            printmes("Units in psi, converting to ft...")
+            printmes("Units in psi, converting {:} to ft...".format(os.path.basename(infile)))
         else:
             df[level] = pd.to_numeric(df[level])
             printmes("Unknown units, no conversion")
@@ -228,7 +228,7 @@ def new_lev_imp(infile):
         if temp_units == 'Deg C' or temp_units == u'\N{DEGREE SIGN}' + u'C':
             df[temp] = df[temp]
         elif temp_units == 'Deg F' or temp_units == u'\N{DEGREE SIGN}' + u'F':
-            printmes('Temp in F, converting to C')
+            printmes('Temp in F, converting {:} to C...'.format(os.path.basename(infile)))
             df[temp] = (df[temp] - 32.0) * 5.0 / 9.0
         df['name'] = infile
         return df
@@ -287,15 +287,15 @@ def new_xle_imp(infile):
         f[str(ch1ID).title()] = pd.to_numeric(f['ch1'])
     elif unit == "kpa":
         f[str(ch1ID).title()] = pd.to_numeric(f['ch1']) * 0.33456
-        printmes("Units in kpa, converting to ft...")
+        printmes("Units in kpa, converting {:} to ft...".format(os.path.basename(infile)))
     elif unit == "mbar":
         f[str(ch1ID).title()] = pd.to_numeric(f['ch1']) * 0.0334552565551
     elif unit == "psi":
         f[str(ch1ID).title()] = pd.to_numeric(f['ch1']) * 2.306726
-        printmes("Units in psi, converting to ft...")
+        printmes("Units in psi, converting {:} to ft...".format(os.path.basename(infile)))
     elif unit == "m" or unit == "meters":
         f[str(ch1ID).title()] = pd.to_numeric(f['ch1']) * 3.28084
-        printmes("Units in psi, converting to ft...")
+        printmes("Units in psi, converting {:} to ft...".format(os.path.basename(infile)))
     else:
         f[str(ch1ID).title()] = pd.to_numeric(f['ch1'])
         printmes("Unknown units, no conversion")
@@ -871,6 +871,9 @@ def fix_drift(well, manualfile, meas='Level', corrwl='corrwl', manmeas='Measured
     for i in range(len(manualfile)):
         breakpoints.append(fcl(wellnona, manualfile.index[i]).name)
 
+    if manualfile.last_valid_index() < wellnona.last_valid_index():
+        breakpoints.append(wellnona.last_valid_index())
+
     breakpoints = pd.Series(breakpoints)
     breakpoints = pd.to_datetime(breakpoints)
     breakpoints.sort_values(inplace=True)
@@ -901,11 +904,13 @@ def fix_drift(well, manualfile, meas='Level', corrwl='corrwl', manmeas='Measured
             last_trans_date = df.loc[df.last_valid_index(), 'julian']
 
             first_man = fcl(manualfile, breakpoints[i])
+            last_man = fcl(manualfile, breakpoints[i + 1])  # first manual measurment
 
             if df.first_valid_index() < manualfile.first_valid_index():
                 first_man[manmeas] = None
 
-            last_man = fcl(manualfile, breakpoints[i + 1])  # first manual measurment
+            if df.last_valid_index() > manualfile.last_valid_index():
+                last_man[manmeas] = None
 
             # intercept of line = value of first manual measurement
             if pd.isna(first_man[manmeas]):
@@ -952,7 +957,6 @@ def fix_drift(well, manualfile, meas='Level', corrwl='corrwl', manmeas='Measured
     drift_info = pd.DataFrame(drift_features).T
 
     return wellbarofixed, drift_info
-
 
 def xle_head_table(folder):
     """Creates a Pandas DataFrame containing header information from all xle files in a folder
