@@ -331,40 +331,88 @@ def new_csv_imp(infile):
     Returns:
         A Pandas DataFrame containing the transducer data
     """
-    f = pd.read_csv(infile, skiprows=1, parse_dates=[[0, 1]])
-    # f = f.reset_index()
-    f['DateTime'] = pd.to_datetime(f['Date_ Time'], errors='coerce')
-    f = f[f.DateTime.notnull()]
-    if ' Feet' in list(f.columns.values):
-        f['Level'] = f[' Feet']
-        f.drop([' Feet'], inplace=True, axis=1)
-    elif 'Feet' in list(f.columns.values):
-        f['Level'] = f['Feet']
-        f.drop(['Feet'], inplace=True, axis=1)
-    else:
-        f['Level'] = f.iloc[:, 1]
-    # Remove first and/or last measurements if the transducer was out of the water
-    # f = dataendclean(f, 'Level')
-    flist = f.columns.tolist()
-    if ' Temp C' in flist:
-        f['Temperature'] = f[' Temp C']
-        f['Temp'] = f['Temperature']
-        f.drop([' Temp C', 'Temperature'], inplace=True, axis=1)
-    elif ' Temp F' in flist:
-        f['Temperature'] = (f[' Temp F'] - 32) * 5 / 9
-        f['Temp'] = f['Temperature']
-        f.drop([' Temp F', 'Temperature'], inplace=True, axis=1)
-    else:
-        f['Temp'] = np.nan
-    f.set_index(['DateTime'], inplace=True)
-    f['date'] = f.index.to_julian_date().values
-    f['datediff'] = f['date'].diff()
-    f = f[f['datediff'] > 0]
-    f = f[f['datediff'] < 1]
-    # bse = int(pd.to_datetime(f.index).minute[0])
-    # f = hourly_resample(f, bse)
-    f.rename(columns={' Volts': 'Volts'}, inplace=True)
-    f.drop([u'date', u'datediff', u'Date_ Time'], inplace=True, axis=1)
+    with open(infile, "r") as fd:
+        txt = fd.readlines()
+        if len(txt) > 1:
+            if 'Serial' in txt[0]:
+                print('{:} is Solinst'.format(infile))
+                if 'UNIT: ' in txt[7]:
+                    level_units = str(txt[7])[5:].strip().lower()
+                if 'UNIT: ' in txt[12]:
+                    temp_units = str(txt[12])[5:].strip().lower()
+                f = pd.read_csv(infile, skiprows=13, parse_dates=[[0, 1]], usecols=[0, 1, 3, 4])
+                print(f.columns)
+                f['DateTime'] = pd.to_datetime(f['Date_Time'], errors='coerce')
+                f.set_index('DateTime', inplace=True)
+                f.drop('Date_Time', axis=1, inplace=True)
+                f.rename(columns={'LEVEL': 'Level', 'TEMP': 'Temp'}, inplace=True)
+                level = 'Level'
+                temp = 'Temp'
+
+                if level_units == "feet" or level_units == "ft":
+                    f[level] = pd.to_numeric(f[level])
+                elif level_units == "kpa":
+                    f[level] = pd.to_numeric(f[level]) * 0.33456
+                    printmes("Units in kpa, converting {:} to ft...".format(os.path.basename(infile)))
+                elif level_units == "mbar":
+                    f[level] = pd.to_numeric(f[level]) * 0.0334552565551
+                elif level_units == "psi":
+                    f[level] = pd.to_numeric(df[level]) * 2.306726
+                    printmes("Units in psi, converting {:} to ft...".format(os.path.basename(infile)))
+                elif level_units == "m" or level_units == "meters":
+                    f[level] = pd.to_numeric(f[level]) * 3.28084
+                    printmes("Units in psi, converting {:} to ft...".format(os.path.basename(infile)))
+                else:
+                    f[level] = pd.to_numeric(df[level])
+                    printmes("Unknown units, no conversion")
+
+                if temp_units == 'Deg C' or temp_units == u'\N{DEGREE SIGN}' + u'C':
+                    f[temp] = f[temp]
+                elif temp_units == 'Deg F' or temp_units == u'\N{DEGREE SIGN}' + u'F':
+                    printmes('Temp in F, converting {:} to C...'.format(os.path.basename(infile)))
+                    f[temp] = (f[temp] - 32.0) * 5.0 / 9.0
+                return f
+
+            elif 'Date' in txt[1]:
+                print('{:} is Global'.format(infile))
+                f = pd.read_csv(infile, skiprows=1, parse_dates=[[0, 1]])
+                # f = f.reset_index()
+                f['DateTime'] = pd.to_datetime(f['Date_ Time'], errors='coerce')
+                f = f[f.DateTime.notnull()]
+                if ' Feet' in list(f.columns.values):
+                    f['Level'] = f[' Feet']
+                    f.drop([' Feet'], inplace=True, axis=1)
+                elif 'Feet' in list(f.columns.values):
+                    f['Level'] = f['Feet']
+                    f.drop(['Feet'], inplace=True, axis=1)
+                else:
+                    f['Level'] = f.iloc[:, 1]
+                # Remove first and/or last measurements if the transducer was out of the water
+                # f = dataendclean(f, 'Level')
+                flist = f.columns.tolist()
+                if ' Temp C' in flist:
+                    f['Temperature'] = f[' Temp C']
+                    f['Temp'] = f['Temperature']
+                    f.drop([' Temp C', 'Temperature'], inplace=True, axis=1)
+                elif ' Temp F' in flist:
+                    f['Temperature'] = (f[' Temp F'] - 32) * 5 / 9
+                    f['Temp'] = f['Temperature']
+                    f.drop([' Temp F', 'Temperature'], inplace=True, axis=1)
+                else:
+                    f['Temp'] = np.nan
+                f.set_index(['DateTime'], inplace=True)
+                f['date'] = f.index.to_julian_date().values
+                f['datediff'] = f['date'].diff()
+                f = f[f['datediff'] > 0]
+                f = f[f['datediff'] < 1]
+                # bse = int(pd.to_datetime(f.index).minute[0])
+                # f = hourly_resample(f, bse)
+                f.rename(columns={' Volts': 'Volts'}, inplace=True)
+                f.drop([u'date', u'datediff', u'Date_ Time'], inplace=True, axis=1)
+                return f
+        else:
+            print('{:} is unrecognized'.format(infile))
+
     return f
 
 
