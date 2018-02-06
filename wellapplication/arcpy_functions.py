@@ -112,6 +112,45 @@ def get_field_names(table):
     field_names.remove('OBJECTID')
     return field_names
 
+def get_gap_data(site_number, enviro, gap_tol = 0.5,
+                      gw_reading_table="UGGP.UGGPADMIN.UGS_GW_reading"):
+    arcpy.env.workspace = enviro
+    first_date = datetime.datetime(1900, 1, 1)
+    last_date = datetime.datetime.now()
+
+    query_txt = "LOCATIONID = '{:}' AND TAPE = 0"
+    query = query_txt.format(site_number)
+
+    sql_sn = (None, 'ORDER BY READINGDATE ASC')
+
+    fieldnames = ['READINGDATE']
+
+    #readings = wa.table_to_pandas_dataframe(gw_reading_table, fieldnames, query, sql_sn)
+
+    dt = []
+
+    # use a search cursor to iterate rows
+    with arcpy.da.SearchCursor(gw_reading_table, 'READINGDATE', query, sql_clause=sql_sn) as search_cursor:
+        # iterate the rows
+        for row in search_cursor:
+            # combine the field names and row items together, and append them
+            dt.append(row[0])
+
+    df = pd.Series(dt,name='DateTime')
+    df = df.to_frame()
+    df['hr_diff'] = df['DateTime'].diff()
+    df.set_index('DateTime',inplace=True)
+    df['julian'] = df.index.to_julian_date()
+    df['diff'] = df['julian'].diff()
+    df['is_gap'] =  df['diff'] > gap_tol
+    def rowIndex(row):
+        return row.name
+    df['gap_end'] = df.apply(lambda x: rowIndex(x) if x['is_gap'] else pd.NaT, axis=1)
+    df['gap_start'] = df.apply(lambda x: rowIndex(x) - x['hr_diff'] if x['is_gap'] else pd.NaT, axis=1)
+    df = df[df['is_gap'] == True]
+    return df
+
+
 
 def table_to_pandas_dataframe(table, field_names=None, query=None, sql_sn=(None, None)):
     """
