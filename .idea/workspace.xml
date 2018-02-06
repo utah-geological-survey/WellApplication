@@ -4,9 +4,10 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d5a82257-6a90-41c3-87e5-13b1695dbcbb" name="Default" comment="">
+    <list default="true" id="d5a82257-6a90-41c3-87e5-13b1695dbcbb" name="Default" comment="fix drift error handling">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/wellapplication/arcpy_functions.py" afterPath="$PROJECT_DIR$/wellapplication/arcpy_functions.py" />
+      <change beforePath="$PROJECT_DIR$/wellapplication/transport.py" afterPath="$PROJECT_DIR$/wellapplication/transport.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -59,11 +60,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="transport.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="transport.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="141">
-              <caret line="531" column="50" lean-forward="false" selection-start-line="531" selection-start-column="40" selection-end-line="531" selection-end-column="51" />
+            <state relative-caret-position="546">
+              <caret line="952" column="0" lean-forward="true" selection-start-line="952" selection-start-column="0" selection-end-line="952" selection-end-column="0" />
               <folding>
                 <element signature="e#0#82#0" expanded="true" />
               </folding>
@@ -105,11 +106,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="arcpy_functions.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="arcpy_functions.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wellapplication/arcpy_functions.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="442">
-              <caret line="217" column="39" lean-forward="false" selection-start-line="217" selection-start-column="39" selection-end-line="217" selection-end-column="39" />
+            <state relative-caret-position="-419">
+              <caret line="274" column="0" lean-forward="true" selection-start-line="274" selection-start-column="0" selection-end-line="274" selection-end-column="0" />
               <folding>
                 <element signature="e#0#82#0" expanded="true" />
               </folding>
@@ -181,8 +182,8 @@
         <option value="$PROJECT_DIR$/wellapplication/__init__.py" />
         <option value="$PROJECT_DIR$/setup.py" />
         <option value="$PROJECT_DIR$/VERSION" />
-        <option value="$PROJECT_DIR$/wellapplication/transport.py" />
         <option value="$PROJECT_DIR$/wellapplication/arcpy_functions.py" />
+        <option value="$PROJECT_DIR$/wellapplication/transport.py" />
       </list>
     </option>
   </component>
@@ -552,13 +553,6 @@
       <option name="presentableId" value="Default" />
       <updated>1483036980477</updated>
     </task>
-    <task id="LOCAL-00061" summary="adding doc strings">
-      <created>1484746238366</created>
-      <option name="number" value="00061" />
-      <option name="presentableId" value="LOCAL-00061" />
-      <option name="project" value="LOCAL" />
-      <updated>1484746238366</updated>
-    </task>
     <task id="LOCAL-00062" summary="adding tests">
       <created>1484747430375</created>
       <option name="number" value="00062" />
@@ -895,7 +889,14 @@
       <option name="project" value="LOCAL" />
       <updated>1517844714010</updated>
     </task>
-    <option name="localTasksCounter" value="110" />
+    <task id="LOCAL-00110" summary="fix drift error handling">
+      <created>1517926831313</created>
+      <option name="number" value="00110" />
+      <option name="presentableId" value="LOCAL-00110" />
+      <option name="project" value="LOCAL" />
+      <updated>1517926831313</updated>
+    </task>
+    <option name="localTasksCounter" value="111" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1306,20 +1307,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
+    <entry file="file://$PROJECT_DIR$/wellapplication/arcpy_functions.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="531" column="50" lean-forward="false" selection-start-line="531" selection-start-column="40" selection-end-line="531" selection-end-column="51" />
+        <state relative-caret-position="-419">
+          <caret line="274" column="0" lean-forward="true" selection-start-line="274" selection-start-column="0" selection-end-line="274" selection-end-column="0" />
           <folding>
             <element signature="e#0#82#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wellapplication/arcpy_functions.py">
+    <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="217" column="39" lean-forward="false" selection-start-line="217" selection-start-column="39" selection-end-line="217" selection-end-column="39" />
+        <state relative-caret-position="546">
+          <caret line="952" column="0" lean-forward="true" selection-start-line="952" selection-start-column="0" selection-end-line="952" selection-end-column="0" />
           <folding>
             <element signature="e#0#82#0" expanded="true" />
           </folding>

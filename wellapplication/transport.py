@@ -886,73 +886,69 @@ def fix_drift(well, manualfile, meas='Level', corrwl='corrwl', manmeas='Measured
     else:
         dtnm = 'DateTime'
         well.index.name = 'DateTime'
-
+    breakpoints = breakpoints.values
     manualfile.loc[:, 'julian'] = manualfile.index.to_julian_date()
-    print(breakpoints)
+
     for i in range(len(breakpoints) - 1):
-        try:
             # Break up pandas dataframe time series into pieces based on timing of manual measurements
-            bracketedwls[i] = well.loc[
-                (well.index.to_datetime() > breakpoints[i]) & (well.index.to_datetime() < breakpoints[i + 1])]
-            df = bracketedwls[i]
-            if len(df) > 0:
-                df.sort_index(inplace=True)
-                df.loc[:, 'julian'] = df.index.to_julian_date()
+        bracketedwls[i] = well.loc[
+            (well.index.to_datetime() > breakpoints[i]) & (well.index.to_datetime() < breakpoints[i + 1])]
+        df = bracketedwls[i]
+        if len(df) > 0:
+            df.sort_index(inplace=True)
+            df.loc[:, 'julian'] = df.index.to_julian_date()
 
-                last_trans = df.loc[df.last_valid_index(), meas]  # last transducer measurement
-                first_trans = df.loc[df.first_valid_index(), meas]  # first transducer measurement
-                first_trans_date = df.loc[df.first_valid_index(), 'julian']
-                last_trans_date = df.loc[df.last_valid_index(), 'julian']
+            last_trans = df.loc[df.last_valid_index(), meas]  # last transducer measurement
+            first_trans = df.loc[df.first_valid_index(), meas]  # first transducer measurement
+            first_trans_date = df.loc[df.first_valid_index(), 'julian']
+            last_trans_date = df.loc[df.last_valid_index(), 'julian']
 
-                first_man = fcl(manualfile, breakpoints[i])
-                last_man = fcl(manualfile, breakpoints[i + 1])  # first manual measurment
+            first_man = fcl(manualfile, breakpoints[i])
+            last_man = fcl(manualfile, breakpoints[i + 1])  # first manual measurment
 
-                if df.first_valid_index() < manualfile.first_valid_index():
-                    first_man[manmeas] = None
+            if df.first_valid_index() < manualfile.first_valid_index():
+                first_man[manmeas] = None
 
-                if df.last_valid_index() > manualfile.last_valid_index():
-                    last_man[manmeas] = None
+            if df.last_valid_index() > manualfile.last_valid_index():
+                last_man[manmeas] = None
 
-                # intercept of line = value of first manual measurement
-                if pd.isna(first_man[manmeas]):
-                    b = last_trans - last_man[manmeas]
-                    drift = 0.000001
-                    slope_man = 0
-                    slope_trans = 0
-                    new_slope = 0
-                elif pd.isna(last_man[manmeas]):
-                    b = first_trans - first_man[manmeas]
-                    drift = 0.000001
-                    slope_man = 0
-                    slope_trans = 0
-                    new_slope = 0
-                else:
-                    b = first_trans - first_man[manmeas]
-                    drift = ((last_trans - last_man[manmeas]) - b)
-                    slope_man = (first_man[manmeas] - last_man[manmeas]) / (first_man['julian'] - last_man['julian'])
-                    slope_trans = (first_trans - last_trans) / (first_trans_date - last_trans_date)
-                    new_slope = slope_trans - slope_man
-
-                # slope of line = change in difference between manual and transducer over time;
-                m = drift / (last_trans_date - first_trans_date)
-
-                # datechange = amount of time between manual measurements
-                df.loc[:, 'datechange'] = df['julian'].apply(lambda x: x - df.loc[df.index[0], 'julian'], 1)
-
-                # bracketedwls[i].loc[:, 'wldiff'] = bracketedwls[i].loc[:, meas] - first_trans
-                # apply linear drift to transducer data to fix drift; flipped x to match drift
-                df.loc[:, 'DRIFTCORRECTION'] = df['datechange'].apply(lambda x: new_slope * x, 1)
-                df.loc[:, outcolname] = df[meas] - (df['DRIFTCORRECTION'] + b)
-
-                drift_features[i] = {'t_beg': breakpoints[i], 'man_beg': first_man.name, 't_end': breakpoints[i + 1],
-                                     'man_end': last_man.name, 'slope_man': slope_man, 'slope_trans': slope_trans,
-                                     'intercept': b, 'slope': m, 'new_slope': new_slope,
-                                     'first_meas': first_man[manmeas], 'last_meas': last_man[manmeas],
-                                     'drift': drift, 'first_trans': first_trans, 'last_trans': last_trans}
+            # intercept of line = value of first manual measurement
+            if pd.isna(first_man[manmeas]):
+                b = last_trans - last_man[manmeas]
+                drift = 0.000001
+                slope_man = 0
+                slope_trans = 0
+                new_slope = 0
+            elif pd.isna(last_man[manmeas]):
+                b = first_trans - first_man[manmeas]
+                drift = 0.000001
+                slope_man = 0
+                slope_trans = 0
+                new_slope = 0
             else:
-                pass
-        except KeyError:
-            print('Missing Segment')
+                b = first_trans - first_man[manmeas]
+                drift = ((last_trans - last_man[manmeas]) - b)
+                slope_man = (first_man[manmeas] - last_man[manmeas]) / (first_man['julian'] - last_man['julian'])
+                slope_trans = (first_trans - last_trans) / (first_trans_date - last_trans_date)
+                new_slope = slope_trans - slope_man
+
+            # slope of line = change in difference between manual and transducer over time;
+            m = drift / (last_trans_date - first_trans_date)
+
+            # datechange = amount of time between manual measurements
+            df.loc[:, 'datechange'] = df['julian'].apply(lambda x: x - df.loc[df.index[0], 'julian'], 1)
+
+            # bracketedwls[i].loc[:, 'wldiff'] = bracketedwls[i].loc[:, meas] - first_trans
+            # apply linear drift to transducer data to fix drift; flipped x to match drift
+            df.loc[:, 'DRIFTCORRECTION'] = df['datechange'].apply(lambda x: new_slope * x, 1)
+            df.loc[:, outcolname] = df[meas] - (df['DRIFTCORRECTION'] + b)
+
+            drift_features[i] = {'t_beg': breakpoints[i], 'man_beg': first_man.name, 't_end': breakpoints[i + 1],
+                                 'man_end': last_man.name, 'slope_man': slope_man, 'slope_trans': slope_trans,
+                                 'intercept': b, 'slope': m, 'new_slope': new_slope,
+                                 'first_meas': first_man[manmeas], 'last_meas': last_man[manmeas],
+                                 'drift': drift, 'first_trans': first_trans, 'last_trans': last_trans}
+        else:
             pass
 
     wellbarofixed = pd.concat(bracketedwls)
