@@ -215,7 +215,7 @@ def simp_imp_well(well_table, file, baro_out, wellid, manual, stbl_elev=True,
     # get manual groundwater elevations
     # man, stickup, well_elev = self.get_gw_elevs(wellid, well_table, manual, stable_elev = stbl_elev)
     stdata = well_table[well_table['WellID'] == str(wellid)]
-    man_sub = manual[manual['Location ID'] == int(wellid)]
+    man_sub = manual[manual['LOCATIONID'] == int(wellid)]
     well_elev = float(stdata['Altitude'].values[0]) # Should be in feet
 
     if stbl_elev:
@@ -229,9 +229,9 @@ def simp_imp_well(well_table, file, baro_out, wellid, manual, stbl_elev=True,
         stickup = man_sub.loc[man_sub.last_valid_index(), 'Current Stickup Height']
 
     # manual = manual['MeasuredDTW'].to_frame()
-    man_sub.loc[:, 'MeasuredDTW'] = man_sub['Water Level (ft)'] * -1
-    man_sub.loc[:, 'Meas_GW_Elev'] = man_sub['MeasuredDTW'].apply(lambda x: float(well_elev) + (x + float(stickup)),
-                                                                  1)
+    man_sub.loc[:, 'MeasuredDTW'] = man_sub['DTWBELOWCASING'] * -1
+    man_sub.loc[:, 'Meas_GW_Elev'] = man_sub.loc[:, 'WATERELEVATION']
+    #man_sub.loc[:, 'Meas_GW_Elev'] = man_sub['MeasuredDTW'].apply(lambda x: float(well_elev) + (x + float(stickup)),1)
     printmes('Stickup: {:}, Well Elev: {:}'.format(stickup, well_elev))
 
     # fix transducer drift
