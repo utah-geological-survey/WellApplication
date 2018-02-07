@@ -413,7 +413,6 @@ def new_csv_imp(infile):
         else:
             print('{:} is unrecognized'.format(infile))
 
-    return f
 
 
 def new_trans_imp(infile):
