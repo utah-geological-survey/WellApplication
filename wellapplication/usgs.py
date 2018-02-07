@@ -363,7 +363,7 @@ def get_huc(x):
         'returnDistinctValues': 'true',
         'f': 'pjson'}
 
-    huc_url = 'https://services.nationalmap.gov/arcgis/rest/services/wbd/MapServer/7/query?'
+    huc_url = 'https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer/6/query?'
     # huc_url = 'https://services.nationalmap.gov/arcgis/rest/services/USGSHydroNHDLarge/MapServer/10/query?'
     # huc_url2 = 'https://services.nationalmap.gov/arcgis/rest/services/nhd/mapserver/8/query?'
     response = requests.get(huc_url, params=values).json()
