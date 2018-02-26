@@ -215,6 +215,16 @@ class nwis(object):
         CleanData = data[~data[colm].isin(['Z', 'R', 'V', 'P', 'O', 'F', 'W', 'G', 'S', 'C', 'E', 'N'])]
         return CleanData
 
+    def my_agg(self, x, avgtype):
+        names = {
+            'mean': x[avgtype].mean(),
+            'std': x[avgtype].std(),
+            'median': x[avgtype].median(),
+            'cnt': (np.count_nonzero(~np.isnan(x))),
+            'err_pls': (np.mean(x) + (np.std(x) * 1.96)),
+            'err_min': (np.mean(x) - (np.std(x) * 1.96))}
+
+        return pd.Series(names, index=list(names.keys()))
 
     def avg_wl(self, numObs=50, avgtype='stdWL', grptype='bytime', grper='12M'):
         """Calculates standardized statistics for a list of stations or a huc from the USGS
@@ -235,22 +245,25 @@ class nwis(object):
         wl_long = data[data['site_no'].isin(list(site_size[site_size >= numObs].index.values))]
         siteList = list(wl_long.site_no.unique())
         for site in siteList:
-            mean = wl_long.ix[wl_long.site_no == site, 'value'].mean()
-            std = wl_long.ix[wl_long.site_no == site, 'value'].std()
-            wl_long.ix[wl_long.site_no == site, 'avgDiffWL'] = wl_long.ix[wl_long.site_no == site, 'value'] - mean
-            wl_long.ix[wl_long.site_no == site, 'stdWL'] = wl_long.ix[wl_long.site_no == site, 'avgDiffWL'] / std
+            mean = wl_long.loc[wl_long.site_no == site, 'value'].mean()
+            std = wl_long.loc[wl_long.site_no == site, 'value'].std()
+            wl_long.loc[wl_long.site_no == site, 'avgDiffWL'] = wl_long.loc[wl_long.site_no == site, 'value'] - mean
+            wl_long.loc[wl_long.site_no == site, 'stdWL'] = wl_long.loc[wl_long.site_no == site, 'avgDiffWL'] / std
 
         if grptype == 'bytime':
-            grp = pd.TimeGrouper(grper)
+            grp = pd.Grouper(freq=grper)
         elif grptype == 'monthly':
             grp = wl_long.index.month
         else:
             grp = grptype
-        wl_stats = wl_long.groupby([grp])[avgtype].agg({'mean': np.mean, 'median': np.median,
-                                                        'standard': np.std,
-                                                        'cnt': (lambda x: np.count_nonzero(~np.isnan(x))),
-                                                        'err_pls': (lambda x: np.mean(x) + (np.std(x) * 1.96)),
-                                                        'err_min': (lambda x: np.mean(x) - (np.std(x) * 1.96))})
+        wllong = wl_long.groupby(['site_no',grp]).mean()
+        wllong.index = wllong.index.droplevel(level=0)
+        wl_stats = wllong.groupby([grp]).apply(lambda x: self.my_agg(x,avgtype),1)
+        #wl_stats = wl_long.groupby([grp])[avgtype].agg({'mean': np.mean, 'median': np.median,
+        #                                                'standard': np.std,
+        #                                                'cnt': (lambda x: np.count_nonzero(~np.isnan(x))),
+        #                                                'err_pls': (lambda x: np.mean(x) + (np.std(x) * 1.96)),
+        #                                                'err_min': (lambda x: np.mean(x) - (np.std(x) * 1.96))})
 
         return wl_stats
 
