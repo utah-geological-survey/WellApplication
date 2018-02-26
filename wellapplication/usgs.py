@@ -216,13 +216,14 @@ class nwis(object):
         return CleanData
 
     def my_agg(self, x):
+
         names = {
-            'mean': x.mean(),
-            'std': x.std(),
-            'median': x.median(),
-            'cnt': (np.count_nonzero(~np.isnan(x))),
-            'err_pls': (np.mean(x) + (np.std(x) * 1.96)),
-            'err_min': (np.mean(x) - (np.std(x) * 1.96))}
+            'mean': x[self.avgtype].mean(),
+            'std': x[self.avgtype].std(),
+            'median': x[self.avgtype].median(),
+            'cnt': (np.count_nonzero(~np.isnan(x[self.avgtype]))),
+            'err_pls': (np.mean(x[self.avgtype]) + (np.std(x[self.avgtype]) * 1.96)),
+            'err_min': (np.mean(x[self.avgtype]) - (np.std(x[self.avgtype]) * 1.96))}
 
         return pd.Series(names, index=list(names.keys()))
 
@@ -235,7 +236,7 @@ class nwis(object):
         :param grper: only used if 'bytime' called; defaults to '12M'; other times can be put in
         :return:
         """
-
+        self.avgtype = avgtype
         data = self.cleanGWL(self.data)
         # stationWL = pd.merge(siteinfo, data, on = 'site_no')
         data.reset_index(inplace=True)
@@ -258,7 +259,7 @@ class nwis(object):
             grp = grptype
         wllong = wl_long.groupby(['site_no',grp]).mean()
         wllong.index = wllong.index.droplevel(level=0)
-        wl_stats = wllong.groupby([grp])[avgtype].apply(lambda x: self.my_agg(x), 1)
+        wl_stats = wllong.groupby([grp]).apply(self.my_agg)
         #wl_stats = wl_long.groupby([grp])[avgtype].agg({'mean': np.mean, 'median': np.median,
         #                                                'standard': np.std,
         #                                                'cnt': (lambda x: np.count_nonzero(~np.isnan(x))),

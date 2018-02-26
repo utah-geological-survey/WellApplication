@@ -62,8 +62,8 @@
       <file leaf-file-name="usgs.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="218" column="17" lean-forward="true" selection-start-line="218" selection-start-column="17" selection-end-line="218" selection-end-column="17" />
+            <state relative-caret-position="663">
+              <caret line="261" column="59" lean-forward="true" selection-start-line="261" selection-start-column="59" selection-end-line="261" selection-end-column="59" />
               <folding>
                 <element signature="e#80#162#0" expanded="true" />
               </folding>
@@ -584,13 +584,6 @@
       <option name="presentableId" value="Default" />
       <updated>1483036980477</updated>
     </task>
-    <task id="LOCAL-00068" summary="Added test and moved test files">
-      <created>1484891798205</created>
-      <option name="number" value="00068" />
-      <option name="presentableId" value="LOCAL-00068" />
-      <option name="project" value="LOCAL" />
-      <updated>1484891798206</updated>
-    </task>
     <task id="LOCAL-00069" summary="added to init">
       <created>1486100390816</created>
       <option name="number" value="00069" />
@@ -927,7 +920,14 @@
       <option name="project" value="LOCAL" />
       <updated>1519685803812</updated>
     </task>
-    <option name="localTasksCounter" value="117" />
+    <task id="LOCAL-00117" summary="modernize avg_wl">
+      <created>1519686535416</created>
+      <option name="number" value="00117" />
+      <option name="presentableId" value="LOCAL-00117" />
+      <option name="project" value="LOCAL" />
+      <updated>1519686535416</updated>
+    </task>
+    <option name="localTasksCounter" value="118" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1006,7 +1006,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="piper fixes" />
     <MESSAGE value="usgs changes to response" />
     <MESSAGE value="piper fix var" />
     <MESSAGE value="gantt test" />
@@ -1031,7 +1030,8 @@
     <MESSAGE value="csv file handling improved to handle solinst out" />
     <MESSAGE value="gap detecting function" />
     <MESSAGE value="updated get_huc" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated get_huc" />
+    <MESSAGE value="modernize avg_wl" />
+    <option name="LAST_COMMIT_MESSAGE" value="modernize avg_wl" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1356,8 +1356,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="218" column="17" lean-forward="true" selection-start-line="218" selection-start-column="17" selection-end-line="218" selection-end-column="17" />
+        <state relative-caret-position="663">
+          <caret line="261" column="59" lean-forward="true" selection-start-line="261" selection-start-column="59" selection-end-line="261" selection-end-column="59" />
           <folding>
             <element signature="e#80#162#0" expanded="true" />
           </folding>
