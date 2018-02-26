@@ -215,11 +215,11 @@ class nwis(object):
         CleanData = data[~data[colm].isin(['Z', 'R', 'V', 'P', 'O', 'F', 'W', 'G', 'S', 'C', 'E', 'N'])]
         return CleanData
 
-    def my_agg(self, x, avgtype):
+    def my_agg(self, x):
         names = {
-            'mean': x[avgtype].mean(),
-            'std': x[avgtype].std(),
-            'median': x[avgtype].median(),
+            'mean': x.mean(),
+            'std': x.std(),
+            'median': x.median(),
             'cnt': (np.count_nonzero(~np.isnan(x))),
             'err_pls': (np.mean(x) + (np.std(x) * 1.96)),
             'err_min': (np.mean(x) - (np.std(x) * 1.96))}
@@ -258,7 +258,7 @@ class nwis(object):
             grp = grptype
         wllong = wl_long.groupby(['site_no',grp]).mean()
         wllong.index = wllong.index.droplevel(level=0)
-        wl_stats = wllong.groupby([grp]).apply(lambda x: self.my_agg(x,avgtype),1)
+        wl_stats = wllong.groupby([grp])[avgtype].apply(lambda x: self.my_agg(x), 1)
         #wl_stats = wl_long.groupby([grp])[avgtype].agg({'mean': np.mean, 'median': np.median,
         #                                                'standard': np.std,
         #                                                'cnt': (lambda x: np.count_nonzero(~np.isnan(x))),
