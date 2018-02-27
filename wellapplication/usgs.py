@@ -7,6 +7,8 @@ Created on Sun Jan  3 00:30:36 2016
 from __future__ import absolute_import, division, print_function, unicode_literals
 import pandas as pd
 from datetime import datetime
+from pylab import rcParams
+
 try:
     from httplib import BadStatusLine
 except ImportError:
@@ -298,6 +300,8 @@ class nwis(object):
         fig = plt.figure()
         ax = fig.add_subplot(111)
 
+        rcParams['figure.figsize'] = 15, 10
+        rcParams['legend.numpoints'] = 1
         plt.plot(x2, y3, '+-', color='green', label='Median')
         ax.plot(x2, y2, '+-', color='red', label='Average')
         ax.fill_between(x2, grpd['err_min'], grpd['err_pls'], alpha=0.2, label='2 Standard Deviations', linewidth=0)

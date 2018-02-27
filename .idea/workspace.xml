@@ -62,8 +62,8 @@
       <file leaf-file-name="usgs.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="652">
-              <caret line="260" column="80" lean-forward="true" selection-start-line="260" selection-start-column="80" selection-end-line="260" selection-end-column="80" />
+            <state relative-caret-position="376">
+              <caret line="303" column="40" lean-forward="false" selection-start-line="303" selection-start-column="40" selection-end-line="303" selection-end-column="40" />
               <folding>
                 <element signature="e#80#162#0" expanded="true" />
               </folding>
@@ -584,13 +584,6 @@
       <option name="presentableId" value="Default" />
       <updated>1483036980477</updated>
     </task>
-    <task id="LOCAL-00071" summary="added to init">
-      <created>1486101352159</created>
-      <option name="number" value="00071" />
-      <option name="presentableId" value="LOCAL-00071" />
-      <option name="project" value="LOCAL" />
-      <updated>1486101352159</updated>
-    </task>
     <task id="LOCAL-00072" summary="added to init">
       <created>1486102723126</created>
       <option name="number" value="00072" />
@@ -927,7 +920,14 @@
       <option name="project" value="LOCAL" />
       <updated>1519743557349</updated>
     </task>
-    <option name="localTasksCounter" value="120" />
+    <task id="LOCAL-00120" summary="add pltavgwl function&#10;added stats to avgwl in usgs">
+      <created>1519744845275</created>
+      <option name="number" value="00120" />
+      <option name="presentableId" value="LOCAL-00120" />
+      <option name="project" value="LOCAL" />
+      <updated>1519744845275</updated>
+    </task>
+    <option name="localTasksCounter" value="121" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1356,8 +1356,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="652">
-          <caret line="260" column="80" lean-forward="true" selection-start-line="260" selection-start-column="80" selection-end-line="260" selection-end-column="80" />
+        <state relative-caret-position="376">
+          <caret line="303" column="40" lean-forward="false" selection-start-line="303" selection-start-column="40" selection-end-line="303" selection-end-column="40" />
           <folding>
             <element signature="e#80#162#0" expanded="true" />
           </folding>
