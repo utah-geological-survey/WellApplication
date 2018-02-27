@@ -220,18 +220,26 @@ class nwis(object):
         names = {
             'mean': x[self.avgtype].mean(),
             'std': x[self.avgtype].std(),
+            'min': x[self.avgtype].min(),
+            'max': x[self.avgtype].max(),
             'median': x[self.avgtype].median(),
             'cnt': (np.count_nonzero(~np.isnan(x[self.avgtype]))),
             'err_pls': (np.mean(x[self.avgtype]) + (np.std(x[self.avgtype]) * 1.96)),
-            'err_min': (np.mean(x[self.avgtype]) - (np.std(x[self.avgtype]) * 1.96))}
+            'err_min': (np.mean(x[self.avgtype]) - (np.std(x[self.avgtype]) * 1.96)),
+            '5 percent': np.percentile(x[self.avgtype], 5),
+            '95 percent': np.percentile(x[self.avgtype], 95)
+        }
 
         return pd.Series(names, index=list(names.keys()))
 
     def avg_wl(self, numObs=50, avgtype='stdWL', grptype='bytime', grper='12M'):
         """Calculates standardized statistics for a list of stations or a huc from the USGS
+        avgDiffWL = average difference from mean WL for each station
+
+
 
         :param numObs: minimum observations per site required to include site in analysis; default is 50
-        :param avgtype: averaging technique for site data; options are 'avgDiffWL' and 'stdWL'; default is 'stWL'
+        :param avgtype: averaging technique for site data; options are 'avgDiffWL','stdWL','cdm','avgDiff_dWL', and 'std_dWWL'; default is 'stWL'
         :param grptype: way to group the averaged data; options are 'bytime' or 'monthly' or user input; default 'bytime'
         :param grper: only used if 'bytime' called; defaults to '12M'; other times can be put in
         :return:
@@ -244,12 +252,20 @@ class nwis(object):
         # get averages by year, month, and site number
         site_size = data.groupby('site_no').size()
         wl_long = data[data['site_no'].isin(list(site_size[site_size >= numObs].index.values))]
+        # eliminate any duplicate site numbers
         siteList = list(wl_long.site_no.unique())
         for site in siteList:
             mean = wl_long.loc[wl_long.site_no == site, 'value'].mean()
             std = wl_long.loc[wl_long.site_no == site, 'value'].std()
+            meandiff = wl_long.loc[wl_long.site_no == site, 'value'].diff().mean()
+            stddiff = wl_long.loc[wl_long.site_no == site, 'value'].diff().std()
             wl_long.loc[wl_long.site_no == site, 'avgDiffWL'] = wl_long.loc[wl_long.site_no == site, 'value'] - mean
             wl_long.loc[wl_long.site_no == site, 'stdWL'] = wl_long.loc[wl_long.site_no == site, 'avgDiffWL'] / std
+            wl_long.loc[wl_long.site_no == site, 'cdm'] = wl_long.loc[wl_long.site_no == site, 'avgDiffWL'].cumsum()
+            wl_long.loc[wl_long.site_no == site, 'avgDiff_dWL'] = wl_long.loc[
+                                                                      wl_long.site_no == site, 'diff'] - meandiff
+            wl_long.loc[wl_long.site_no == site, 'std_dWL'] = wl_long.loc[
+                                                                  wl_long.site_no == site, 'avgDiff_dWL'] / stddiff
 
         if grptype == 'bytime':
             grp = pd.Grouper(freq=grper)
@@ -257,16 +273,54 @@ class nwis(object):
             grp = wl_long.index.month
         else:
             grp = grptype
+
+        # this statement reduces bias from one station
         wllong = wl_long.groupby(['site_no',grp]).mean()
         wllong.index = wllong.index.droplevel(level=0)
+        # this statement gets the statistics
         wl_stats = wllong.groupby([grp]).apply(self.my_agg)
-        #wl_stats = wl_long.groupby([grp])[avgtype].agg({'mean': np.mean, 'median': np.median,
-        #                                                'standard': np.std,
-        #                                                'cnt': (lambda x: np.count_nonzero(~np.isnan(x))),
-        #                                                'err_pls': (lambda x: np.mean(x) + (np.std(x) * 1.96)),
-        #                                                'err_min': (lambda x: np.mean(x) - (np.std(x) * 1.96))})
+
+        self.wl_stats = wl_stats
 
         return wl_stats
+
+    def pltavgwl(self, maxdate = [0,0,0], mindate=[1950,1,1],):
+
+        if maxdate[0] == 0:
+            maxdate = [datetime.today().year,1,1]
+
+        grpd = self.wl_stats
+        x2 = grpd.index
+        y3 = grpd['mean']
+        y2 = grpd['median']
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+
+        plt.plot(x2, y3, '+-', color='green', label='Median')
+        ax.plot(x2, y2, '+-', color='red', label='Average')
+        ax.fill_between(x2, grpd['err_min'], grpd['err_pls'], alpha=0.2, label='2 Standard Deviations', linewidth=0)
+
+        ax.set_ylabel(self.avgtype, color='red')
+        ax.invert_yaxis()
+        ax.grid()
+        ax2 = ax.twinx()
+        ax2.plot(x2, grpd['cnt'], label='Number of Wells Observed')
+        ax2.set_ylim(0, int(grpd['cnt'].max()) * 3)
+        ax2.set_yticks(range(0, int(grpd['cnt'].max()), int(grpd['cnt'].max() / 10)))
+        ax2.set_ylabel('Number of Wells Observed', color='blue')
+        ax2.yaxis.set_label_coords(1.03, 0.2)
+        ax.set_xlim(pd.datetime(*mindate), pd.datetime(*maxdate))
+        date_range = pd.date_range('{:}-{:}-{:}'.format(*mindate), '{:}-{:}-{:}'.format(*maxdate), freq='36M')
+        date_range = date_range.map(lambda t: t.strftime('%Y-%m-%d'))
+        ax.set_xticks(date_range)
+        ax.set_xlabel('date')
+        # ask matplotlib for the plotted objects and their labels
+        lines, labels = ax.get_legend_handles_labels()
+        lines2, labels2 = ax2.get_legend_handles_labels()
+        ax2.legend(lines + lines2, labels + labels2, loc=0)
+
+        return fig,ax,ax2
 
     def xcheck(self, x):
         """Converts empty list to empty string and filled list into string of first value"""

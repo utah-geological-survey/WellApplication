@@ -62,8 +62,8 @@
       <file leaf-file-name="usgs.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="663">
-              <caret line="261" column="59" lean-forward="true" selection-start-line="261" selection-start-column="59" selection-end-line="261" selection-end-column="59" />
+            <state relative-caret-position="737">
+              <caret line="322" column="25" lean-forward="false" selection-start-line="322" selection-start-column="25" selection-end-line="322" selection-end-column="25" />
               <folding>
                 <element signature="e#80#162#0" expanded="true" />
               </folding>
@@ -584,13 +584,6 @@
       <option name="presentableId" value="Default" />
       <updated>1483036980477</updated>
     </task>
-    <task id="LOCAL-00069" summary="added to init">
-      <created>1486100390816</created>
-      <option name="number" value="00069" />
-      <option name="presentableId" value="LOCAL-00069" />
-      <option name="project" value="LOCAL" />
-      <updated>1486100390816</updated>
-    </task>
     <task id="LOCAL-00070" summary="added to init">
       <created>1486100629182</created>
       <option name="number" value="00070" />
@@ -927,7 +920,14 @@
       <option name="project" value="LOCAL" />
       <updated>1519686535416</updated>
     </task>
-    <option name="localTasksCounter" value="118" />
+    <task id="LOCAL-00118" summary="modernize avg_wl">
+      <created>1519686815659</created>
+      <option name="number" value="00118" />
+      <option name="presentableId" value="LOCAL-00118" />
+      <option name="project" value="LOCAL" />
+      <updated>1519686815659</updated>
+    </task>
+    <option name="localTasksCounter" value="119" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1356,8 +1356,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="663">
-          <caret line="261" column="59" lean-forward="true" selection-start-line="261" selection-start-column="59" selection-end-line="261" selection-end-column="59" />
+        <state relative-caret-position="737">
+          <caret line="322" column="25" lean-forward="false" selection-start-line="322" selection-start-column="25" selection-end-line="322" selection-end-column="25" />
           <folding>
             <element signature="e#80#162#0" expanded="true" />
           </folding>
