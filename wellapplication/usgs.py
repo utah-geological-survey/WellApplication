@@ -259,6 +259,7 @@ class nwis(object):
             std = wl_long.loc[wl_long.site_no == site, 'value'].std()
             meandiff = wl_long.loc[wl_long.site_no == site, 'value'].diff().mean()
             stddiff = wl_long.loc[wl_long.site_no == site, 'value'].diff().std()
+            wl_long.loc[wl_long.site_no == site, 'diff'] = wl_long.loc[wl_long.site_no == site, 'value'].diff()
             wl_long.loc[wl_long.site_no == site, 'avgDiffWL'] = wl_long.loc[wl_long.site_no == site, 'value'] - mean
             wl_long.loc[wl_long.site_no == site, 'stdWL'] = wl_long.loc[wl_long.site_no == site, 'avgDiffWL'] / std
             wl_long.loc[wl_long.site_no == site, 'cdm'] = wl_long.loc[wl_long.site_no == site, 'avgDiffWL'].cumsum()
