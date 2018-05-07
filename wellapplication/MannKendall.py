@@ -7,7 +7,6 @@ Created on Fri Jan  8 19:55:22 2016
 from __future__ import absolute_import, division, print_function, unicode_literals
 import numpy as np
 import pandas as pd
-import scipy as sc
 from scipy.stats import norm
 
 import sys
@@ -69,8 +68,8 @@ def mk_test(x, alpha = 0.05):
         z = 0
     
     # calculate the p_value
-    p = 2*(1-sc.stats.norm.cdf(abs(z))) # two tail test
-    h = abs(z) > sc.stats.norm.ppf(1-alpha/2) 
+    p = 2*(1- norm.cdf(abs(z))) # two tail test
+    h = abs(z) > norm.ppf(1-alpha/2)
     
     if (z<0) and h:
         trend = 'decreasing'

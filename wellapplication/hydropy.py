@@ -7,6 +7,7 @@ for a better and more up to date copy of this script go to the original repo.
 from __future__ import absolute_import, division, print_function, unicode_literals
 import pandas as pd
 import numpy as np
+from scipy.optimize import curve_fit
 
 
 def get_baseflow_chapman(flowserie, recession_time):
@@ -102,7 +103,7 @@ def ratingCurve(discharge, stage):
     stage = array of corresponding stage readings;
     Returns coefficients a, b for the rating curve in the form y = a * x**b
     """
-    from scipy.optimize import curve_fit
+
     popt, pcov = curve_fit(exp_curve, stage, discharge)
 
     def r_squ():

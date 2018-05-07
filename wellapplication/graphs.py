@@ -5,13 +5,16 @@ Created on Thu Nov 19 12:32:51 2015
 @author: paulinkenbrandt
 """
 from __future__ import absolute_import, division, print_function, unicode_literals
-from scipy import stats as sp
+
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+import matplotlib.cm as cm
+from scipy.stats import linregress
 import numpy as np
 from collections import OrderedDict
 from datetime import datetime, timedelta
-from scipy.optimize import curve_fit
+
 
 
 def get_recess_int(df, Q, maxper=18, minper=6, thresh=30, inplace=False):
@@ -450,6 +453,7 @@ def fdc(df, site, begyear=1900, endyear=2015, normalizer=1, plot=True):
     :rtype data: list
 
     """
+    from scipy import stats as sp
     # limit dataframe to only the site
     df = df[[site]]
 
@@ -656,42 +660,30 @@ def scatterColor(x0, y, w):
     .. note:: See documentation at http://statsmodels.sourceforge.net/0.6.0/generated/statsmodels.robust.robust_linear_model.RLM.html
     for the RLM line
     """
-    import matplotlib as mpl
-    import matplotlib.cm as cm
-    import statsmodels.api as sm
-    from scipy.stats import linregress
+
+
     cmap = plt.cm.get_cmap('RdYlBu')
     norm = mpl.colors.Normalize(vmin=w.min(), vmax=w.max())
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     m.set_array(w)
-    sc = plt.scatter(x0, y, label='', color=m.to_rgba(w))
 
-    xa = sm.add_constant(x0)
 
-    est = sm.RLM(y, xa).fit()
-    r2 = sm.WLS(y, xa, weights=est.weights).fit().rsquared
-    slope = est.params[1]
+    plt.scatter(x0, y, label='', color=m.to_rgba(w))
 
-    x_prime = np.linspace(np.min(x0), np.max(x0), 100)[:, np.newaxis]
-    x_prime = sm.add_constant(x_prime)
-    y_hat = est.predict(x_prime)
+    slope, intercept, r_value, p_value, std_err = linregress(x0, y)
 
-    const = est.params[0]
-    y2 = [i * slope + const for i in x0]
-
-    lin = linregress(x0, y)
     x1 = np.arange(np.min(x0), np.max(x0), 0.1)
-    y1 = [i * lin[0] + lin[1] for i in x1]
-    y2 = [i * slope + const for i in x1]
+    y1 = [i * slope + intercept for i in x1]
+
     plt.plot(x1, y1, c='g',
-             label='simple linear regression m = {:.2f} b = {:.0f}, r^2 = {:.2f}'.format(lin[0], lin[1], lin[2] ** 2))
-    plt.plot(x1, y2, c='r', label='rlm regression m = {:.2f} b = {:.0f}, r2 = {:.2f}'.format(slope, const, r2))
+             label='simple linear regression m = {:.2f} b = {:.0f}, r^2 = {:.2f}'.format(slope, intercept, r_value ** 2))
+
     plt.legend()
     cbar = plt.colorbar(m)
 
     cbar.set_label('Julian Date')
 
-    return slope, const
+    return slope, intercept
 
 
 

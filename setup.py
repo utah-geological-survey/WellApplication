@@ -21,7 +21,7 @@ except:
 setup(name='wellapplication',
       description = 'Interface with xle files; analyze hydrographs; plot hydrographs; download USGS data',
       long_description = long_description,
-      version = '0.5.4',
+      version = '0.5.5',
       author = 'Paul Inkenbrandt',
       author_email = 'paulinkenbrandt@utah.gov',
       url = 'https://github.com/inkenbrandt/WellApplication',
@@ -33,8 +33,7 @@ setup(name='wellapplication',
                         "scipy >= 0.10.0",
                         "pyproj >= 1.9.4",
                         "requests >= 2.11.1",
-                        "xlrd >= 0.5.4",
-                        "statsmodels >= 0.6.0"],
+                        "xlrd >= 0.5.4"],
       packages = find_packages(exclude=['contrib', 'docs', 'tests*']))
 
 

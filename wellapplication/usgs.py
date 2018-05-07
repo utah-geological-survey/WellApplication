@@ -9,10 +9,6 @@ import pandas as pd
 from datetime import datetime
 from pylab import rcParams
 
-try:
-    from httplib import BadStatusLine
-except ImportError:
-    from http.client import BadStatusLine
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
@@ -413,7 +409,7 @@ def get_elev(x, units='Meters'):
              response = requests.get(elev_url, params=values).json()
              g = float(response['USGS_Elevation_Point_Query_Service']['Elevation_Query']['Elevation'])
              break
-         except(BadStatusLine):
+         except:
              print("Connection attempt {:} of 3 failed.".format(attempts))
              attempts += 1
              g = 0

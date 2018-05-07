@@ -357,13 +357,13 @@ def new_csv_imp(infile):
                 elif level_units == "mbar":
                     f[level] = pd.to_numeric(f[level]) * 0.0334552565551
                 elif level_units == "psi":
-                    f[level] = pd.to_numeric(df[level]) * 2.306726
+                    f[level] = pd.to_numeric(f[level]) * 2.306726
                     printmes("Units in psi, converting {:} to ft...".format(os.path.basename(infile)))
                 elif level_units == "m" or level_units == "meters":
                     f[level] = pd.to_numeric(f[level]) * 3.28084
                     printmes("Units in psi, converting {:} to ft...".format(os.path.basename(infile)))
                 else:
-                    f[level] = pd.to_numeric(df[level])
+                    f[level] = pd.to_numeric(f[level])
                     printmes("Unknown units, no conversion")
 
                 if temp_units == 'Deg C' or temp_units == u'\N{DEGREE SIGN}' + u'C':
