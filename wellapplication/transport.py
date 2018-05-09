@@ -431,14 +431,18 @@ def new_trans_imp(infile):
     try:
         if file_ext == '.xle':
             well = new_xle_imp(infile)
+            well = dataendclean(well, 'Level')
         elif file_ext == '.lev':
             well = new_lev_imp(infile)
+            well = dataendclean(well, 'Level')
         elif file_ext == '.csv':
             well = new_csv_imp(infile)
+            well = dataendclean(well, 'Level')
         else:
             printmes('filetype not recognized')
+            well = None
             pass
-        return dataendclean(well, 'Level')
+        return well
     except AttributeError:
         printmes('Bad File')
         return
