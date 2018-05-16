@@ -26,7 +26,7 @@
       <file leaf-file-name="setup.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/setup.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
+            <state relative-caret-position="340">
               <caret line="23" column="22" selection-start-line="23" selection-start-column="22" selection-end-line="23" selection-end-column="22" />
               <folding>
                 <element signature="e#0#82#0" expanded="true" />
@@ -71,8 +71,8 @@
       <file leaf-file-name="arcpy_functions.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wellapplication/arcpy_functions.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2567">
-              <caret line="151" selection-start-line="151" selection-end-line="151" />
+            <state relative-caret-position="141">
+              <caret line="114" column="4" selection-start-line="114" selection-start-column="4" selection-end-line="114" selection-end-column="4" />
               <folding>
                 <element signature="e#0#82#0" expanded="true" />
               </folding>
@@ -83,18 +83,13 @@
       <file leaf-file-name="transport.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="566">
-              <caret line="442" column="23" selection-start-line="442" selection-start-column="23" selection-end-line="442" selection-end-column="23" />
+            <state relative-caret-position="602">
+              <caret line="1069" lean-forward="true" selection-start-line="1069" selection-end-line="1069" />
               <folding>
                 <element signature="e#0#82#0" expanded="true" />
               </folding>
             </state>
           </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="mesopy.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/wellapplication/mesopy.py">
-          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file leaf-file-name="VERSION" pinned="false" current-in-tab="false">
@@ -203,8 +198,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-14" />
-    <option name="y" value="88" />
+    <option name="x" value="-1729" />
+    <option name="y" value="-28" />
     <option name="width" value="1594" />
     <option name="height" value="883" />
   </component>
@@ -216,7 +211,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -233,12 +227,13 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="last_opened_file_path" value="G:/My Drive/Python/GitHub/UBM" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -548,13 +543,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1483036980477</updated>
-    </task>
-    <task id="LOCAL-00074" summary="added to init">
-      <created>1486160584921</created>
-      <option name="number" value="00074" />
-      <option name="presentableId" value="LOCAL-00074" />
-      <option name="project" value="LOCAL" />
-      <updated>1486160584922</updated>
     </task>
     <task id="LOCAL-00075" summary="python 3 compatibility">
       <created>1486161750977</created>
@@ -892,7 +880,14 @@
       <option name="project" value="LOCAL" />
       <updated>1525707378452</updated>
     </task>
-    <option name="localTasksCounter" value="123" />
+    <task id="LOCAL-00123" summary="fixed new_trans_imp error">
+      <created>1525873666050</created>
+      <option name="number" value="00123" />
+      <option name="presentableId" value="LOCAL-00123" />
+      <option name="project" value="LOCAL" />
+      <updated>1525873666051</updated>
+    </task>
+    <option name="localTasksCounter" value="124" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -937,10 +932,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
+    <frame x="-1688" y="-25" width="1696" height="1036" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15208334" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17848411" />
       <window_info anchor="bottom" id="TODO" order="13" />
       <window_info anchor="right" id="R Packages" order="3" />
       <window_info anchor="right" id="R Graphics" order="4" />
@@ -948,8 +943,8 @@
       <window_info anchor="bottom" id="Run" order="4" sideWeight="0.49815693" weight="0.33900106" />
       <window_info anchor="bottom" id="Version Control" order="16" sideWeight="0.4934176" weight="0.32412326" />
       <window_info anchor="bottom" id="Python Console" order="17" weight="0.32731137" />
-      <window_info active="true" anchor="right" id="Structure" order="6" side_tool="true" visible="true" weight="0.13385417" />
-      <window_info anchor="bottom" id="Terminal" order="19" sideWeight="0.8266277" weight="0.17994858" />
+      <window_info active="true" anchor="right" id="Structure" order="6" side_tool="true" visible="true" weight="0.15709047" />
+      <window_info anchor="bottom" id="Terminal" order="19" sideWeight="0.8266277" visible="true" weight="0.16231555" />
       <window_info anchor="bottom" id="Debug" order="5" weight="0.4" />
       <window_info id="Favorites" order="1" side_tool="true" />
       <window_info anchor="bottom" id="SFDX" order="14" />
@@ -959,11 +954,11 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Inspection Results" order="20" sideWeight="0.49012437" visible="true" weight="0.3174807" />
       <window_info anchor="bottom" id="Log Manager" order="21" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4955357" weight="0.32649574" />
       <window_info anchor="bottom" id="Execute Anonymous" order="18" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="7" weight="0.25" />
       <window_info anchor="bottom" id="Salesforce" order="22" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4955357" weight="0.32649574" />
       <window_info anchor="right" id="Data View" order="5" />
     </layout>
   </component>
@@ -971,7 +966,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="gantt test" />
     <MESSAGE value="gantt cleanup" />
     <MESSAGE value="recess cleanup" />
     <MESSAGE value="fixing usgs" />
@@ -996,7 +990,8 @@
     <MESSAGE value="modernize avg_wl" />
     <MESSAGE value="add pltavgwl function&#10;added stats to avgwl in usgs" />
     <MESSAGE value="removed statsmodel depends" />
-    <option name="LAST_COMMIT_MESSAGE" value="removed statsmodel depends" />
+    <MESSAGE value="fixed new_trans_imp error" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed new_trans_imp error" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1004,6 +999,16 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/wellapplication/arcpy_functions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1853">
+          <caret line="114" column="4" selection-start-line="114" selection-start-column="4" selection-end-line="114" selection-end-column="4" />
+          <folding>
+            <element signature="e#0#82#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/ros.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="7412">
@@ -1220,9 +1225,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2159">
           <caret line="131" column="89" selection-start-line="131" selection-start-column="87" selection-end-line="131" selection-end-column="89" />
-          <folding>
-            <element signature="e#94#176#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1253,9 +1255,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wellapplication/mesopy.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/ros.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="7412">
@@ -1285,7 +1284,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/setup.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
+        <state relative-caret-position="340">
           <caret line="23" column="22" selection-start-line="23" selection-start-column="22" selection-end-line="23" selection-end-column="22" />
           <folding>
             <element signature="e#0#82#0" expanded="true" />
@@ -1295,8 +1294,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/arcpy_functions.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2567">
-          <caret line="151" selection-start-line="151" selection-end-line="151" />
+        <state relative-caret-position="141">
+          <caret line="114" column="4" selection-start-line="114" selection-start-column="4" selection-end-line="114" selection-end-column="4" />
           <folding>
             <element signature="e#0#82#0" expanded="true" />
           </folding>
@@ -1305,8 +1304,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="566">
-          <caret line="442" column="23" selection-start-line="442" selection-start-column="23" selection-end-line="442" selection-end-column="23" />
+        <state relative-caret-position="602">
+          <caret line="1069" lean-forward="true" selection-start-line="1069" selection-end-line="1069" />
           <folding>
             <element signature="e#0#82#0" expanded="true" />
           </folding>

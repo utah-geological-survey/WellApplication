@@ -1010,6 +1010,93 @@ def fix_drift(well, manualfile, meas='Level', corrwl='corrwl', manmeas='Measured
     return wellbarofixed, drift_info
 
 
+def jumpfixagg(df, meas, thresh=0.03, window=24, maxiter=15, return_jump=False):
+    """This is a more aggressive version of the jumpfix function.
+    It uses the diference between the average of two windows around the jump.
+    It removes jumps or jolts in time series data (where offset is lasting).
+
+    Args:
+        df (object):
+            dataframe to manipulate
+        meas (str):
+            name of field with jolts
+        thresh (float):
+            size of jolt to search for
+        window (int):
+            number of hours to average around the jump
+        maxiter (int):
+            max number of iterations to run remove jumps
+        return_jump (bool):
+            if True, returns a Dataframe showing jump locations and magnitudes
+    Returns:
+        df1: dataframe of corrected data
+        jump: dataframe of jumps corrected in data
+    """
+    df1 = df.copy(deep=True)
+    df1.loc[:, 'diff'] = df1[meas].diff()
+
+    jump = df1[(abs(df1['diff']) >= thresh)]
+    jump.loc[:, 'cumul'] = jump.loc[:, 'diff'].cumsum()
+    jump1 = jump.copy(deep=True)
+    jaa = 1000
+    iterstart = 0
+
+    while abs(jaa) > 1e-5:
+        jas = []
+        for i in jump.index:
+            ja1 = df1.loc[i:i + datetime.timedelta(hours=window), meas].mean()
+            ja2 = df1.loc[i - datetime.timedelta(hours=window):i, meas].mean()
+            ja = ja1 - ja2
+            jud = df1.loc[i]
+            # ax1.scatter(jt,ja)
+            df1.loc[i:, meas] = df1.loc[i:, meas].apply(lambda x: x - ja, 1)
+            jas.append(ja)
+        jaa = np.mean(jas)
+
+        df1.loc[:, 'diff'] = df1.loc[:, meas].diff()
+        jump = df1[(abs(df1['diff']) >= thresh)]
+        jump.loc[:, 'cumul'] = jump.loc[:, 'diff'].cumsum()
+        iterstart += 1
+        if iterstart >= maxiter:
+            break
+
+    df1 = df1[abs(df1['diff']) <= thresh].resample('1H').asfreq().interpolate(method='time')
+
+    if return_jump:
+        print(jump1)
+        return df1, jump1
+    else:
+        return df1
+
+def compile_end_beg_dates(infile):
+    """ Searches through directory and compiles transducer files, returning a dataframe of the file name,
+    beginning measurement, and ending measurement. Complements xle_head_table, which derives these dates from an
+    xle header.
+    Args:
+        folder (directory):
+            folder containing transducer files
+    Returns:
+        A Pandas DataFrame containing the file name, beginning measurement date, and end measurement date
+    Example::
+        >>> compile_end_beg_dates('C:/folder_with_xles/')
+
+
+    """
+    filelist = glob.glob(infile)
+    f = {}
+
+    # iterate through list of relevant files
+    for infile in filelist:
+        f[getfilename(infile)] = new_trans_imp(infile)
+
+    dflist = []
+    for key, val in f.items():
+        if val is not None:
+            dflist.append((key, val.index[0], val.index[-1]))
+
+    df = pd.DataFrame(dflist, columns=['filename', 'beginning', 'end'])
+    return df
+
 def xle_head_table(folder):
     """Creates a Pandas DataFrame containing header information from all xle files in a folder
     Args:
