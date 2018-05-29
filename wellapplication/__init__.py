@@ -11,7 +11,7 @@ from .MannKendall import *
 from .ros import *
 from .arcpy_functions import *
 
-__version__ = '0.5.5'
+__version__ = '0.5.6'
 __author__ = 'Paul Inkenbrandt'
 __name__ = 'wellapplication'
 

@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="d5a82257-6a90-41c3-87e5-13b1695dbcbb" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VERSION" beforeDir="false" afterPath="$PROJECT_DIR$/VERSION" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wellapplication/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/wellapplication/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/wellapplication/transport.py" beforeDir="false" afterPath="$PROJECT_DIR$/wellapplication/transport.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -71,7 +74,7 @@
       <file leaf-file-name="arcpy_functions.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wellapplication/arcpy_functions.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="141">
+            <state relative-caret-position="1853">
               <caret line="114" column="4" selection-start-line="114" selection-start-column="4" selection-end-line="114" selection-end-column="4" />
               <folding>
                 <element signature="e#0#82#0" expanded="true" />
@@ -80,11 +83,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="transport.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="transport.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="602">
-              <caret line="1069" lean-forward="true" selection-start-line="1069" selection-end-line="1069" />
+            <state relative-caret-position="144">
+              <caret line="945" column="92" selection-start-line="945" selection-start-column="92" selection-end-line="945" selection-end-column="92" />
               <folding>
                 <element signature="e#0#82#0" expanded="true" />
               </folding>
@@ -113,10 +116,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/wellapplication/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
+            <state relative-caret-position="221">
               <caret line="13" column="20" selection-start-line="13" selection-start-column="20" selection-end-line="13" selection-end-column="20" />
               <folding>
                 <element signature="e#25#107#0" expanded="true" />
@@ -190,10 +193,10 @@
         <option value="$PROJECT_DIR$/wellapplication/hydropy.py" />
         <option value="$PROJECT_DIR$/wellapplication/graphs.py" />
         <option value="$PROJECT_DIR$/wellapplication/usgs.py" />
+        <option value="$PROJECT_DIR$/wellapplication/transport.py" />
         <option value="$PROJECT_DIR$/wellapplication/__init__.py" />
         <option value="$PROJECT_DIR$/VERSION" />
         <option value="$PROJECT_DIR$/setup.py" />
-        <option value="$PROJECT_DIR$/wellapplication/transport.py" />
       </list>
     </option>
   </component>
@@ -211,6 +214,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -227,7 +231,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -543,13 +546,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1483036980477</updated>
-    </task>
-    <task id="LOCAL-00075" summary="python 3 compatibility">
-      <created>1486161750977</created>
-      <option name="number" value="00075" />
-      <option name="presentableId" value="LOCAL-00075" />
-      <option name="project" value="LOCAL" />
-      <updated>1486161750977</updated>
     </task>
     <task id="LOCAL-00076" summary="python 3 compatibility">
       <created>1486163060924</created>
@@ -887,7 +883,14 @@
       <option name="project" value="LOCAL" />
       <updated>1525873666051</updated>
     </task>
-    <option name="localTasksCounter" value="124" />
+    <task id="LOCAL-00124" summary="added jumpfixagg function">
+      <created>1526486718186</created>
+      <option name="number" value="00124" />
+      <option name="presentableId" value="LOCAL-00124" />
+      <option name="project" value="LOCAL" />
+      <updated>1526486718187</updated>
+    </task>
+    <option name="localTasksCounter" value="125" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -935,7 +938,7 @@
     <frame x="-1688" y="-25" width="1696" height="1036" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17848411" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18031785" />
       <window_info anchor="bottom" id="TODO" order="13" />
       <window_info anchor="right" id="R Packages" order="3" />
       <window_info anchor="right" id="R Graphics" order="4" />
@@ -943,7 +946,7 @@
       <window_info anchor="bottom" id="Run" order="4" sideWeight="0.49815693" weight="0.33900106" />
       <window_info anchor="bottom" id="Version Control" order="16" sideWeight="0.4934176" weight="0.32412326" />
       <window_info anchor="bottom" id="Python Console" order="17" weight="0.32731137" />
-      <window_info active="true" anchor="right" id="Structure" order="6" side_tool="true" visible="true" weight="0.15709047" />
+      <window_info anchor="right" id="Structure" order="6" side_tool="true" visible="true" weight="0.15709047" />
       <window_info anchor="bottom" id="Terminal" order="19" sideWeight="0.8266277" visible="true" weight="0.16231555" />
       <window_info anchor="bottom" id="Debug" order="5" weight="0.4" />
       <window_info id="Favorites" order="1" side_tool="true" />
@@ -966,7 +969,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="gantt cleanup" />
     <MESSAGE value="recess cleanup" />
     <MESSAGE value="fixing usgs" />
     <MESSAGE value="fixing recess" />
@@ -991,7 +993,8 @@
     <MESSAGE value="add pltavgwl function&#10;added stats to avgwl in usgs" />
     <MESSAGE value="removed statsmodel depends" />
     <MESSAGE value="fixed new_trans_imp error" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed new_trans_imp error" />
+    <MESSAGE value="added jumpfixagg function" />
+    <option name="LAST_COMMIT_MESSAGE" value="added jumpfixagg function" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1265,12 +1268,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wellapplication/__init__.py">
+    <entry file="file://$PROJECT_DIR$/wellapplication/arcpy_functions.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="13" column="20" selection-start-line="13" selection-start-column="20" selection-end-line="13" selection-end-column="20" />
+        <state relative-caret-position="1853">
+          <caret line="114" column="4" selection-start-line="114" selection-start-column="4" selection-end-line="114" selection-end-column="4" />
           <folding>
-            <element signature="e#25#107#0" expanded="true" />
+            <element signature="e#0#82#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="945" column="92" selection-start-line="945" selection-start-column="92" selection-end-line="945" selection-end-column="92" />
+          <folding>
+            <element signature="e#0#82#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1292,22 +1305,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wellapplication/arcpy_functions.py">
+    <entry file="file://$PROJECT_DIR$/wellapplication/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="114" column="4" selection-start-line="114" selection-start-column="4" selection-end-line="114" selection-end-column="4" />
+        <state relative-caret-position="221">
+          <caret line="13" column="20" selection-start-line="13" selection-start-column="20" selection-end-line="13" selection-end-column="20" />
           <folding>
-            <element signature="e#0#82#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="602">
-          <caret line="1069" lean-forward="true" selection-start-line="1069" selection-end-line="1069" />
-          <folding>
-            <element signature="e#0#82#0" expanded="true" />
+            <element signature="e#25#107#0" expanded="true" />
           </folding>
         </state>
       </provider>

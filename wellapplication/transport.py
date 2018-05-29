@@ -943,7 +943,7 @@ def fix_drift(well, manualfile, meas='Level', corrwl='corrwl', manmeas='Measured
     for i in range(len(breakpoints) - 1):
             # Break up pandas dataframe time series into pieces based on timing of manual measurements
         bracketedwls[i] = well.loc[
-            (well.index.to_datetime() > breakpoints[i]) & (well.index.to_datetime() < breakpoints[i + 1])]
+            (pd.to_datetime(well.index) > breakpoints[i]) & (pd.to_datetime(well.index) < breakpoints[i + 1])]
         df = bracketedwls[i]
         if len(df) > 0:
             df.sort_index(inplace=True)
