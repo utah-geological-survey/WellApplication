@@ -223,9 +223,9 @@ class nwis(object):
             'median': x[self.avgtype].median(),
             'cnt': (np.count_nonzero(~np.isnan(x[self.avgtype]))),
             'err_pls': (np.mean(x[self.avgtype]) + (np.std(x[self.avgtype]) * 1.96)),
-            'err_min': (np.mean(x[self.avgtype]) - (np.std(x[self.avgtype]) * 1.96)),
-            '5 percent': np.percentile(x[self.avgtype], 5),
-            '95 percent': np.percentile(x[self.avgtype], 95)
+            'err_min': (np.mean(x[self.avgtype]) - (np.std(x[self.avgtype]) * 1.96))
+            #'5 percent': np.percentile(x[self.avgtype], 5),
+            #'95 percent': np.percentile(x[self.avgtype], 95)
         }
 
         return pd.Series(names, index=list(names.keys()))

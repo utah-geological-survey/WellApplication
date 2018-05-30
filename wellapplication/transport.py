@@ -1204,28 +1204,28 @@ class wellmod(object):
 
     def remove_bp(self):
 
-        well = self.new_trans_imp(self.well_file)
-        baro = self.new_trans_imp(self.baro_file)
+        well = new_trans_imp(self.well_file)
+        baro = new_trans_imp(self.baro_file)
 
-        df = self.well_baro_merge(well, baro, barocolumn='Level', wellcolumn='Level', outcolumn='corrwl', vented=False,
+        df = well_baro_merge(well, baro, barocolumn='Level', wellcolumn='Level', outcolumn='corrwl', vented=False,
                                   sampint=60)
 
         df.to_csv(self.save_location)
 
     def remove_bp_drift(self):
 
-        well = self.new_trans_imp(self.well_file)
-        baro = self.new_trans_imp(self.baro_file)
+        well = new_trans_imp(self.well_file)
+        baro = new_trans_imp(self.baro_file)
 
         man = pd.DataFrame(
             {'DateTime': [self.man_startdate, self.man_enddate],
              'MeasuredDTW': [self.man_start_level * -1, self.man_end_level * -1]}).set_index('DateTime')
 
-        corrwl = self.well_baro_merge(well, baro, barocolumn='Level', wellcolumn='Level', outcolumn='corrwl',
+        corrwl = well_baro_merge(well, baro, barocolumn='Level', wellcolumn='Level', outcolumn='corrwl',
                                       vented=False,
                                       sampint=60)
 
-        dft = self.fix_drift(corrwl, man, meas='corrwl', manmeas='MeasuredDTW')
+        dft = fix_drift(corrwl, man, meas='corrwl', manmeas='MeasuredDTW')
         drift = round(float(dft[1]['drift'].values[0]), 3)
 
         printmes("Drift is {:} feet".format(drift))
