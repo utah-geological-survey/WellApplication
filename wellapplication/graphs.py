@@ -459,7 +459,7 @@ def fdc(df, site, begyear=1900, endyear=2015, normalizer=1, plot=True):
 
     # filter dataframe to only include dates of interest
     data = df[
-        (df.index.to_datetime() > pd.datetime(begyear, 1, 1)) & (df.index.to_datetime() < pd.datetime(endyear, 1, 1))]
+        (pd.to_datetime(df.index) > pd.datetime(begyear, 1, 1)) & (pd.to_datetime(df.index) < pd.datetime(endyear, 1, 1))]
 
     # remove na values from dataframe
     data = data.dropna()

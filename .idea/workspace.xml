@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d5a82257-6a90-41c3-87e5-13b1695dbcbb" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wellapplication/transport.py" beforeDir="false" afterPath="$PROJECT_DIR$/wellapplication/transport.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wellapplication/usgs.py" beforeDir="false" afterPath="$PROJECT_DIR$/wellapplication/usgs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wellapplication/graphs.py" beforeDir="false" afterPath="$PROJECT_DIR$/wellapplication/graphs.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -48,11 +47,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="usgs.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="usgs.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1020">
-              <caret line="225" column="84" lean-forward="true" selection-start-line="225" selection-start-column="84" selection-end-line="225" selection-end-column="84" />
+            <state relative-caret-position="289">
+              <caret line="227" column="61" lean-forward="true" selection-start-line="227" selection-start-column="61" selection-end-line="227" selection-end-column="61" />
               <folding>
                 <element signature="e#80#162#0" expanded="true" />
               </folding>
@@ -87,11 +86,20 @@
       <file leaf-file-name="transport.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="683">
-              <caret line="1227" column="14" selection-start-line="1227" selection-start-column="14" selection-end-line="1227" selection-end-column="14" />
+            <state relative-caret-position="267">
+              <caret line="629" column="8" selection-start-line="629" selection-start-column="8" selection-end-line="629" selection-end-column="8" />
               <folding>
                 <element signature="e#0#82#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="graphs.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/wellapplication/graphs.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="222">
+              <caret line="461" column="91" selection-start-line="461" selection-start-column="91" selection-end-line="461" selection-end-column="91" />
             </state>
           </provider>
         </entry>
@@ -193,13 +201,13 @@
         <option value="$PROJECT_DIR$/wellapplication/arcpy_functions.py" />
         <option value="$PROJECT_DIR$/wellapplication/MannKendall.py" />
         <option value="$PROJECT_DIR$/wellapplication/hydropy.py" />
-        <option value="$PROJECT_DIR$/wellapplication/graphs.py" />
         <option value="$PROJECT_DIR$/wellapplication/__init__.py" />
         <option value="$PROJECT_DIR$/VERSION" />
         <option value="$PROJECT_DIR$/setup.py" />
         <option value="$PROJECT_DIR$/wellapplication/transport.py" />
         <option value="$PROJECT_DIR$/../loggerloader/loggerloader_tbx.pyt" />
         <option value="$PROJECT_DIR$/wellapplication/usgs.py" />
+        <option value="$PROJECT_DIR$/wellapplication/graphs.py" />
       </list>
     </option>
   </component>
@@ -483,13 +491,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1483036980477</updated>
-    </task>
-    <task id="LOCAL-00077" summary="python 3 compatibility">
-      <created>1486353503313</created>
-      <option name="number" value="00077" />
-      <option name="presentableId" value="LOCAL-00077" />
-      <option name="project" value="LOCAL" />
-      <updated>1486353503314</updated>
     </task>
     <task id="LOCAL-00078" summary="python 3 compatibility">
       <created>1486354439406</created>
@@ -827,7 +828,14 @@
       <option name="project" value="LOCAL" />
       <updated>1527628232442</updated>
     </task>
-    <option name="localTasksCounter" value="126" />
+    <task id="LOCAL-00126" summary="fix error">
+      <created>1527695089464</created>
+      <option name="number" value="00126" />
+      <option name="presentableId" value="LOCAL-00126" />
+      <option name="project" value="LOCAL" />
+      <updated>1527695089464</updated>
+    </task>
+    <option name="localTasksCounter" value="127" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -883,8 +891,8 @@
       <window_info anchor="bottom" id="Run" order="4" sideWeight="0.49815693" weight="0.33900106" />
       <window_info anchor="bottom" id="Version Control" order="16" sideWeight="0.4934176" weight="0.32412326" />
       <window_info anchor="bottom" id="Python Console" order="17" weight="0.32731137" />
-      <window_info anchor="right" id="Structure" order="6" side_tool="true" visible="true" weight="0.1369936" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="19" sideWeight="0.8266277" visible="true" weight="0.15697037" />
+      <window_info active="true" anchor="right" id="Structure" order="6" side_tool="true" visible="true" weight="0.1369936" />
+      <window_info anchor="bottom" id="Terminal" order="19" sideWeight="0.8266277" visible="true" weight="0.15697037" />
       <window_info anchor="bottom" id="Debug" order="5" weight="0.4" />
       <window_info id="Favorites" order="1" side_tool="true" />
       <window_info anchor="bottom" id="SFDX" order="14" />
@@ -906,7 +914,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixing usgs" />
     <MESSAGE value="fixing recess" />
     <MESSAGE value="adding doc strings" />
     <MESSAGE value="adding tests" />
@@ -931,7 +938,8 @@
     <MESSAGE value="fixed new_trans_imp error" />
     <MESSAGE value="added jumpfixagg function" />
     <MESSAGE value="datetime issue" />
-    <option name="LAST_COMMIT_MESSAGE" value="datetime issue" />
+    <MESSAGE value="fix error" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix error" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1144,13 +1152,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wellapplication/graphs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="11373">
-          <caret line="669" selection-start-line="669" selection-end-line="669" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/chem.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2159">
@@ -1235,23 +1236,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="227" column="61" lean-forward="true" selection-start-line="227" selection-start-column="61" selection-end-line="227" selection-end-column="61" />
+          <folding>
+            <element signature="e#80#162#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/wellapplication/transport.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="683">
-          <caret line="1227" column="14" selection-start-line="1227" selection-start-column="14" selection-end-line="1227" selection-end-column="14" />
+        <state relative-caret-position="267">
+          <caret line="629" column="8" selection-start-line="629" selection-start-column="8" selection-end-line="629" selection-end-column="8" />
           <folding>
             <element signature="e#0#82#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wellapplication/usgs.py">
+    <entry file="file://$PROJECT_DIR$/wellapplication/graphs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1020">
-          <caret line="225" column="84" lean-forward="true" selection-start-line="225" selection-start-column="84" selection-end-line="225" selection-end-column="84" />
-          <folding>
-            <element signature="e#80#162#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="222">
+          <caret line="461" column="91" selection-start-line="461" selection-start-column="91" selection-end-line="461" selection-end-column="91" />
         </state>
       </provider>
     </entry>
