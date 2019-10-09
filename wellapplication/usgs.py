@@ -392,8 +392,8 @@ def get_elev(x, units='Meters'):
     :Example:
         >>> get_elev([-111.21,41.4])
         1951.99
-    """
-
+    """ 
+    
     values = {
         'x': x[0],
         'y': x[1],
@@ -401,7 +401,7 @@ def get_elev(x, units='Meters'):
         'output': 'json'
     }
 
-    elev_url = 'https://ned.usgs.gov/epqs/pqs.php?'
+    elev_url = 'https://nationalmap.gov/epqs/pqs.php?'
 
     attempts = 0
     while attempts < 4:
