@@ -401,7 +401,7 @@ def get_elev(x, units='Meters'):
         'output': 'json'
     }
 
-    elev_url = 'http://ned.usgs.gov/epqs/pqs.php?'
+    elev_url = 'https://ned.usgs.gov/epqs/pqs.php?'
 
     attempts = 0
     while attempts < 4:
