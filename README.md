@@ -37,7 +37,7 @@ This class has functions used to import transducer data and condition it for ana
 
 The most important function in this library is `new_xle_imp`, which uses the path and filename of an xle file, commonly produced by pressure transducers, to convert that file into a <a href=http://pandas.pydata.org/>Pandas</a> DataFrame.
 
-A <a href=http://jupyter.org/> Jupyter Notebook</a> using some of the transport functions can be found <a href = http://nbviewer.jupyter.org/github/inkenbrandt/WellApplication/blob/master/docs/UMAR_WL_Data.ipynb>here</a>.
+A <a href=http://jupyter.org/> Jupyter Notebook</a> using some of the transport functions can be found <a href = http://nbviewer.jupyter.org/github/utah-geological-survey/WellApplication/blob/master/docs/UMAR_WL_Data.ipynb>here</a>.
 
 ### usgs
 
@@ -53,5 +53,5 @@ The main <a href='https://waterservices.usgs.gov/rest/'>USGS services</a> are `d
 >>> flow_data = discharge.data
 ```
 
-A <a href=http://jupyter.org/> Jupyter Notebook</a> using some of the usgs functions can be found <a href=https://github.com/inkenbrandt/WellApplication/blob/master/docs/USGS_Interpolate.ipynb> here</a>.
+A <a href=http://jupyter.org/> Jupyter Notebook</a> using some of the usgs functions can be found <a href=https://nbviewer.jupyter.org/github/utah-geological-survey/WellApplication/blob/master/docs/USGS.ipynb> here</a>.
 
