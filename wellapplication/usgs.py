@@ -181,7 +181,7 @@ class nwis(object):
         """
         self.service = 'site'
         self.out_format = 'rdb'
-
+        kwargs['siteOutput'] = 'expanded'
         resp = self.get_response(**kwargs)
         print(resp.url)
         linefile = resp.iter_lines()
