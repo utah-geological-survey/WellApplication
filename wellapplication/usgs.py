@@ -428,7 +428,7 @@ def get_huc(x):
         'inSR': '4326',
         'spatialRel': 'esriSpatialRelIntersects',
         'returnGeometry': 'false',
-        'outFields': 'HUC12,Name',
+        'outFields': 'huc12,name',
         'returnDistinctValues': 'true',
         'f': 'pjson'}
 
@@ -436,7 +436,7 @@ def get_huc(x):
     # huc_url = 'https://services.nationalmap.gov/arcgis/rest/services/USGSHydroNHDLarge/MapServer/10/query?'
     # huc_url2 = 'https://services.nationalmap.gov/arcgis/rest/services/nhd/mapserver/8/query?'
     response = requests.get(huc_url, params=values).json()
-    return response['features'][0]['attributes']['HUC12'], response['features'][0]['attributes']['NAME']
+    return response['features'][0]['attributes']['huc12'], response['features'][0]['attributes']['name']
 
 def get_fips(x):
     """Receive the content of ``url``, parse it as JSON and return the object.
