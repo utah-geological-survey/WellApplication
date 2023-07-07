@@ -274,7 +274,7 @@ class nwis(object):
             grp = grptype
 
         # this statement reduces bias from one station
-        wllong = wl_long.groupby(['site_no',grp]).mean()
+        wllong = wl_long.groupby(['site_no',grp]).mean(numeric_only=True)
         wllong.index = wllong.index.droplevel(level=0)
         # this statement gets the statistics
         wl_stats = wllong.groupby([grp]).apply(self.my_agg)
