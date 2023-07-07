@@ -216,11 +216,11 @@ class nwis(object):
     def my_agg(self, x):
 
         names = {
-            'mean': x[self.avgtype].mean(),
-            'std': x[self.avgtype].std(),
-            'min': x[self.avgtype].min(),
-            'max': x[self.avgtype].max(),
-            'median': x[self.avgtype].median(),
+            'mean': x[self.avgtype].mean(numeric_only=True),
+            'std': x[self.avgtype].std(numeric_only=True),
+            'min': x[self.avgtype].min(numeric_only=True),
+            'max': x[self.avgtype].max(numeric_only=True),
+            'median': x[self.avgtype].median(numeric_only=True),
             'cnt': (np.count_nonzero(~np.isnan(x[self.avgtype]))),
             'err_pls': (np.mean(x[self.avgtype]) + (np.std(x[self.avgtype]) * 1.96)),
             'err_min': (np.mean(x[self.avgtype]) - (np.std(x[self.avgtype]) * 1.96))
