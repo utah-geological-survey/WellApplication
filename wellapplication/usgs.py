@@ -311,7 +311,7 @@ class nwis(object):
         ax2.set_yticks(range(0, int(grpd['cnt'].max()), int(grpd['cnt'].max() / 10)))
         ax2.set_ylabel('Number of Wells Observed', color='blue')
         ax2.yaxis.set_label_coords(1.03, 0.2)
-        ax.set_xlim(pd.to_datetime(*mindate), pd.to_datetime(*maxdate))
+        ax.set_xlim(datetime(*mindate), datetime(*maxdate))
         date_range = pd.date_range('{:}-{:}-{:}'.format(*mindate), '{:}-{:}-{:}'.format(*maxdate), freq='36M')
         date_range = date_range.map(lambda t: t.strftime('%Y-%m-%d'))
         ax.set_xticks(date_range)
