@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+dynamic = ["version"]
+name = "WellApplication"
+requires-python = ">= 3.8"
+authors = [{name = "Paul Inkenbrandt", email = "paulinkenbrandt@utah.gov"}]
+maintainers = [{name = "Paul Inkenbrandt", email = "paulinkenbrandt@utah.gov"}]
+description = "Tools used to manipulate hydrograph data; Solinst xles to pandas dataframe; hydrograph analysis; hydrology; Gannt Charts; Piper diagrams; hydrogeology; wells; groundwater; USGS data; WQP data;"
+readme = "README.md"
+license = {file = "LICENSE.txt"}
+keywords = ["well", "groundwater", "transducer"]
+
+[project.urls]
+Homepage = "https://github.com/utah-geological-survey/WellApplication"
+Issues = "https://github.com/utah-geological-survey/WellApplication/issues"
