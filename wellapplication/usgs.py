@@ -195,6 +195,9 @@ class nwis(object):
         df = pd.read_table(resp.url, sep="\t", skiprows=numlist)
         return df
 
+    def get_first_string(lst):
+        """Function to get the first string from each list"""
+        return lst[0] if isinstance(lst, list) and lst and all(isinstance(item, str) for item in lst) else None
 
     def cleanGWL(self, df, colm='qualifiers',inplace=False):
         """Drops water level data of suspect quality based on lev_status_cd
@@ -209,7 +212,7 @@ class nwis(object):
             data = df
         else:
             data = df.copy(deep=True)
-        data[colm] = data[colm].apply(lambda x: self.xcheck(x), 1)
+        data[colm] = data[colm].apply(get_first_string)
         CleanData = data[~data[colm].isin(['Z', 'R', 'V', 'P', 'O', 'F', 'W', 'G', 'S', 'C', 'E', 'N'])]
         return CleanData
 
