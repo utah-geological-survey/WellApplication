@@ -233,7 +233,7 @@ class nwis(object):
 
         return pd.Series(names, index=list(names.keys()))
 
-    def avg_wl(self, numObs=50, avgtype='stdWL', grptype='bytime', grper='12M'):
+    def avg_wl(self, numObs=50, avgtype='stdWL', grptype='bytime', grper='12ME'):
         """Calculates standardized statistics for a list of stations or a huc from the USGS
         avgDiffWL = average difference from mean WL for each station
 
@@ -315,7 +315,7 @@ class nwis(object):
         ax2.set_ylabel('Number of Wells Observed', color='blue')
         ax2.yaxis.set_label_coords(1.03, 0.2)
         ax.set_xlim(datetime(*mindate), datetime(*maxdate))
-        date_range = pd.date_range('{:}-{:}-{:}'.format(*mindate), '{:}-{:}-{:}'.format(*maxdate), freq='36M')
+        date_range = pd.date_range('{:}-{:}-{:}'.format(*mindate), '{:}-{:}-{:}'.format(*maxdate), freq='36ME')
         date_range = date_range.map(lambda t: t.strftime('%Y-%m-%d'))
         ax.set_xticks(date_range)
         ax.set_xlabel('date')
