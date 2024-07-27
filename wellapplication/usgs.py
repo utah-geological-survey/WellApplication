@@ -195,6 +195,7 @@ class nwis(object):
         df = pd.read_table(resp.url, sep="\t", skiprows=numlist)
         return df
 
+    @staticmethod
     def get_first_string(lst):
         """Function to get the first string from each list"""
         return lst[0] if isinstance(lst, list) and lst and all(isinstance(item, str) for item in lst) else None
