@@ -42,7 +42,7 @@ class nwis(object):
         self.loc_type = loc_type
         self.values = self.parsesitelist(values)
         self.header = {'Accept-encoding': 'gzip'}
-        self.url = 'https://waterservices.usgs.gov/nwis/'
+        #self.url = 'https://waterservices.usgs.gov/nwis/'
         self.geo_criteria = ['sites', 'stateCd', 'huc', 'countyCd', 'bBox']
         self.out_format = 'json'
         self.start_date = '1800-01-01'
@@ -111,45 +111,114 @@ class nwis(object):
         return self._checkresponse(response_ob)
 
     def get_nwis(self, **kwargs):
-        jsn_dict = self.get_response(**kwargs)
-        nwis_dict = jsn_dict.json()
-        # dictionary from json object; each value in this dictionary is a station timeseries
-        dt = nwis_dict['value']['timeSeries']
+        import dataretrieval.waterdata as waterdata
+        import dataretrieval.nwis as legacy_nwis
+        import pandas as pd
+        import numpy as np
 
-        station_id, lat, lon, srs, station_type, station_nm = [], [], [], [], [], []
-        f = {}
-        for i in range(len(dt)):
-            station_id.append(dt[i]['sourceInfo']['siteCode'][0]['value'])
-            lat.append(dt[i]['sourceInfo']['geoLocation'][u'geogLocation']['latitude'])
-            lon.append(dt[i]['sourceInfo']['geoLocation'][u'geogLocation']['longitude'])
-            srs.append(dt[i]['sourceInfo']['geoLocation'][u'geogLocation']['srs'])
-            station_type.append(dt[i]['sourceInfo']['siteProperty'][0]['value'])
-            station_nm.append(dt[i]['sourceInfo'][u'siteName'])
+        print('Fetching data via hybrid engine (Legacy metadata + Modernized chunked data)...')
+        
+        # 1. Fetch the Site Metadata using the LEGACY engine
+        loc_kwargs = {self.loc_type: self.values}
+        
+        try:
+            print(f"Finding monitoring locations for {self.loc_type} = {self.values}...")
+            sites_df, _ = legacy_nwis.get_info(**loc_kwargs)
+        except Exception as e:
+            raise nwisError(f"Could not fetch site metadata: {e}")
 
-            df = pd.DataFrame(dt[i]['values'][0]['value'])
-            if 'dateTime' in df.columns and 'Gage height, feet' not in dt[i]['variable']['variableDescription']:
-                df.index = pd.to_datetime(df.pop('dateTime'))
-                df.value = df.value.astype(float)
-                df.value = df.value.where(df.value > -999, np.nan)
-                df.index.name = 'datetime'
-                
-                f[dt[i]['sourceInfo']['siteCode'][0]['value']] = df
-            else:
-                print(dt[i]['variable']['variableDescription'] + " skipped!")
-                pass
+        if sites_df is None or sites_df.empty:
+            print('No Data! (No sites found)')
+            return None, None
 
-        stat_dict = {'site_no': station_id, 'dec_lat_va': lat, 'dec_long_va': lon, 'dec_coord_datum_cd': srs,
-                     'station_nm': station_nm, 'data_type_cd': station_type}
-        stations = pd.DataFrame(stat_dict)
-        if len(dt) > 1 and len(f) >= 1:
-            data = pd.concat(f)
-            data.index.set_names('site_no', level=0, inplace=True)
-        elif len(dt) == 1 and len(f) >= 1:
-            data = f[dt[0]['sourceInfo']['siteCode'][0]['value']]
-            data['site_no'] = dt[0]['sourceInfo']['siteCode'][0]['value']
+        # Format legacy site IDs into modern "USGS-12345678" format
+        site_ids = ["USGS-" + str(s) for s in sites_df['site_no'].dropna().unique()]
+
+       # 2. Fetch measurements in CHUNKS to avoid 403 Server Limit errors
+        meas_kwargs = {
+            'parameter_code': '72019'  # <--- CRITICAL: This forces Depth to Water only
+        }
+        if 'startDT' in kwargs: meas_kwargs['start'] = kwargs['startDT']
+        if 'endDT' in kwargs: meas_kwargs['end'] = kwargs['endDT']
+        
+        chunk_size = 50
+        all_data_frames = []
+        
+        print(f"Fetching field measurements for {len(site_ids)} sites in chunks of {chunk_size}...")
+        
+        for i in range(0, len(site_ids), chunk_size):
+            chunk = site_ids[i:i + chunk_size]
+            try:
+                # Fetch a single chunk
+                chunk_df, _ = waterdata.get_field_measurements(
+                    monitoring_location_id=chunk, 
+                    **meas_kwargs
+                )
+                if chunk_df is not None and not chunk_df.empty:
+                    all_data_frames.append(chunk_df)
+            except Exception as e:
+                # If a specific chunk fails, we report it but continue with others
+                print(f"Warning: Failed to fetch chunk starting at index {i}: {e}")
+
+        if not all_data_frames:
+            print('No measurement data found for these sites!')
+            return sites_df, None
+
+        # Combine all successful chunks
+        data_df = pd.concat(all_data_frames, ignore_index=True)
+        print(f"Total data retrieved! Columns available: {list(data_df.columns)}")
+
+        # 3. Dynamically find the Date column
+        if 'phenomenon_time' in data_df.columns:
+            data_df['datetime'] = pd.to_datetime(data_df['phenomenon_time'], errors='coerce')
+        elif 'measurement_dt' in data_df.columns:
+            data_df['datetime'] = pd.to_datetime(data_df['measurement_dt'], errors='coerce')
         else:
-            data = None
-            print('No Data!')
+            possible_date_cols = [c for c in data_df.columns if 'date' in c.lower() or 'time' in c.lower() or c.endswith('_dt')]
+            if possible_date_cols:
+                data_df['datetime'] = pd.to_datetime(data_df[possible_date_cols[0]], errors='coerce')
+
+        # 4. Dynamically find the Value and Quality columns
+        if 'result_value' in data_df.columns:
+            data_df.rename(columns={'result_value': 'value'}, inplace=True)
+        elif 'lev_va' in data_df.columns:
+            data_df.rename(columns={'lev_va': 'value'}, inplace=True)
+
+        # Map the new OGC "result_qualifier" to "qualifiers" for cleanGWL compatibility
+        if 'result_qualifier' in data_df.columns:
+            data_df.rename(columns={'result_qualifier': 'qualifiers'}, inplace=True)
+        elif 'lev_status_cd' in data_df.columns:
+            data_df.rename(columns={'lev_status_cd': 'qualifiers'}, inplace=True)
+        else:
+            # If no qualifier column exists, create an empty string column 
+            # so cleanGWL has a key to look at without crashing
+            data_df['qualifiers'] = ""
+
+        if 'value' in data_df.columns:
+            data_df['value'] = pd.to_numeric(data_df['value'], errors='coerce')
+            data_df['value'] = data_df['value'].where(data_df['value'] > -999, np.nan)
+
+        # 5. Clean up site numbers and format metadata
+        data_df['site_no'] = data_df.get('monitoring_location_id', data_df.get('site_no', pd.Series(dtype=str))).str.replace('USGS-', '')
+        
+        stat_dict = {
+            'site_no': sites_df['site_no'],
+            'dec_lat_va': sites_df['dec_lat_va'],
+            'dec_long_va': sites_df['dec_long_va'],
+            'dec_coord_datum_cd': sites_df['dec_coord_datum_cd'],
+            'station_nm': sites_df['station_nm'],
+            'data_type_cd': sites_df['site_tp_cd']
+        }
+        stations = pd.DataFrame(stat_dict)
+
+        # 6. Final MultiIndex formatting
+        unique_sites_found = list(data_df['site_no'].dropna().unique())
+        if len(unique_sites_found) > 1:
+            data = data_df.set_index(['site_no', 'datetime'])
+        else:
+            data = data_df.set_index('datetime')
+            data['site_no'] = unique_sites_found[0] if unique_sites_found else None
+
         return stations, data
 
     def parsesitelist(self, values):
@@ -197,23 +266,20 @@ class nwis(object):
 
     @staticmethod
     def get_first_string(lst):
-        """Function to get the first string from each list"""
-        return lst[0] if isinstance(lst, list) and lst and all(isinstance(item, str) for item in lst) else None
+        """Function to get the first string from each list or return the string itself"""
+        return lst[0] if isinstance(lst, list) and lst and all(isinstance(item, str) for item in lst) else lst
 
-    def cleanGWL(self, df, colm='qualifiers',inplace=False):
-        """Drops water level data of suspect quality based on lev_status_cd
-
-        :param df: (pandas dataframe) groundwater dataframe
-        :param colm: column to parse; defaults to 'qualifiers'
-
-        :type colm: str
-        :returns: sitno (str) - subset of input dataframe as new dataframe
-        """
+    def cleanGWL(self, df, colm='qualifiers', inplace=False):
+        """Drops water level data of suspect quality based on qualifier codes"""
         if inplace:
             data = df
         else:
             data = df.copy(deep=True)
-        data[colm] = data[colm].apply(get_first_string)
+            
+        # Use self. to reference the static method
+        data[colm] = data[colm].apply(self.get_first_string)
+        
+        # Filter out the suspect codes
         CleanData = data[~data[colm].isin(['Z', 'R', 'V', 'P', 'O', 'F', 'W', 'G', 'S', 'C', 'E', 'N'])]
         return CleanData
 
@@ -235,41 +301,38 @@ class nwis(object):
         return pd.Series(names, index=list(names.keys()))
 
     def avg_wl(self, numObs=50, avgtype='stdWL', grptype='bytime', grper='12ME'):
-        """Calculates standardized statistics for a list of stations or a huc from the USGS
-        avgDiffWL = average difference from mean WL for each station
-
-
-
-        :param numObs: minimum observations per site required to include site in analysis; default is 50
-        :param avgtype: averaging technique for site data; options are 'avgDiffWL','stdWL','cdm','avgDiff_dWL', and 'std_dWWL'; default is 'stWL'
-        :param grptype: way to group the averaged data; options are 'bytime' or 'monthly' or user input; default 'bytime'
-        :param grper: only used if 'bytime' called; defaults to '12M'; other times can be put in
-        :return:
-        """
         self.avgtype = avgtype
         data = self.cleanGWL(self.data)
-        # stationWL = pd.merge(siteinfo, data, on = 'site_no')
+        
         data.reset_index(inplace=True)
         data.set_index(['datetime'], inplace=True)
-        # get averages by year, month, and site number
-        site_size = data.groupby('site_no').size()
-        wl_long = data[data['site_no'].isin(list(site_size[site_size >= numObs].index.values))]
-        # eliminate any duplicate site numbers
-        siteList = list(wl_long.site_no.unique())
-        for site in siteList:
-            mean = wl_long.loc[wl_long.site_no == site, 'value'].mean()
-            std = wl_long.loc[wl_long.site_no == site, 'value'].std()
-            meandiff = wl_long.loc[wl_long.site_no == site, 'value'].diff().mean()
-            stddiff = wl_long.loc[wl_long.site_no == site, 'value'].diff().std()
-            wl_long.loc[wl_long.site_no == site, 'diff'] = wl_long.loc[wl_long.site_no == site, 'value'].diff()
-            wl_long.loc[wl_long.site_no == site, 'avgDiffWL'] = wl_long.loc[wl_long.site_no == site, 'value'] - mean
-            wl_long.loc[wl_long.site_no == site, 'stdWL'] = wl_long.loc[wl_long.site_no == site, 'avgDiffWL'] / std
-            wl_long.loc[wl_long.site_no == site, 'cdm'] = wl_long.loc[wl_long.site_no == site, 'avgDiffWL'].cumsum()
-            wl_long.loc[wl_long.site_no == site, 'avgDiff_dWL'] = wl_long.loc[
-                                                                      wl_long.site_no == site, 'diff'] - meandiff
-            wl_long.loc[wl_long.site_no == site, 'std_dWL'] = wl_long.loc[
-                                                                  wl_long.site_no == site, 'avgDiff_dWL'] / stddiff
 
+        # 1. Filter out sites with too few observations
+        site_counts = data.groupby('site_no')['value'].transform('count')
+        wl_long = data[site_counts >= numObs].copy()
+
+        if wl_long.empty:
+            print("No sites met the minimum observation requirement.")
+            return None
+
+        # 2. Vectorized Statistics (No more loops!)
+        # We group by site and transform to keep the original DataFrame shape
+        grouped = wl_long.groupby('site_no')['value']
+        
+        wl_long['diff'] = grouped.diff()
+        site_means = grouped.transform('mean')
+        site_stds = grouped.transform('std')
+        
+        wl_long['avgDiffWL'] = wl_long['value'] - site_means
+        wl_long['stdWL'] = wl_long['avgDiffWL'] / site_stds
+        wl_long['cdm'] = wl_long.groupby('site_no')['avgDiffWL'].cumsum()
+        
+        # Standardized difference logic
+        diff_grouped = wl_long.groupby('site_no')['diff']
+        wl_long['avgDiff_dWL'] = wl_long['diff'] - diff_grouped.transform('mean')
+        wl_long['std_dWL'] = wl_long['avgDiff_dWL'] / diff_grouped.transform('std')
+
+        # 3. Grouping for output
         if grptype == 'bytime':
             grp = pd.Grouper(freq=grper)
         elif grptype == 'monthly':
@@ -277,12 +340,11 @@ class nwis(object):
         else:
             grp = grptype
 
-        # this statement reduces bias from one station
-        wllong = wl_long.groupby(['site_no',grp]).mean(numeric_only=True)
-        wllong.index = wllong.index.droplevel(level=0)
-        # this statement gets the statistics
-        wl_stats = wllong.groupby([grp]).apply(self.my_agg)
-
+        # Reduce bias: average measurements per site per time step first
+        site_time_avg = wl_long.groupby(['site_no', grp]).mean(numeric_only=True)
+        
+        # Calculate final stats across all sites for each time step
+        wl_stats = site_time_avg.groupby(level=1).apply(self.my_agg)
         self.wl_stats = wl_stats
 
         return wl_stats
@@ -385,38 +447,33 @@ class nwis(object):
         plt.grid()
 
 def get_elev(x, units='Meters'):
-    """Uses USGS elevation service to retrieve elevation
-    :param x: longitude and latitude of point where elevation is desired
-    :type x: list
-    :param units: units for returned value; defaults to Meters; options are 'Meters' or 'Feet'
-    :type units: str
-
-    :returns: ned float elevation of location in meters
-
-    :Example:
-        >>> get_elev([-111.21,41.4])
-        1951.99
-    """ 
+    """Uses the modernized USGS elevation service (v1)""" 
+    
+    # Map units to the code the API expects (0 for Feet, 1 for Meters)
+    unit_code = '1' if units.lower() == 'meters' else '0'
     
     values = {
         'x': x[0],
         'y': x[1],
-        'units': units,
+        'units': units, # The new API accepts 'Meters' or 'Feet' as strings too
         'output': 'json'
     }
 
-    elev_url = 'https://nationalmap.gov/epqs/pqs.php?'
+    # Updated URL
+    elev_url = 'https://epqs.nationalmap.gov/v1/json?'
 
     attempts = 0
-    while attempts < 4:
-         try:
-             response = requests.get(elev_url, params=values).json()
-             g = float(response['USGS_Elevation_Point_Query_Service']['Elevation_Query']['Elevation'])
-             break
-         except:
-             print("Connection attempt {:} of 3 failed.".format(attempts))
-             attempts += 1
-             g = 0
+    g = 0.0
+    while attempts < 3:
+        try:
+            response = requests.get(elev_url, params=values, timeout=10).json()
+            # The new JSON structure puts the value directly under 'value'
+            g = float(response['value'])
+            break
+        except Exception as e:
+            attempts += 1
+            print(f"Elevation connection attempt {attempts} failed: {e}")
+            
     return g
 
 def get_huc(x):
